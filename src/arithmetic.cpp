@@ -36,7 +36,7 @@ void TPostfix::setTPostfix(string infix_new)
 	toLexem();
 }
 
-void TPostfix::toLexem()
+void TPostfix::toLexem() //converting an expression into lexem mas
 {
 	int summ_brackets = 0;
 	size_t lexnumber = 0;
@@ -163,7 +163,7 @@ void TPostfix::toLexem()
 	size = lexnumber;
 }
 
-void TPostfix::value_of_variable()
+void TPostfix::value_of_variable() //assign a value to a variable
 {
 	string operand, value;
 
@@ -194,7 +194,7 @@ size_t TPostfix::getPriority(string operat)
 		return 0;
 }
 
-void TPostfix::toPostfix()
+void TPostfix::toPostfix() //converting an infix to a postfix
 { 
 	size_t psize = 0;
 	string* pform = new string[size];
@@ -239,7 +239,7 @@ void TPostfix::toPostfix()
 		}
 	}
 
-	while (!operations.isEmpty()) //пока стэк не пуст
+	while (!operations.isEmpty())
 	{
 		pform[psize] = operations.pop();
 		psize++;
@@ -254,10 +254,10 @@ void TPostfix::toPostfix()
 	} 
 }
 
-double TPostfix::toСonverter(string number)
+double TPostfix::toСonverter(string number) //сonverting a string to a double
 {
 	double double_number = 0.0, sign = 1.0, e_double = 0.0;
-	int flag = 0, k = 0, dot = 0;
+	int flag = 0, k = 0, dot = 0;   //k - the number of digits after the dot
 	string e_num;
 
 	for (size_t i = 0; i < number.size(); i++)
@@ -315,7 +315,7 @@ double TPostfix::toСonverter(string number)
 	return double_number;
 }
 
-void TPostfix::toCalculate()
+void TPostfix::toCalculate() //calculations
 {
 	value_of_variable();
 
