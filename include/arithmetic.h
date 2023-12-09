@@ -25,25 +25,25 @@ public:
 
 	TPostfix(string _infix);
 
-	void setTPostfix(string _infix); //задать строку
+	void setTPostfix(string _infix);
 
-	void toLexem(); //перевод выражения в массив лексем
+	void toLexem();
 
-	void value_of_variable(); //присвоить значение
+	void value_of_variable();
 
-	size_t getPriority(string operation); //обозначить приоритет операции
+	size_t getPriority(string operation);
 
-	void toPostfix(); //преобразование инфикс в постфикс
+	void toPostfix();
 
-	double toСonverter(string number); //конвертор из строки в дабл
+	double toСonverter(string number);
 
-	void toCalculate(); //счёт
+	void toCalculate();
 
-	string getPostfix(); //получить постфикс в виде строки
+	string getPostfix();
 
-	string getInfix(); //получить инфикс в виде строки
+	string getInfix();
 
-	double getResult(); //получить результат в даблах
+	double getResult();
 
 	~TPostfix();
 };
