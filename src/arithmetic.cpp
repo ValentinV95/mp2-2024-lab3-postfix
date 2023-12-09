@@ -2,7 +2,7 @@
 
 #include "arithmetic.h"
 
-TPostfix::TPostfix() //конструктор присваивания
+TPostfix::TPostfix()
 {
 	size = 0;
 	infix = "";
@@ -22,7 +22,7 @@ TPostfix::TPostfix(string new_infix)
 	toLexem();
 }
 
-void TPostfix::setTPostfix(string infix_new) //задать строку
+void TPostfix::setTPostfix(string infix_new)
 {
 	delete[] data;
 
@@ -36,10 +36,10 @@ void TPostfix::setTPostfix(string infix_new) //задать строку
 	toLexem();
 }
 
-void TPostfix::toLexem() //перевод выражения в массив лексем
+void TPostfix::toLexem()
 {
-	int summ_brackets = 0; //проверка на количество открывающихся и закрывающихся скобок
-	size_t lexnumber = 0; //размер массива лексем
+	int summ_brackets = 0;
+	size_t lexnumber = 0;
 
 	for (size_t i = 0; i < size; i++)
 	{
@@ -48,7 +48,7 @@ void TPostfix::toLexem() //перевод выражения в массив л�
 			if (i == 0 || (i + 1) == size || (infix[i - 1] < '0' && infix[i - 1] != ')'))
 				throw invalid_argument("Operation was installed in wrong position");
 
-			data[lexnumber] = infix[i]; //отдельная лексема
+			data[lexnumber] = infix[i];
 			lexnumber++;
 			continue;
 		}
@@ -58,13 +58,13 @@ void TPostfix::toLexem() //перевод выражения в массив л�
 			if ((i + 1) == size)
 				throw invalid_argument("Operation was installed in wrong position");
 
-			if (i == 0 || (infix[i - 1] < '0' && infix[i - 1] != ')')) //проверка на унарный минус
+			if (i == 0 || (infix[i - 1] < '0' && infix[i - 1] != ')'))
 			{
 				data[lexnumber] = '~';
 				lexnumber++;
 			}
 
-			else if (infix[i - 1] == 'E') //отрицательная степень
+			else if (infix[i - 1] == 'E')
 			{
 				data[lexnumber] += '~';
 			}
@@ -105,12 +105,12 @@ void TPostfix::toLexem() //перевод выражения в массив л�
 		else if (i != 0 && infix[i - 1] == ')')
 			throw invalid_argument("There is no operation");
 
-		else if (infix[i] >= 'a' && infix[i] <= 'z') //работа с переменными
+		else if (infix[i] >= 'a' && infix[i] <= 'z')
 		{
-			if (i != 0 && infix[i - 1] >= '0') //если между числом и переменной нет операции
+			if (i != 0 && infix[i - 1] >= '0')
 				throw invalid_argument("There is no operation between a number and a variable");
 			
-			if (i + 1 != size && infix[i + 1] == '.') //если после переменной стоит точка
+			if (i + 1 != size && infix[i + 1] == '.')
 				throw invalid_argument("The dot can't be placed after the variable");
 				
 			data[lexnumber] = infix[i];
@@ -118,12 +118,12 @@ void TPostfix::toLexem() //перевод выражения в массив л�
 			continue;
 		}
 
-		else if (infix[i] >= '0' && infix[i] <= '9') //работа числами
+		else if (infix[i] >= '0' && infix[i] <= '9')
 		{
-			if (i != 0 && infix[i - 1] >= 'a' && infix[i - 1] <= 'z') //если нет операции между числом и переменной
+			if (i != 0 && infix[i - 1] >= 'a' && infix[i - 1] <= 'z')
 				throw invalid_argument("There is no operation between a number and a variable");
 
-			else if (i + 1 == size || (infix[i + 1] < '0' && infix[i + 1] != '.')) //он собирает число из строки "infix" и добавляет его в массив "data" до тех пор, пока не достигнет символа, который не является цифрой или точкой, или пока не достигнет конца строки "infix".
+			else if (i + 1 == size || (infix[i + 1] < '0' && infix[i + 1] != '.'))
 			{ 
 				data[lexnumber] += infix[i]; //продолжение числа
 				lexnumber++;
@@ -133,7 +133,7 @@ void TPostfix::toLexem() //перевод выражения в массив л�
 			continue;
 		} 
 
-		else if (infix[i] == 'E') //работа с экспонентой
+		else if (infix[i] == 'E')
 		{
 			if (i + 1 == size || i == 0 || infix[i - 1] < '0' && infix[i - 1] != '.' || infix[i + 1] < '0' && infix[i + 1] != '-')
 				throw invalid_argument("Error, wrong exponentional notation");
@@ -143,7 +143,7 @@ void TPostfix::toLexem() //перевод выражения в массив л�
 			continue;
 		}
 
-		else if (infix[i] == '.') //работа с точкой
+		else if (infix[i] == '.')
 		{
 			if (i == 0 || (i + 1) == size || infix[i - 1] < '0' || infix[i - 1] > '9' || infix[i + 1] < '0' || infix[i + 1] > '9' && infix[i + 1] != 'E')
 				throw invalid_argument("Number must be in math form");
@@ -153,17 +153,17 @@ void TPostfix::toLexem() //перевод выражения в массив л�
 			continue;
 		}
 
-		else //если инородное существо
+		else
 			throw invalid_argument("There is a foreign creature...");
 	}
 
-	if (summ_brackets != 0) //если число открывающихся и закрывающихся скобок не совпадают
+	if (summ_brackets != 0)
 		throw range_error("Opening and closing brackets must to have equal number");
 
 	size = lexnumber;
 }
 
-void TPostfix::value_of_variable() //присвоить значение переменной
+void TPostfix::value_of_variable()
 {
 	string operand, value;
 
@@ -182,7 +182,7 @@ void TPostfix::value_of_variable() //присвоить значение пер�
 	}
 }
 
-size_t TPostfix::getPriority(string operat) //получить приоритет для операций
+size_t TPostfix::getPriority(string operat)
 {
 	if (operat == "+" || operat == "-")
 		return 1;
@@ -194,7 +194,7 @@ size_t TPostfix::getPriority(string operat) //получить приорите�
 		return 0;
 }
 
-void TPostfix::toPostfix() //Преобразование инфиксной формы в постфиксную
+void TPostfix::toPostfix()
 { 
 	size_t psize = 0;
 	string* pform = new string[size];
@@ -210,18 +210,18 @@ void TPostfix::toPostfix() //Преобразование инфиксной ф�
 			
 		else if (data[i] == "(")
 		{
-			operations.push(data[i]); //текущая операция (data[i]) добавляется в стек операций.
+			operations.push(data[i]);
 			continue;
 		}
 
 		else if (data[i] == ")")
 		{
-			while ((operations.top() != "("))  //пока верхний элемент не равен откр скобки
+			while ((operations.top() != "("))
 			{
-				pform[psize] = operations.pop(); //достаём элементы из стэка и присваиваем в постифк запись
+				pform[psize] = operations.pop();
 				psize++;
 			}
-			operations.pop(); //извлекаем из стэка скобку
+			operations.pop();
 			continue;
 		}
 
@@ -229,10 +229,10 @@ void TPostfix::toPostfix() //Преобразование инфиксной ф�
 			operations.push(data[i]);
 
 		else 
-		{//если стэк не пуст, приоритет операции на вершине стека не превосходит приоритет текущей операции
+		{
 			while (!operations.isEmpty() && (getPriority(operations.top()) >= getPriority(data[i])))
 			{
-				pform[psize] = operations.pop(); //извлекается элемент из стека операций (operations.pop()) и добавляется в массив postfixform.
+				pform[psize] = operations.pop();
 				psize++;
 			}
 			operations.push(data[i]);
@@ -243,20 +243,18 @@ void TPostfix::toPostfix() //Преобразование инфиксной ф�
 	{
 		pform[psize] = operations.pop();
 		psize++;
-	} //извлекаются оставшиеся операции из стека operations. 
-	// Цикл продолжается, пока стек не станет пустым
-
+	}
+	
 	size = psize;
 
 	for (size_t i = 0; i < size; i++)
 	{
 		data[i] = pform[i];
 		postfix += pform[i];
-	} //значения из массива pform копируются обратно в исходный массив data.
-	// + добавляются к строке postfix для последующего использования.
+	} 
 }
 
-double TPostfix::toСonverter(string number) //конвертор стоки в дабл
+double TPostfix::toСonverter(string number)
 {
 	double double_number = 0.0, sign = 1.0, e_double = 0.0;
 	int flag = 0, k = 0, dot = 0;
@@ -264,12 +262,12 @@ double TPostfix::toСonverter(string number) //конвертор стоки в 
 
 	for (size_t i = 0; i < number.size(); i++)
 	{
-		if (dot > 1) //если в числе более одной точки
+		if (dot > 1)
 			throw runtime_error("More than 1 dot");
 
 		if (number[i] == '~')
 		{
-			if (i != 0) //если минус стоит не перед числом
+			if (i != 0)
 				throw runtime_error("Minus can't stay in this place");
 
 			sign = -1.0;
@@ -287,13 +285,13 @@ double TPostfix::toСonverter(string number) //конвертор стоки в 
 		{
 			for (size_t j = i + 1; j < number.size(); j++)
 			{
-				if ((number[j] >= '0' && number[j] <= '9') || number[j] == '~' || number[j] == '-') //если после Е стоит число или минус
-					e_num += number[j]; //кладём этот элемент в строку
+				if ((number[j] >= '0' && number[j] <= '9') || number[j] == '~' || number[j] == '-')
+					e_num += number[j];
 				else
 					throw invalid_argument("Exponential notation contains foreign characters");
 			}
 
-			e_double = toСonverter(e_num); //преобразуем
+			e_double = toСonverter(e_num);
 
 			break;
 		}
@@ -301,9 +299,9 @@ double TPostfix::toСonverter(string number) //конвертор стоки в 
 		if ((number[i] < '0') || (number[i] > '9'))
 			throw invalid_argument("Inccorect symbol");
 
-		if (flag) k++; //считает, сколько цифр после запятой
+		if (flag) k++;
 
-		double_number = double_number * 10.0 + static_cast<double>(number[i] - '0'); //сравнение аски кодов элементов
+		double_number = double_number * 10.0 + static_cast<double>(number[i] - '0');
 	}
 
 	for (int i = 0; i < k; i++)
@@ -317,7 +315,7 @@ double TPostfix::toСonverter(string number) //конвертор стоки в 
 	return double_number;
 }
 
-void TPostfix::toCalculate() //калькулятор
+void TPostfix::toCalculate()
 {
 	value_of_variable();
 
@@ -328,9 +326,9 @@ void TPostfix::toCalculate() //калькулятор
 	{
 		if (data[i] == "+")
 		{
-			tmp = numbers.pop(); //достаёт из стэка верхний элемент
-			tmp = numbers.pop() + tmp; //прибавляет к нему следующий элемент из стэка
-			numbers.push(tmp);  //отправляет новое значение обратно в стэк
+			tmp = numbers.pop();
+			tmp = numbers.pop() + tmp;
+			numbers.push(tmp);
 		}
 
 		else if (data[i] == "-")
@@ -363,28 +361,28 @@ void TPostfix::toCalculate() //калькулятор
 			numbers.push(-tmp);
 		}
 
-		else numbers.push(toСonverter(data[i])); //число преобразуется в дабл и добавляется в стэк
+		else numbers.push(toСonverter(data[i]));
 	}
 
-	result = numbers.pop(); //в результат записывается последний элемент из стэка
+	result = numbers.pop();
 }
 
-string TPostfix::getPostfix() //получить постфиксную форму записи в строке
+string TPostfix::getPostfix()
 {
 	return postfix;
 }
 
-string TPostfix::getInfix() //получить инфиксную форму записи в строке
+string TPostfix::getInfix()
 {
 	return infix;
 }
 
-double TPostfix::getResult() //получить результат вычисления в дабл
+double TPostfix::getResult()
 {
 	return result;
 }
 
-TPostfix::~TPostfix() //деструктор
+TPostfix::~TPostfix()
 {
 	delete[] data;
 }
