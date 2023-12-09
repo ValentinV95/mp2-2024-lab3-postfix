@@ -7,3 +7,60 @@
 // - получение количества элементов в стеке
 // - очистка стека
 // при вставке в полный стек должна перевыделяться память
+#pragma once
+#include <stdexcept>
+#include <algorithm>
+
+size_t BASIC_SIZE = 10;
+
+template<typename T>
+class TStack {
+public:
+	TStack() {
+		size = 0;
+		pMem = new T[BASIC_SIZE];
+		capacity = BASIC_SIZE;
+	}
+	~TStack() {
+		delete[] pMem;
+		size = 0;
+		capacity = 0;
+	}
+	void push(T elem) {
+		if (isFull()) {
+			rearrange();
+		}
+		pMem[size++] = elem;
+	}
+	T top() {
+		if (isEmpty()) {
+			throw std::out_of_range("Stack is empty");
+		}
+		return pMem[size - 1];
+	}
+	T pop() {
+		if (isEmpty()) {
+			throw std::out_of_range("Stack is empty");
+		}
+		const T &ret = pMem[size - 1];
+		size--;
+		return ret;
+	}
+	void clear() {
+		size = 0;
+	}
+	size_t get_size() { return size; }
+	bool isFull() { return size == capacity; }
+	bool isEmpty() { return size == 0; }
+private:
+	void rearrange() {
+		T *tmp = pMem;
+		capacity *= 2;
+		pMem = new T[capacity];
+		std::copy(tmp, tmp + size, pMem);
+		delete[] tmp;
+	}
+	T *pMem;
+	size_t size;
+	size_t capacity;
+};
