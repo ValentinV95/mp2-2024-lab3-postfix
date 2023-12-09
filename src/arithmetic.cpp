@@ -1,8 +1,5 @@
 // реализация функций и классов для вычисления арифметических выражений
 #include "arithmetic.h"
-#include <vector>
-#include <map>
-#include <cmath>
 
 TPostfix::std::string Error_string(std::string& s, int i) {
 	std::string tmp = "Error: ";
