@@ -252,8 +252,7 @@ void TPostfix::toPostfix() // Converting infix form  into postfix one
 	delete[] pform;
 }
 
-
-double TPostfix::toConverter(string number) //сonverting a string to a double
+double TPostfix::string_in_double(string number) //сonverting a string to a double
 {
 	double double_number = 0.0, sign = 1.0, e_double = 0.0;
 	int flag = 0, k = 0, dot = 0;   //k - the number of digits after the dot
@@ -290,7 +289,7 @@ double TPostfix::toConverter(string number) //сonverting a string to a double
 					throw invalid_argument("Exponential notation contains foreign characters");
 			}
 
-			e_double = toConverter(e_num);
+			e_double = string_in_double(e_num);
 
 			break;
 		}
@@ -360,7 +359,7 @@ void TPostfix::toCalculate() //calculations
 			numbers.push(-tmp);
 		}
 
-		else numbers.push(toConverter(data[i]));
+		else numbers.push(string_in_double(data[i]));
 	}
 
 	result = numbers.pop();
