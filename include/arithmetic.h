@@ -18,7 +18,7 @@ double exp_form_to_double(const string &expr);
 size_t operator_priority(const string &expr);
 
 inline bool is_arithmetical(char inp) {
-	return (inp == '(' || inp == ')' || inp == '*' || inp == '/' || inp == '-' || inp == '+' || inp == '~');
+	return (inp == '(' || inp == ')' || inp == '*' || inp == '/' || inp == '-' || inp == '+');
 }
 inline bool is_alphabet_or_numeric(char inp) {
 	return ((inp >= 'A' && inp <= 'Z') || (inp >= 'a' && inp <= 'z') || (inp >= '0' && inp <= '9') || (inp == '.'));
@@ -130,23 +130,19 @@ T TPostfix<T>::calculate() {
 	T arg2;
 	for (size_t i = 0; i < postfix_lexems.size(); i++) {
 		if (postfix_lexems[i] == "+") {
-			arg1 = vars.pop();
-			arg2 = vars.pop();
+			arg1 = vars.pop(); arg2 = vars.pop();
 			vars.push(arg2 + arg1);
 		}
 		else if (postfix_lexems[i] == "-") {
-			arg1 = vars.pop();
-			arg2 = vars.pop();
+			arg1 = vars.pop(); arg2 = vars.pop();
 			vars.push(arg2 - arg1);
 		}
 		else if (postfix_lexems[i] == "*") {
-			arg1 = vars.pop();
-			arg2 = vars.pop();
+			arg1 = vars.pop(); arg2 = vars.pop();
 			vars.push(arg2 * arg1);
 		}
 		else if (postfix_lexems[i] == "/") {
-			arg1 = vars.pop();
-			arg2 = vars.pop();
+			arg1 = vars.pop(); arg2 = vars.pop();
 			if (arg1 == T(0)) {
 				throw invalid_argument("Postfix: Zero division error");
 			}

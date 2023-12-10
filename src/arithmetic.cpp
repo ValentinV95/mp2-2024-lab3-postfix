@@ -114,10 +114,10 @@ size_t operator_priority(const string &expr) {
 	else if (expr == "-") { return 1; }
 	else if (expr == "*") { return 2; }
 	else if (expr == "/") { return 2; }
+	else if (expr == "~") { return 2; }
 	else if (expr == "sin") { return 3; }
 	else if (expr == "cos") { return 3; }
 	else if (expr == "tan") { return 3; }
-	else if (expr == "~") { return 2; }
 	else if (expr == "exp") { return 3; }
 	else if (expr == "lg") { return 3; }
 	else { return 0; }
@@ -137,7 +137,12 @@ vector<string> arithmetic_to_lexems(const string &expr) {
 				res.push_back(buf);
 				buf = "";
 			}
-			buf += item;
+			if (item == '-' && ((i == 0) || (expr[i-1] == '('))) {
+				buf += '~';
+			}
+			else {
+				buf += item;
+			}
 			res.push_back(buf);
 			buf = "";
 		}
