@@ -1,4 +1,4 @@
-﻿// реализация функций и классов для вычисления арифметических выражений
+// реализация функций и классов для вычисления арифметических выражений
 
 #include "arithmetic.h"
 
@@ -194,48 +194,44 @@ size_t TPostfix::getPriority(string operat)
 		return 0;
 }
 
-void TPostfix::toPostfix() //converting an infix to a postfix
-{ 
+void TPostfix::toPostfix() // Converting infix form  into postfix one
+{
 	size_t psize = 0;
 	string* pform = new string[size];
 
 	for (size_t i = 0; i < size; i++)
 	{
-		if (data[i] >= "0" && data[i] <= "9")
-		{
-			pform[psize] = data[i];
-			psize++;
-			continue;
-		}
-			
-		else if (data[i] == "(")
-		{
+		if (data[i] == "(")
 			operations.push(data[i]);
-			continue;
-		}
 
 		else if (data[i] == ")")
 		{
-			while ((operations.top() != "("))
+			while ((operations.top() != "(")) 
 			{
 				pform[psize] = operations.pop();
 				psize++;
 			}
+
 			operations.pop();
-			continue;
 		}
 
-		else if (data[i] == "~")
-			operations.push(data[i]);
-
-		else 
+		else if (!(data[i] >= "a" && data[i] <= "z"))
 		{
-			while (!operations.isEmpty() && (getPriority(operations.top()) >= getPriority(data[i])))
+			if (!operations.isEmpty() && !(data[i] == "~") && (getPriority(operations.top()) >= getPriority(data[i])))
 			{
-				pform[psize] = operations.pop();
-				psize++;
+				while ((!operations.isEmpty()) && (getPriority(operations.top()) >= getPriority(data[i])))
+				{
+					pform[psize] = operations.pop();
+					psize++;
+				}
 			}
 			operations.push(data[i]);
+		}
+
+		else
+		{
+			pform[psize] = data[i];
+			psize++;
 		}
 	}
 
@@ -251,8 +247,11 @@ void TPostfix::toPostfix() //converting an infix to a postfix
 	{
 		data[i] = pform[i];
 		postfix += pform[i];
-	} 
+	}
+
+	delete[] pform;
 }
+
 
 double TPostfix::toСonverter(string number) //сonverting a string to a double
 {
