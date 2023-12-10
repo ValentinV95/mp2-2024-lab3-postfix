@@ -23,14 +23,6 @@ inline bool is_arithmetical(char inp) {
 inline bool is_alphabet_or_numeric(char inp) {
 	return ((inp >= 'A' && inp <= 'Z') || (inp >= 'a' && inp <= 'z') || (inp >= '0' && inp <= '9') || (inp == '.'));
 }
-inline bool is_alphabet_or_numeric(const string& inp) {
-	for (size_t i = 0; i < inp.size(); i++) {
-		if ((inp[i] < 'A' || inp[i] > 'Z') && (inp[i] < 'a' || inp[i] > 'z') && (inp[i] < '0' || inp[i] > '9') && (inp[i] != '.')) {
-			return false;
-		}
-	}
-	return true;
-}
 
 vector<string> arithmetic_to_lexems(const string &expr);
 
@@ -63,6 +55,9 @@ void TPostfix<T>::toPostfix(const vector<string> &expr) {
 		lexem = expr[i];
 		if (lexem == "(") { stack.push(lexem); }
 		else if (lexem == ")") {
+			if (stack.isEmpty()) {
+				throw invalid_argument("Postfix: Missing opening bracket");
+			}
 			stackItem = stack.pop();
 			while (stackItem != "(") {
 				postfix_lexems.push_back(stackItem);
@@ -103,12 +98,13 @@ template<typename T>
 void TPostfix<T>::askOperands(istream& from, ostream& log) {
 	bool is_numeric;
 	char elem;
+	string buf_to_ignore;
 	// ask operands
 	for (auto it = operands.begin(); it != operands.end(); it++) {
 		is_numeric = true;
 		for (size_t i = 0; i < it->first.size(); i++) {
 			elem = it->first[i];
-			if ((elem < '0' || elem > '9') && elem != '.' && elem != 'e') {
+			if ((elem < '0' || elem > '9') && elem != '.' && elem != 'e' && elem != '+' && elem != '-') {
 				is_numeric = false;
 			}
 		}
@@ -118,6 +114,8 @@ void TPostfix<T>::askOperands(istream& from, ostream& log) {
 		else {
 			log << "\"" << it->first << "\": ";
 			from >> it->second;
+			from.clear();
+			getline(from, buf_to_ignore);
 		}
 	}
 }
@@ -149,6 +147,9 @@ T TPostfix<T>::calculate() {
 		else if (postfix_lexems[i] == "/") {
 			arg1 = vars.pop();
 			arg2 = vars.pop();
+			if (arg1 == T(0)) {
+				throw invalid_argument("Postfix: Zero division error");
+			}
 			vars.push(arg2 / arg1);
 		}
 		else if (postfix_lexems[i] == "~") {
@@ -173,6 +174,9 @@ T TPostfix<T>::calculate() {
 		}
 		else if (postfix_lexems[i] == "lg") {
 			arg1 = vars.pop();
+			if (arg1 <= T(0)) {
+				throw invalid_argument("Postfix: Lg of negative error");
+			}
 			vars.push(log10(arg1));
 		}
 		else {

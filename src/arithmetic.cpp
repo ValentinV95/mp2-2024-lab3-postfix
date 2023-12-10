@@ -127,9 +127,12 @@ vector<string> arithmetic_to_lexems(const string &expr) {
 	vector<string> res;
 	string buf = "";
 	char item;
+	// when +,- is part of number
+	bool expcase;
 	for (size_t i = 0; i < expr.size(); i++) {
 		item = expr[i];
-		if (is_arithmetical(item)) {
+		expcase = ((i > 0) && (item == '+' || item == '-') && (expr[i - 1] == 'e'));
+		if (is_arithmetical(item) && !expcase) {
 			if (buf != "") {
 				res.push_back(buf);
 				buf = "";
@@ -138,11 +141,13 @@ vector<string> arithmetic_to_lexems(const string &expr) {
 			res.push_back(buf);
 			buf = "";
 		}
-		else if (is_alphabet_or_numeric(item)) {
+		else if (is_alphabet_or_numeric(item) || expcase) {
 			buf += item;
 		}
 	}
-	res.push_back(buf);
+	if (buf != "") {
+		res.push_back(buf);
+	}
 	return res;
 }
 
@@ -166,14 +171,10 @@ bool check_infix_correctness(const vector<string> &lexems) {
 		lexem = lexems[i];
 		if ((operator_priority(lexem) == 1 || operator_priority(lexem) == 2) && lexem != "~") { cur_state = states_array[cur_state][0]; }
 		else if (lexem == "(") { cur_state = states_array[cur_state][1]; }
-		else if (is_alphabet_or_numeric(lexem) && operator_priority(lexem) == 0) { cur_state = states_array[cur_state][2]; }
 		else if (operator_priority(lexem) == 3) { cur_state = states_array[cur_state][3]; }
 		else if (lexem == ")") { cur_state = states_array[cur_state][4]; }
 		else if (lexem == "~") { cur_state = states_array[cur_state][5]; }
-		else {
-			throw std::invalid_argument("Check Arithm.: Bad input: " + lexem);
-			continue;
-		}
+		else { cur_state = states_array[cur_state][2]; }
 		if (cur_state == 0) {
 			return false;
 		}
