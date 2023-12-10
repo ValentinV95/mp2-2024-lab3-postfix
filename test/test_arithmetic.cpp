@@ -28,7 +28,7 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix_with_unary_minus)
 TEST(Arithmetic, can_correct_create_postfix_to_infix_with_operation_with_different_priorities)
 {
 	string str = "-(x+y)*z";
-	string correct = "x y + z * ~ ";
+	string correct = "x y + ~ z * ";
 	Arithmetic s(str);
 	EXPECT_EQ(correct, s.getPostfix());
 }
@@ -36,7 +36,7 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix_with_operation_with_differe
 TEST(Arithmetic, can_correct_create_postfix_to_infix_with_long_variable_names)
 {
 	string str = "-(_xt+y_b)*z1k";
-	string correct = "_xt y_b + z1k * ~ ";
+	string correct = "_xt y_b + ~ z1k * ";
 	Arithmetic s(str);
 	EXPECT_EQ(correct, s.getPostfix());
 }
@@ -44,7 +44,7 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix_with_long_variable_names)
 TEST(Arithmetic, can_correct_create_postfix_to_infix_with_double)
 {
 	string str = "-(x+y)*8.9";
-	string correct = "x y + 8.9 * ~ ";
+	string correct = "x y + ~ 8.9 * ";
 	Arithmetic s(str);
 	EXPECT_EQ(correct, s.getPostfix());
 }
@@ -52,7 +52,7 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix_with_double)
 TEST(Arithmetic, can_correct_create_postfix_to_infix_with_double_first_point)
 {
 	string str = "-(x+y)*.9";
-	string correct = "x y + .9 * ~ ";
+	string correct = "x y + ~ .9 * ";
 	Arithmetic s(str);
 	EXPECT_EQ(correct, s.getPostfix());
 }
@@ -60,7 +60,7 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix_with_double_first_point)
 TEST(Arithmetic, can_correct_create_postfix_to_infix_with_double_with_e)
 {
 	string str = "-(x+y)*8.e-4";
-	string correct = "x y + 8.e-4 * ~ ";
+	string correct = "x y + ~ 8.e-4 * ";
 	Arithmetic s(str);
 	EXPECT_EQ(correct, s.getPostfix());
 }
