@@ -45,11 +45,11 @@ public:
 		return count;
 	}
 	T& show_back() {
-		if (!isEmpty())return mas[count];
+		if (!isEmpty())return mas[count-1];
 		throw std::out_of_range("There are no elements in this Stack");
 	}
 	T pop_back() {
-		if (!isEmpty()) return mas[count--];
+		if (!isEmpty()) return mas[--count];
 		throw std::out_of_range("There are no elements in this Stack");
 	}
 	void clear() {

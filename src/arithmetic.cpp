@@ -1,7 +1,7 @@
 // реализация функций и классов для вычисления арифметических выражений
 #include "arithmetic.h"
 
-TPostfix::std::string Error_string(std::string& s, int i) {
+std::string TPostfix::Error_string(std::string& s, int i) {
 	std::string tmp = "Error: ";
 	for (int j = 0; j < i; j++) tmp += s[j];
 	tmp = tmp + '\"' + s[i] + '\"';
@@ -9,21 +9,21 @@ TPostfix::std::string Error_string(std::string& s, int i) {
 	tmp += '\n';
 	return tmp;
 }
-TPostfix::bool is_op_or_func(std::string s) {
+bool TPostfix::is_op_or_func(std::string s) {
 	for (int i = 0; i < 11; i++) if (s == pr[i]) return true;
 	return false;
 }
-TPostfix::bool is_op_or_func(char c) {
+bool TPostfix::is_op_or_func(char c) {
 	std::string s;
 	s = c;
 	for (int i = 0; i < 5; i++) if (s == pr[i]) return true;
 	return false;
 }
-TPostfix::int get_prior(std::string& s) {
+int TPostfix::get_prior(std::string& s) {
 	for (int i = 0; i < 11; i++) if (s == pr[i]) return i;
 	return -1;
 }
-TPostfix::double valid(std::string& s) {
+double TPostfix::valid(std::string& s) {
 	double res = 0;
 	int i = 0, mod = 0, pw = 0;
 	while ((s[i] != '.') && (s[i] != 'e') && (i != s.size())) {
@@ -51,7 +51,7 @@ TPostfix::double valid(std::string& s) {
 	res *= pow(10, mod * pw);
 	return res;
 }
-TPostfix::std::string number_check(std::string& s, int& i) {
+std::string TPostfix::number_check(std::string& s, int& i) {
 	std::string tmp;
 	tmp = s[i];
 	i++;
@@ -115,7 +115,7 @@ TPostfix::TPostfix(std::string& s) {
 			while (St.show_back() != "(") RPN.push_back(St.pop_back());
 			St.pop_back();
 		}
-		else if ((i < s.size() - 2) && (is_op_or_func(tmp + s[i + 1] + s[i + 2]))) { // обработка функций
+		else if (i < s.size() - 2 && s.size()>2 && (is_op_or_func(tmp + s[i + 1] + s[i + 2]))) { // обработка функций
 			if ((i > s.size() - 6) || s[i + 3] != '(') throw std::invalid_argument(Error_string(s, i + 3) + "After a function must be a \'(\'");
 			tmp = tmp + s[i + 1] + s[i + 2];
 			i += 2;
@@ -137,13 +137,13 @@ TPostfix::TPostfix(std::string& s) {
 		else throw std::invalid_argument(Error_string(s, i) + "This writing is not correct");
 		i++;
 	}
-	if (bracket.GetCount() > 1) {
-		while (bracket.GetCount() != 1) bracket.pop_back();
+	if (bracket.GetCount() != 0) {
+		if (bracket.GetCount() > 1) while (bracket.GetCount() != 1) bracket.pop_back();
 		throw std::invalid_argument(Error_string(s, bracket.pop_back()) + "The brackets are placed incorrectly");
 	}
 	while (!St.isEmpty()) RPN.push_back(St.pop_back());
 }
-TPostfix::double count() {
+double TPostfix::count() {
 	TStack<double> St;
 	std::map <std::string, double> variables;
 	for (int i = 0; i < RPN.size(); i++) {

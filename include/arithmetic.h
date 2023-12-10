@@ -1,9 +1,10 @@
 // объ€вление функций и классов дл€ вычислени€ арифметических выражений
 
-include "stack.h"
+#include "stack.h"
 #include <vector>
 #include <map>
 #include <cmath>
+#include <string>
 
 class TPostfix {
 	std::vector<std::string> RPN;
