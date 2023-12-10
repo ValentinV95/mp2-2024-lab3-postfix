@@ -45,6 +45,7 @@ int Arithmetic::priority(const char& operation)
 	if (operation == '(' || operation == ')') return 0;
 	if (operation == '+' || operation == '-') return 1;
 	if (operation == '*' || operation == '/') return 2;
+	if (operation == '~') return 3;
 	else return -1;
 }
 
@@ -165,26 +166,26 @@ bool Arithmetic::isDigit(const char& first_symbol)
 void Arithmetic::infixCheck()
 {
 	string error ("Unexpected element: ");
-	string arrow = "<-";
+	string arrow = " <- ";
 	int open = 0, close = 0;
 	int breckets = 0;
 	
 	if (infix.find(' ')!=-1)
 		throw invalid_argument("You shold not use spaces");
 
-	error += infix[0];
 	if ((!isOperand(infix[0])) && (!isDigit(infix[0])) && infix[0] != '(' && infix[0] != '-')
 	{
+		error += infix[0];
 		error += arrow;
 		throw invalid_argument(error.c_str());
 	}
 	if (infix[0] == '(')
 		breckets++;
-	for (size_t i = 1; i < infix.length() - 1; i++) {
+	for (size_t i = 0; i < infix.length() - 1; i++) {
 
-		if (isDigit(infix[i])&& i < infix.length() - 1) {
+		if (i < infix.length() - 1 && isDigit(infix[i])) {
 			string name;
-			while (((!isOperation(infix[i])) || infix[i] != ')' || infix[i] != '(') && (i < infix.length()))
+			while (((!isOperation(infix[i])) && infix[i] != ')' && infix[i] != '(') && (i < infix.length()))
 			{
 				name.push_back(infix[i]);
 				error += infix[i++];
@@ -193,7 +194,7 @@ void Arithmetic::infixCheck()
 			for (size_t j = 0; j < name.length(); j++)
 				if (!(isDigit(name[j]) || name[j] == 'e'|| name[j] == '+' || name[j] == '-'))
 				{
-					error += arrow;
+					error += arrow + "The mistake in a digit";
 					throw invalid_argument(error.c_str());
 				}
 			if (infix[i] == '(')
@@ -206,7 +207,7 @@ void Arithmetic::infixCheck()
 
 		}
 
-		if (isOperand(infix[i])&& i < infix.length() - 1) {
+		if (i < infix.length() - 1 && isOperand(infix[i])) {
 			string name;
 			while (!(isOperation(infix[i]) || infix[i] == ')' || infix[i] == '(') && i < infix.length()) {
 
@@ -216,7 +217,7 @@ void Arithmetic::infixCheck()
 			for (size_t j = 0; j < name.length(); j++)
 				if (!(isDigit(name[j]) || isOperand(name[j])))
 				{
-					error += arrow;
+					error += arrow + "The mistake in the name of variable";
 					throw invalid_argument(error.c_str());
 				}
 			if (infix[i] == '(')
@@ -227,37 +228,37 @@ void Arithmetic::infixCheck()
 			}
 		}
 
-		if (infix[i] == ')' && i < infix.length() - 1) {
+		if (i < infix.length() - 1 && infix[i] == ')') {
 			error += infix[i];
 			breckets--;
 			if (breckets < 0)
 			{
-				error += arrow;
+				error += arrow + "Wrong brecket";
 				throw invalid_argument(error.c_str());
 			}
 			if ((!isOperation(infix[i+1])) && infix[i+1] != ')')
 			{
 				error += infix[i+1];
-				error += arrow;
+				error += arrow + "Here should be an operation";
 				throw invalid_argument(error.c_str());
 			}
 		}
 
-		if (isOperation(infix[i]) && i < infix.length() - 1) {
+		if (i < infix.length() - 1 && isOperation(infix[i])) {
 				error += infix[i];
 				if ((!isOperand(infix[i+1])) && (!isDigit(infix[i+1])) && infix[i+1] != '(') {
 					error += infix[i + 1];
-					error +=  arrow;
+					error +=  arrow + "Here should be digit, variable or '('";
 					throw invalid_argument(error.c_str());
 				}
 		}
 
-		if (infix[i] == '(' && i < infix.length() - 1) {
+		if (i < infix.length() - 1 && infix[i] == '(') {
 			error += infix[i];
 			breckets++;
 			if (infix[i+1] != '-' && infix[i+1] != '(' && (!isDigit(infix[i+1])) && (!isOperand(infix[i+1]))) {
 				error += infix[i+1];
-				error += arrow;
+				error += arrow + "Here should be digit, variable,unary minus or '('";
 				throw invalid_argument(error.c_str());
 			}
 		}
@@ -267,7 +268,7 @@ void Arithmetic::infixCheck()
 
 	if (!(isDigit(infix[infix.length() - 1]) || isOperand(infix[infix.length() - 1]) || infix[infix.length() - 1] == ')')) {
 		error += infix[infix.length() - 1];
-		error += arrow;
+		error += arrow + "Here should be digit, veriable or ')'";
 		throw invalid_argument(error.c_str());
 	}
 
