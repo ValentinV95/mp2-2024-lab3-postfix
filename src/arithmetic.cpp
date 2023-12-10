@@ -1,4 +1,4 @@
-// реализация функций и классов для вычисления арифметических выражений
+п»ї// СЂРµР°Р»РёР·Р°С†РёСЏ С„СѓРЅРєС†РёР№ Рё РєР»Р°СЃСЃРѕРІ РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёС… РІС‹СЂР°Р¶РµРЅРёР№
 
 #include "arithmetic.h"
 #include <sstream>
@@ -185,7 +185,7 @@ void TPostfix::clearVariables()
 TPostfix::Token* TPostfix::Tokenizer::tokenize(const std::string& s, std::map<std::string, double>& vars, size_t& sz)
 {
 	TStack<Token> tmp;
-	// стек для помещения позиций скобок в данной строке
+	// СЃС‚РµРє РґР»СЏ РїРѕРјРµС‰РµРЅРёСЏ РїРѕР·РёС†РёР№ СЃРєРѕР±РѕРє РІ РґР°РЅРЅРѕР№ СЃС‚СЂРѕРєРµ
 	TStack<size_t> parenthesis;
 	TokenizerState ts = TOKEN_INIT;
 	bool unary = true;
@@ -442,7 +442,7 @@ TPostfix::Token TPostfix::Tokenizer::tokenizeNumber(const std::string& s, size_t
 		beforePointChars.pop();
 	}
 
-	// перевод в double
+	// РїРµСЂРµРІРѕРґ РІ double
 	TStack<char> tmp;
 	while (!afterPointChars.isEmpty())
 	{

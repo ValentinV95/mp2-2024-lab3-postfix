@@ -1,10 +1,10 @@
-// тесты для вычисления арифметических выражений
+п»ї// С‚РµСЃС‚С‹ РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёС… РІС‹СЂР°Р¶РµРЅРёР№
 
 #include "arithmetic.h"
 #include <gtest.h>
 #include <cmath>
 
-// Проверка работоспособности
+// РџСЂРѕРІРµСЂРєР° СЂР°Р±РѕС‚РѕСЃРїРѕСЃРѕР±РЅРѕСЃС‚Рё
 TEST(TPostfix, can_evaluate)
 {
 	TPostfix tp;
@@ -35,10 +35,10 @@ TEST(TPostfix, throws_on_unexpected_token)
 	ASSERT_ANY_THROW(tp.evaluate("x+1"));
 	ASSERT_ANY_THROW(tp.evaluate("sin(,)"));
 	ASSERT_ANY_THROW(tp.evaluate("4_+1"));
-	ASSERT_ANY_THROW(tp.evaluate("с"));
+	ASSERT_ANY_THROW(tp.evaluate("СЃ"));
 }
 
-// Проверка работоспособности операций
+// РџСЂРѕРІРµСЂРєР° СЂР°Р±РѕС‚РѕСЃРїРѕСЃРѕР±РЅРѕСЃС‚Рё РѕРїРµСЂР°С†РёР№
 TEST(TPostfix, can_add)
 {
 	TPostfix tp;
@@ -82,7 +82,7 @@ TEST(TPostfix, can_use_functions)
 	EXPECT_NEAR(std::exp(1), tp.evaluate("exp(1)"), 1e-7);
 }
 
-// Проверка ввода чисел
+// РџСЂРѕРІРµСЂРєР° РІРІРѕРґР° С‡РёСЃРµР»
 TEST(TPostfix, can_enter_number_with_point)
 {
 	TPostfix tp;
@@ -124,7 +124,7 @@ TEST(TPostfix, invalid_numbers_input_cases)
 	ASSERT_ANY_THROW(tp.evaluate("1.2e+3e+4"));
 }
 
-// Правильность размещения чисел
+// РџСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ СЂР°Р·РјРµС‰РµРЅРёСЏ С‡РёСЃРµР»
 TEST(TPostfix, cant_put_two_numbers_together)
 {
 	TPostfix tp;
@@ -138,7 +138,7 @@ TEST(TPostfix, cant_put_number_after_right_parenthesis)
 	ASSERT_ANY_THROW(tp.evaluate("3(4+7)+7"));
 }
 
-// Правильность размещения переменных
+// РџСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ СЂР°Р·РјРµС‰РµРЅРёСЏ РїРµСЂРµРјРµРЅРЅС‹С…
 TEST(TPostfix, cant_put_variables_together)
 {
 	TPostfix tp;
@@ -158,7 +158,7 @@ TEST(TPostfix, cant_put_variable_and_number_together)
 	ASSERT_ANY_THROW(tp.evaluate("4x"));
 }
 
-// Размещение скобок
+// Р Р°Р·РјРµС‰РµРЅРёРµ СЃРєРѕР±РѕРє
 TEST(TPostfix, throws_error_on_unmatched_parenthesis)
 {
 	TPostfix tp;
@@ -230,7 +230,7 @@ TEST(TPostfix, can_handle_many_parenthesis)
 	ASSERT_NEAR(1.0, tp.evaluate("3+((((2/(-2)))+((2/(-2)))))"), 1e-7);
 }
 
-// Порядок операций
+// РџРѕСЂСЏРґРѕРє РѕРїРµСЂР°С†РёР№
 TEST(TPostfix, multiplication_precedence)
 {
 	TPostfix tp;
@@ -271,7 +271,7 @@ TEST(TPostfix, can_evaluate_complex_expression)
 	EXPECT_NEAR(1/std::sqrt(3) * (0.1e+7 * 5.3 + 1) * 5.3 + 1.05 * tan(3.1415926535897932384626433 / 6) - log(2.71828182845904523536) / 152.4 * 3 / 4, tp.evaluate("1/sqrt(3)*(0.1e+7*5.3+1)*5.3+1.05*tan(pi/6)-ln(e)/152.4*3/4"), 1e-7);
 }
 
-// Размещение операций
+// Р Р°Р·РјРµС‰РµРЅРёРµ РѕРїРµСЂР°С†РёР№
 TEST(TPostfix, can_put_unary_minus_after_operand)
 {
 	TPostfix tp;
@@ -295,7 +295,7 @@ TEST(TPostfix, check_missing_operands)
 	ASSERT_ANY_THROW(tp.evaluate("+3"));
 }
 
-// Проверка присваивания
+// РџСЂРѕРІРµСЂРєР° РїСЂРёСЃРІР°РёРІР°РЅРёСЏ
 TEST(TPostfix, can_assign_variables)
 {
 	TPostfix tp;
