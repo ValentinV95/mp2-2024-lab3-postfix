@@ -82,7 +82,7 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 			if (i + 1 == size)
 				throw invalid_argument("Opening bracket was installed in wrong position");
 
-			if(i != 0 && (infix[i - 1] > '0' || infix[i - 1] == ')'))
+			if (i != 0 && (infix[i - 1] > '0' || infix[i - 1] == ')'))
 				throw invalid_argument("There is no operation");
 
 			data[lexnumber] = infix[i];
@@ -109,10 +109,10 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 		{
 			if (i != 0 && infix[i - 1] >= '0')
 				throw invalid_argument("There is no operation between a number and a variable");
-			
+
 			if (i + 1 != size && infix[i + 1] == '.')
 				throw invalid_argument("The dot can't be placed after the variable");
-				
+
 			data[lexnumber] = infix[i];
 			lexnumber++;
 			continue;
@@ -124,21 +124,21 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 				throw invalid_argument("There is no operation between a number and a variable");
 
 			else if (i + 1 == size || (infix[i + 1] < '0' && infix[i + 1] != '.'))
-			{ 
+			{
 				data[lexnumber] += infix[i]; //продолжение числа
 				lexnumber++;
 			}
 
 			else data[lexnumber] += infix[i];
 			continue;
-		} 
+		}
 
 		else if (infix[i] == 'E')
 		{
 			if (i + 1 == size || i == 0 || infix[i - 1] < '0' && infix[i - 1] != '.' || infix[i + 1] < '0' && infix[i + 1] != '-')
 				throw invalid_argument("Error, wrong exponentional notation");
 
-			else 
+			else
 				data[lexnumber] += infix[i];
 			continue;
 		}
@@ -147,7 +147,7 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 		{
 			if (i == 0 || (i + 1) == size || infix[i - 1] < '0' || infix[i - 1] > '9' || infix[i + 1] < '0' || infix[i + 1] > '9' && infix[i + 1] != 'E')
 				throw invalid_argument("Number must be in math form");
-			
+
 			else
 				data[lexnumber] += infix[i];
 			continue;
@@ -253,7 +253,7 @@ void TPostfix::toPostfix() // Converting infix form  into postfix one
 }
 
 
-double TPostfix::toСonverter(string number) //сonverting a string to a double
+double TPostfix::toConverter(string number) //сonverting a string to a double
 {
 	double double_number = 0.0, sign = 1.0, e_double = 0.0;
 	int flag = 0, k = 0, dot = 0;   //k - the number of digits after the dot
@@ -262,7 +262,7 @@ double TPostfix::toСonverter(string number) //сonverting a string to a double
 	for (size_t i = 0; i < number.size(); i++)
 	{
 		if (dot > 1)
-			throw runtime_error("More than 1 dot");
+			throw runtime_error("There is can't be more than one dot in the number");
 
 		if (number[i] == '~')
 		{
@@ -290,7 +290,7 @@ double TPostfix::toСonverter(string number) //сonverting a string to a double
 					throw invalid_argument("Exponential notation contains foreign characters");
 			}
 
-			e_double = toСonverter(e_num);
+			e_double = toConverter(e_num);
 
 			break;
 		}
@@ -360,7 +360,7 @@ void TPostfix::toCalculate() //calculations
 			numbers.push(-tmp);
 		}
 
-		else numbers.push(toСonverter(data[i]));
+		else numbers.push(toConverter(data[i]));
 	}
 
 	result = numbers.pop();
