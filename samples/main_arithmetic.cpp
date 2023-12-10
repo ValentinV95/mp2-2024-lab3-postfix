@@ -12,7 +12,7 @@ int main()
 	{
 		cout << "Hello! It`s your new calculator!" << endl;
 		cout << "You can use operations +,-,/,*. If \"-\" is unary, use breckets for correct work." << endl;
-		cout << "Names of your variables can use letters, digits (not on the first position) and \"_\"." << endl << endl;
+		cout << "Names of your variables can use letters, digits and dotes (not on the first position) and \"_\"." << endl << endl;
 		cout << "Give the expression without spaces: ";
 		string exp;
 		cin >> exp;
