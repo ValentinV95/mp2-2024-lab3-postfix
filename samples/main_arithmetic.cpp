@@ -5,7 +5,6 @@
 using namespace std;
 int main()
 {
-
     setlocale(LC_ALL, "Russian");
     string exprstr;
     cout << "Entry rules: "<<endl;

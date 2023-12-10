@@ -9,7 +9,6 @@ class ArithmeticExpr {
 	string pubpostfix;
 	vector<string> postfix;
 	vector<string> lexems;
-	//map<string, int> priority;
 	map<string, double> operands;
 	string priorStr[12] = {"(","+","-","*","/","~","sin","cos","tg","ctg","ln","exp"}; 
 	int priorVal[12]= { 0,1,1,2,2,3,4,4,4,4,4,4 };
@@ -22,9 +21,9 @@ public:
 	vector <string> GetLexems() const;
 	vector<string> GetOperands() const;
 	double Calculate(const map<string, double>& value);
-	string isNumberOrVar(string infx); // выделяет из строки подстроку с нулевого символа, если это число или переменная
+	string isNumberOrVar(string infx); // selects a substring from the zero character from the string, if it is a number or a variable
 	double Translate(string snum);
-	string isFunc(string infx); //выделяет из строки подстроку с нулевого символа, если это функция
+	string isFunc(string infx); //selects a substring from a string with a null character if it is a function
 	int Priority(string item);
 };
-int StringIsAlmostCorrect(string s);  //устраняет большую часть ошибкок от пользователя, необходимых для упрощения последующего кода
+int StringIsAlmostCorrect(string s);  //eliminates most of the errors from the user needed to simplify the subsequent code

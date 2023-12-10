@@ -5,40 +5,42 @@
 #include "stack.h"
 ArithmeticExpr::ArithmeticExpr(string infx) {
 	infix = infx;
-	//priority = { {"+",1},{"-",1},{"*",2},{"/",2},{"~",3},{"sin",4},{"cos",4},{"tg",4},{"ctg",4},{"ln",4},{"exp",4}};
 }
 int StringIsAlmostCorrect(string s) { 
 	int count = 0;
 	for (int i = 0; i < s.length(); i++) {
 		if ((s[i] == '('|| s[i] == '+' || s[i] == '-' || s[i] == '*' || s[i] == '/') && (s[i + 1] == ')' || s[i + 1] == '+' || s[i + 1] == '*' || s[i + 1] == '/')) {
-			return i; // проверка на отсутсвие ошибок (*, +* и тд
+			return i; //checking for errors (*, +*, etc.
 		}
-		if (s[i] == ')' && s[i + 1] == '(') return i; // проверка на )(
-		if (s[i] == ' ') return i; // отсутствие пробелов
+		if (s[i] == ')' && s[i + 1] == '(') return i; // checking for )(
+		if (s[i] == ' ') return i; // no gaps
 		if (s[i] == '(') count++;
 		if (s[i] == ')') count--;
 		if (i >= 1) {
 			if (s[i] == 'x' && (s[i - 1] == '0' || s[i - 1] == '1' || s[i - 1] == '2' || s[i - 1] == '3' || s[i - 1] == '4' || s[i - 1] == '5' || s[i - 1] == '6' || s[i - 1] == '7' || s[i - 1] == '8' || s[i - 1] == '9')){
-				return i; //исключение ситуаций 6+78x65
+				return i; //exclusion of situations 6+78x65
 			}
 		}
+		if ((s[i] == '0' || s[i] == '1' || s[i] == '2' || s[i] == '3' || s[i] == '4' || s[i] == '5' || s[i] == '6' || s[i] == '7' || s[i] == '8' || s[i] == '9')&&(!(s[i + 1] == '+' || s[i + 1] == '-' || s[i + 1] == '*' || s[i + 1] == '/'||s[i+1]==')'||s[i + 1] == '.' || s[i + 1] == 'e'||s[i + 1] == '0' || s[i + 1] == '1' || s[i + 1] == '2' || s[i + 1] == '3' || s[i + 1] == '4' || s[i + 1] == '5' || s[i + 1] == '6' || s[i + 1] == '7' || s[i + 1] == '8' || s[i + 1] == '9'||s[i+1]=='\0'))) {
+			return i; //exclusion of situations 6sin(8)
+		}
 		if ((s[i] == 'x'&&s[i+1]!='p') && (!(s[i + 1] == '0' || s[i + 1] == '1' || s[i + 1] == '2' || s[i + 1] == '3' || s[i + 1] == '4' || s[i + 1] == '5' || s[i + 1] == '6' || s[i + 1] == '7' || s[i + 1] == '8' || s[i + 1] == '9'))) {
-			return i; // правильный ввод переменных, типа х*, где * - любое число
+			return i; // correct input of variables, such as x*, where * is any number
 		}
 		if (i == 0 && s[i] == '.') {
 			if (!(s[i + 1] == '0' || s[i + 1] == '1' || s[i + 1] == '2' || s[i + 1] == '3' || s[i + 1] == '4' || s[i + 1] == '5' || s[i + 1] == '6' || s[i + 1] == '7' || s[i + 1] == '8' || s[i + 1] == '9')) return i;
-		} // если . первый символ, то после нее обязательна цифра
+		} // if . the first character, then a digit is required after it
 		else if (i > 0 && s[i] == '.') {
 			if (!(s[i + 1] == '+' || s[i + 1] == '-' || s[i + 1] == '*' || s[i + 1] == '/' || s[i + 1] == '0' || s[i + 1] == '1' || s[i + 1] == '2' || s[i + 1] == '3' || s[i + 1] == '4' || s[i + 1] == '5' || s[i + 1] == '6' || s[i + 1] == '7' || s[i + 1] == '8' || s[i + 1] == '9') &&
 				!(s[i - 1] == '+' || s[i - 1] == '-' || s[i - 1] == '*' || s[i - 1] == '/' || s[i - 1] == '0' || s[i - 1] == '1' || s[i - 1] == '2' || s[i - 1] == '3' || s[i - 1] == '4' || s[i - 1] == '5' || s[i - 1] == '6' || s[i - 1] == '7' || s[i - 1] == '8' || s[i - 1] == '9')) return i;
-		} // возле . нет некорректных символов
+		} //near . there are no invalid characters
 
-		if (s[0] == 'e'&&s[1]!='x'&&s[2]!='p') return i; //e для чисел не может быть первым символом
+		if (s[0] == 'e'&&s[1]!='x'&&s[2]!='p') return i; //e for numbers, it cannot be the first character
 		else if (i > 0 && s[i] == 'e' && s[i+1] != 'x' && s[i+2] != 'p') {
 			if (!(s[i + 1] == '+' || s[i + 1] == '-') &&!(s[i - 1] == '0' || s[i - 1] == '1' || s[i - 1] == '2' || s[i - 1] == '3' || s[i - 1] == '4' || s[i - 1] == '5' || s[i - 1] == '6' || s[i - 1] == '7' || s[i - 1] == '8' || s[i - 1] == '9' || s[i - 1] == '.')) return i;
-		}// возле e нет некорректных символов
+		}// there are no incorrect characters near e
 
-		if ((s[i] == 's' && s[i + 1] == 'i' && s[i + 2] == 'n' && s[i + 3] != '(')) return i; //корректность ввода функций
+		if ((s[i] == 's' && s[i + 1] == 'i' && s[i + 2] == 'n' && s[i + 3] != '(')) return i; //correctness of function input
 		if ((s[i] == 'c' && s[i + 1] == 'o' && s[i + 2] == 's' && s[i + 3] != '(')) return i;
 		if ((s[i] == 'e' && s[i + 1] == 'x' && s[i + 2] == 'p' && s[i + 3] != '(')) return i;
 		if ((s[i] == 'c' && s[i + 1] == 't' && s[i + 2] == 'g' && s[i + 3] != '(')) return i;
@@ -46,8 +48,8 @@ int StringIsAlmostCorrect(string s) {
 		if ((s[i] == 'l' && s[i + 1] == 'n' && s[i + 2] != '(')) return i;
 		
 	}
-	if (s[s.length() - 1] == '(' || s[s.length() - 1] == '+' || s[s.length() - 1] == '-' || s[s.length() - 1] == '*' || s[s.length() - 1] == '/') return -1; // строка не заканчивается операцией или (
-	if (count != 0) return -2; // количества ( и ) равны
+	if (s[s.length() - 1] == '(' || s[s.length() - 1] == '+' || s[s.length() - 1] == '-' || s[s.length() - 1] == '*' || s[s.length() - 1] == '/') return -1; // the line does not end with the or operation (
+	if (count != 0) return -2; // the quantities '(' and ')' are equal
 	return -128;
 }
 void ArithmeticExpr::Parse() {
