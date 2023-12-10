@@ -1,7 +1,7 @@
 // реализация функций и классов для вычисления арифметических выражений
 #include "arithmetic.h"
 
-std::string TPostfix::Error_string(std::string& s, int i) {
+std::string TPostfix::Error_string(const std::string& s, int i) {
 	std::string tmp = "Error: ";
 	for (int j = 0; j < i; j++) tmp += s[j];
 	tmp = tmp + '\"' + s[i] + '\"';
@@ -9,24 +9,26 @@ std::string TPostfix::Error_string(std::string& s, int i) {
 	tmp += '\n';
 	return tmp;
 }
-bool TPostfix::is_op_or_func(std::string s) {
-	for (int i = 0; i < 11; i++) if (s == pr[i]) return true;
-	return false;
+
+int TPostfix::get_prior(const std::string& s) noexcept {
+	if (s == "+" || s == "-") return 1;
+	if (s == "*" || s == "/") return 2;
+	if (s == "~") return 3;
+	if (s == "sin" || s == "cos" || s == "tan" || s == "cot" || s == "exp" || s == "log") return 4;
+	return 0;
 }
-bool TPostfix::is_op_or_func(char c) {
-	std::string s;
-	s = c;
-	for (int i = 0; i < 5; i++) if (s == pr[i]) return true;
-	return false;
+
+int TPostfix::get_prior(char c) noexcept {
+	if (c == '+' || c == '-') return 1;
+	if (c == '*' || c == '/') return 2;
+	if (c == '~') return 3;
+	return 0;
 }
-int TPostfix::get_prior(std::string& s) {
-	for (int i = 0; i < 11; i++) if (s == pr[i]) return i;
-	return -1;
-}
-double TPostfix::valid(std::string& s) {
+
+double TPostfix::valid(const std::string& s) {
 	double res = 0;
 	int i = 0, mod = 0, pw = 0;
-	while ((s[i] != '.') && (s[i] != 'e') && (i != s.size())) {
+	while ((i != s.size()) && (s[i] != '.') && (s[i] != 'e')) {
 		res *= 10;
 		res += (int)s[i] - 48;
 		i++;
@@ -51,17 +53,16 @@ double TPostfix::valid(std::string& s) {
 	res *= pow(10, mod * pw);
 	return res;
 }
-std::string TPostfix::number_check(std::string& s, int& i) {
+std::string TPostfix::number_check(const std::string& s, int& i) {
 	std::string tmp;
 	tmp = s[i];
 	i++;
-	while (i != s.size() && s[i] != '.' && s[i] != 'e' && s[i] != ')' && !is_op_or_func(s[i])) {
+	while (i != s.size() && ((int)s[i] >= 48 && (int)s[i] <= 57)) {
 		tmp += s[i];
 		i++;
 	}
 	if (s[i] == '.') tmp += s[i++];
-	while ((i != s.size()) && (s[i] != 'e') && !is_op_or_func(s[i]) && (s[i] != ')')) {
-		if (s[i] == '.') throw std::invalid_argument(Error_string(s, i) + "There cannot be more than one \'.\' in a number");
+	while ((i != s.size()) && (int)s[i] >= 48 && (int)s[i] <= 57) {
 		tmp += s[i];
 		i++;
 	}
@@ -83,54 +84,54 @@ std::string TPostfix::number_check(std::string& s, int& i) {
 		tmp += s[i];
 		i++;
 	}
-	if (i != s.size() && !is_op_or_func(s[i]) && s[i] != ')') throw std::invalid_argument(Error_string(s, i) + "The operand must be followed by an operator or a closing parenthesis");
+	if (i != s.size() && !get_prior(s[i]) && s[i] != ')') throw std::invalid_argument(Error_string(s, i) + "The operand must be followed by an operator or a closing parenthesis");
 	i--;
 	return tmp;
 }
-TPostfix::TPostfix(std::string& s) {
+TPostfix::TPostfix(const std::string& s) {
 	int i = 0;
 	std::string tmp;
 	TStack<std::string> St;
-	TStack<int> bracket; //данный стек нужен, чтобы указвать на ошибки в расстановке скобок
+	TStack<int> bracket; //This stack is needed to indicate the first incorrectly plcaed bracket
 	while (i < s.size()) {
 		tmp = s[i];
-		if (is_op_or_func(s[i])) { //обработка операций
+		if (get_prior(s[i])) { //Work with operators
 			if ((i == 0) || (s[i - 1] == '(')) {
 				if (tmp == "-") tmp = "~";
 				else throw std::invalid_argument(Error_string(s, i) + "Binary operators cannot be preceded by an opening parenthesis");
 			}
-			else if (is_op_or_func(s[i - 1])) throw std::invalid_argument(Error_string(s, i) + "Two operators cannot stand in a row");
+			else if (get_prior(s[i - 1])) throw std::invalid_argument(Error_string(s, i) + "Two operators cannot stand in a row");
 			if (i == s.size() - 1 || s[i + 1] == ')') throw std::invalid_argument(Error_string(s, i) + "The operator must be followed by an operand");
-			while (!St.isEmpty() && St.show_back() != "(" && get_prior(St.show_back()) >= get_prior(tmp)) RPN.push_back(St.pop_back());
+			while (!St.isEmpty() && St.top() != "(" && get_prior(St.top()) >= get_prior(tmp)) RPN.push_back(St.pop_back());
 			St.push_back(tmp);
 		}
-		else if ((s[i] == '(') && (i < s.size() - 1) && (s[i + 1] != ')')) { //обработка открывающей скобки
+		else if ((s[i] == '(') && (i < s.size() - 1) && (s[i + 1] != ')')) { //Work with opening bracket
 			bracket.push_back(i);
 			St.push_back(tmp);
 		}
-		else if (s[i] == ')') { //обработка закрывающей скобки
+		else if (s[i] == ')') { //Work with closing bracket
 			if (bracket.GetCount() == 0) throw std::invalid_argument(Error_string(s, i) + "The brackets are placed incorrectly");
 			bracket.pop_back();
-			if (i != s.size() - 1 && !is_op_or_func(s[i + 1]) && s[i + 1] != ')') throw std::invalid_argument(Error_string(s, i + 1) + "The operand must be followed by an operator or a closing parenthesis");
-			while (St.show_back() != "(") RPN.push_back(St.pop_back());
+			if (i != s.size() - 1 && !get_prior(s[i + 1]) && s[i + 1] != ')') throw std::invalid_argument(Error_string(s, i + 1) + "The operand must be followed by an operator or a closing parenthesis");
+			while (St.top() != "(") RPN.push_back(St.pop_back());
 			St.pop_back();
 		}
-		else if (i < s.size() - 2 && s.size()>2 && (is_op_or_func(tmp + s[i + 1] + s[i + 2]))) { // обработка функций
+		else if (i < s.size() - 2 && s.size()>2 && (get_prior(tmp + s[i + 1] + s[i + 2]))) { //Work with functions
 			if ((i > s.size() - 6) || s[i + 3] != '(') throw std::invalid_argument(Error_string(s, i + 3) + "After a function must be a \'(\'");
 			tmp = tmp + s[i + 1] + s[i + 2];
 			i += 2;
 			St.push_back(tmp);
 		}
-		else if (((int)s[i] >= 48 && (int)s[i] <= 57) || (s[i] == '.')) {// обработка чисел
+		else if (((int)s[i] >= 48 && (int)s[i] <= 57) || (s[i] == '.')) {//Work with numbers
 			RPN.push_back(number_check(s, i));
 		}
-		else if (s[i] == 'x') { //обработка переменных
+		else if (s[i] == 'x') { //Work with vaiables
 			i++;
 			while ((i != s.size()) && ((int)s[i] >= 48 && (int)s[i] <= 57)) {
 				tmp += s[i];
 				i++;
 			}
-			if (i != s.size() && !is_op_or_func(s[i]) && s[i] != ')') throw std::invalid_argument(Error_string(s, i) + "You can't name variables this way");
+			if (i != s.size() && !get_prior(s[i]) && s[i] != ')') throw std::invalid_argument(Error_string(s, i) + "You can't name variables this way");
 			i--;
 			RPN.push_back(tmp);
 		}
@@ -147,7 +148,7 @@ double TPostfix::count() {
 	TStack<double> St;
 	std::map <std::string, double> variables;
 	for (int i = 0; i < RPN.size(); i++) {
-		if (is_op_or_func(RPN[i])) {
+		if (get_prior(RPN[i])) {
 			if (RPN[i] == "+") St.push_back(St.pop_back() + St.pop_back());
 			else if (RPN[i] == "-") St.push_back(-St.pop_back() + St.pop_back());
 			else if (RPN[i] == "*") St.push_back(St.pop_back() * St.pop_back());

@@ -14,7 +14,7 @@ class TStack {
 	T* mas;
 	size_t count;
 	size_t size;
-	bool isFull() {
+	bool isFull() noexcept {
 		return count == size;
 	}
 	void resize() {
@@ -44,7 +44,7 @@ public:
 	size_t GetCount() noexcept {
 		return count;
 	}
-	T& show_back() {
+	T& top() {
 		if (!isEmpty())return mas[count-1];
 		throw std::out_of_range("There are no elements in this Stack");
 	}
@@ -53,7 +53,6 @@ public:
 		throw std::out_of_range("There are no elements in this Stack");
 	}
 	void clear() {
-		this->~TStack();
-		this->TStack();
+		count = 0;
 	}
 };
