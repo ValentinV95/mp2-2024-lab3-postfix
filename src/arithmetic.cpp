@@ -5,9 +5,9 @@
 double string_to_decimal(const string &expr) {
 	double res = 0.0;
 	if (expr.size() == 0) {
-		throw invalid_argument("Empty string");
+		return res;
 	}
-	for (int i = expr.size() - 1; i > 0; i--) {
+	for (size_t i = expr.size() - 1; i > 0; i--) {
 		res += static_cast<double>(expr[i]) - static_cast<double>('0');
 		res /= 10;
 	}
@@ -23,26 +23,28 @@ double string_to_decimal(const string &expr) {
 
 int string_to_integer(const string &expr) {
 	int res = 0;
+	bool minus = false;
 	if (expr.size() == 0) {
-		throw invalid_argument("Empty string");
+		return res;
 	}
-	for (int i = expr.size() - 1; i >= 0; i--) {
-		res += static_cast<double>(expr[i]) - static_cast<double>('0');
-		res *= 10;
-	}
+	size_t i = 0;
 	if (expr[0] == '-') {
-		res *= -1;
+		minus = true;
+		i++;
 	}
-	else {
-		res += static_cast<double>(expr[0]) - static_cast<double>('0');
+	while (i < expr.size()) {
 		res *= 10;
+		res += static_cast<int>(expr[i]) - static_cast<int>('0');
+		i++;
+	}
+	if (minus) {
+		res *= -1;
 	}
 	return res;
 }
 
 double exp_form_to_double(const string &expr) {
 	// init state machine matrix
-	const size_t TRASH = 0;
 	const size_t a_size = 6;
 	const size_t s_size = 10;
 	const size_t a0[a_size] = { 0, 0, 0, 0, 0, 0 };
@@ -53,55 +55,133 @@ double exp_form_to_double(const string &expr) {
 	const size_t a5[a_size] = { 5, 5, 0, 0, 7, 0 };
 	const size_t a6[a_size] = { 5, 5, 0, 0, 0, 0 };
 	const size_t a7[a_size] = { 0, 0, 8, 0, 0, 8 };
-	const size_t a8[a_size] = { 0, 9, 0, 0, 0, 0 };
+	const size_t a8[a_size] = { 9, 9, 0, 0, 0, 0 };
 	const size_t a9[a_size] = { 9, 9, 0, 0, 0, 0 };
 	const size_t *states_array[s_size] = { a0, a1, a2, a3, a4, a5, a6, a7, a8, a9 };
 	// get 3 nums
 	string first_num = "";
 	string mov = "";
 	string second_num = "";
-	size_t i = 0;
 	size_t cur_state = 1;
 	size_t cur_slot = 0;
-	while (i < expr.size()) {
-		// move
-		if (expr[i] == '0') { cur_state = states_array[cur_state][0]; }
-		else if (expr[i] >= '1' && expr[i] <= '9') { cur_state = states_array[cur_state][1]; }
-		else if (expr[i] == '-') { cur_state = states_array[cur_state][2]; }
-		else if (expr[i] == '.') { cur_state = states_array[cur_state][3]; }
-		else if (expr[i] == 'e') { cur_state = states_array[cur_state][4]; }
-		else if (expr[i] == '+') { cur_state = states_array[cur_state][5]; }
+	char item;
+	for (size_t i = 0; i < expr.size(); i++) {
+		// move state
+		item = expr[i];
+		if (item == '0') { cur_state = states_array[cur_state][0]; }
+		else if (item >= '1' && item <= '9') { cur_state = states_array[cur_state][1]; }
+		else if (item == '-') { cur_state = states_array[cur_state][2]; }
+		else if (item == '.') { cur_state = states_array[cur_state][3]; }
+		else if (item == 'e') { cur_state = states_array[cur_state][4]; }
+		else if (item == '+') { cur_state = states_array[cur_state][5]; }
 		else {
-			throw std::invalid_argument("Bad number");
+			//throw std::invalid_argument("Bad number");
+			continue;
 		}
 		if (cur_state == 0) {
 			break;
 		}
-		if (expr[i] == '.') {
+		if (item == '.') {
 			cur_slot = 1;
 		}
-		else if (expr[i] == 'e') {
+		else if (item == 'e') {
 			cur_slot = 2;
 		}
-		else if (expr[i] == '-' || (expr[i] >= '0' && expr[i] <= '9')) {
+		else if (item == '-' || (item >= '0' && item <= '9')) {
 			// add to corresponding num
 			switch (cur_slot) {
 			case 0:
-				first_num += expr[i];
+				first_num += item;
 				break;
 			case 1:
-				second_num += expr[i];
+				second_num += item;
 				break;
 			case 2:
-				mov += expr[i];
+				mov += item;
 				break;
 			}
 		}
-		i++;
 	}
 	// find result
 	double res;
 	res = string_to_integer(first_num) + string_to_decimal(second_num);
 	res *= std::pow(10, string_to_integer(mov));
 	return res;
+}
+
+size_t operator_priority(const string &expr) {
+	if (expr == "+") { return 1; }
+	else if (expr == "-") { return 1; }
+	else if (expr == "*") { return 2; }
+	else if (expr == "/") { return 2; }
+	else if (expr == "sin") { return 3; }
+	else if (expr == "cos") { return 3; }
+	else if (expr == "tan") { return 3; }
+	else if (expr == "~") { return 2; }
+	else if (expr == "exp") { return 3; }
+	else if (expr == "lg") { return 3; }
+	else { return 0; }
+}
+
+vector<string> arithmetic_to_lexems(const string &expr) {
+	vector<string> res;
+	string buf = "";
+	char item;
+	for (size_t i = 0; i < expr.size(); i++) {
+		item = expr[i];
+		if (is_arithmetical(item)) {
+			if (buf != "") {
+				res.push_back(buf);
+				buf = "";
+			}
+			buf += item;
+			res.push_back(buf);
+			buf = "";
+		}
+		else if (is_alphabet_or_numeric(item)) {
+			buf += item;
+		}
+	}
+	res.push_back(buf);
+	return res;
+}
+
+bool check_infix_correctness(const vector<string> &lexems) {
+	// init state machine matrix
+	const size_t a_size = 6;
+	const size_t s_size = 7;
+	const size_t a0[a_size] = { 0, 0, 0, 0, 0, 0 };
+	const size_t a1[a_size] = { 0, 1, 2, 4, 0, 3 };
+	const size_t a2[a_size] = { 6, 0, 0, 0, 5, 0 };
+	const size_t a3[a_size] = { 0, 1, 2, 4, 0, 0 };
+	const size_t a4[a_size] = { 0, 1, 0, 0, 0, 0 };
+	const size_t a5[a_size] = { 6, 0, 0, 0, 5, 0 };
+	const size_t a6[a_size] = { 0, 1, 2, 4, 0, 0 };
+	const size_t *states_array[s_size] = { a0, a1, a2, a3, a4, a5, a6 };
+	// check
+	string lexem;
+	size_t cur_state = 1;
+	for (size_t i = 0; i < lexems.size(); i++) {
+		// move state
+		lexem = lexems[i];
+		if ((operator_priority(lexem) == 1 || operator_priority(lexem) == 2) && lexem != "~") { cur_state = states_array[cur_state][0]; }
+		else if (lexem == "(") { cur_state = states_array[cur_state][1]; }
+		else if (is_alphabet_or_numeric(lexem) && operator_priority(lexem) == 0) { cur_state = states_array[cur_state][2]; }
+		else if (operator_priority(lexem) == 3) { cur_state = states_array[cur_state][3]; }
+		else if (lexem == ")") { cur_state = states_array[cur_state][4]; }
+		else if (lexem == "~") { cur_state = states_array[cur_state][5]; }
+		else {
+			throw std::invalid_argument("Check Arithm.: Bad input: " + lexem);
+			continue;
+		}
+		if (cur_state == 0) {
+			return false;
+		}
+	}
+	if (cur_state == 2 || cur_state == 5) {
+		return true;
+	}
+	else {
+		return false;
+	}
 }

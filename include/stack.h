@@ -11,7 +11,7 @@
 #include <stdexcept>
 #include <algorithm>
 
-size_t BASIC_SIZE = 10;
+const size_t BASIC_SIZE = 10;
 
 template<typename T>
 class TStack {
@@ -34,18 +34,18 @@ public:
 	}
 	T top() {
 		if (isEmpty()) {
-			throw std::out_of_range("Stack is empty");
+			throw std::out_of_range("Stack: Stack is empty");
 		}
 		return pMem[size - 1];
 	}
 	T pop() {
 		if (isEmpty()) {
-			throw std::out_of_range("Stack is empty");
+			throw std::out_of_range("Stack: Stack is empty");
 		}
 		const T &ret = pMem[size - 1];
 		size--;
 		return ret;
-	}
+	} 
 	void clear() {
 		size = 0;
 	}

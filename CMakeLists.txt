@@ -6,3 +6,8 @@ include_directories(include gtest)
 add_subdirectory(samples)
 add_subdirectory(test)
 add_subdirectory(gtest)
+
+file(GLOB hdrs "include/*.h")
+file(GLOB srcs "src/arithmetic.cpp")
+
+add_library(arithm_lib STATIC "${hdrs}" "${srcs}")
