@@ -123,9 +123,12 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 			if (i != 0 && infix[i - 1] >= 'a' && infix[i - 1] <= 'z')
 				throw invalid_argument("There is no operation between a number and a variable");
 
+			if (infix[i] == '0' && infix[i + 1] >= '0' && infix[i+1] <= '9')
+				throw invalid_argument("The number can't look like this");
+
 			else if (i + 1 == size || (infix[i + 1] < '0' && infix[i + 1] != '.'))
 			{
-				data[lexnumber] += infix[i]; //продолжение числа
+				data[lexnumber] += infix[i];
 				lexnumber++;
 			}
 
@@ -194,7 +197,7 @@ size_t TPostfix::getPriority(string operat)
 		return 0;
 }
 
-void TPostfix::toPostfix() // Converting infix form  into postfix one
+void TPostfix::toPostfix() //converting infix to postfix
 {
 	size_t psize = 0;
 	string* pform = new string[size];
@@ -379,7 +382,6 @@ double TPostfix::getResult()
 {
 	return result;
 }
-
 TPostfix::~TPostfix()
 {
 	delete[] data;
