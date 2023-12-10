@@ -35,7 +35,7 @@ public:
 
 	void toPostfix();
 
-	double toConverter(string number);
+	double string_in_double(string number);
 
 	void toCalculate();
 
