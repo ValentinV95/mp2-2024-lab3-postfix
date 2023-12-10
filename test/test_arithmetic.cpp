@@ -1,4 +1,4 @@
-// тесты для вычисления арифметических выражений
+// ГІГҐГ±ГІГ» Г¤Г«Гї ГўГ»Г·ГЁГ±Г«ГҐГ­ГЁГї Г Г°ГЁГґГ¬ГҐГІГЁГ·ГҐГ±ГЄГЁГµ ГўГ»Г°Г Г¦ГҐГ­ГЁГ©
 
 #include <gtest.h>
 #include "arithmetic.h"
@@ -73,19 +73,19 @@ TEST(TPostfix, can_correct_convertation_string_to_number)
 {
     string str = "37";
     TPostfix new_str(str);
-    EXPECT_EQ(37, new_str.toСonverter("37"));
+    EXPECT_EQ(37, new_str.string_in_double("37"));
 }
 
 TEST(TPostfix, can_correct_convertation_string_with_dot_to_number)
 {
     string str = "37.7";
     TPostfix new_str(str);
-    EXPECT_EQ(37.7, new_str.toСonverter("37.7"));
+    EXPECT_EQ(37.7, new_str.string_in_double("37.7"));
 }
 
 TEST(TPostfix, can_correct_convertation_string_with_dot_and_E_to_number)
 {
     string str = "37.7E1";
     TPostfix new_str(str);
-    EXPECT_EQ(377, new_str.toСonverter("37.7E1"));
+    EXPECT_EQ(377, new_str.string_in_double("37.7E1"));
 }
