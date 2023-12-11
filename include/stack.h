@@ -53,7 +53,6 @@ public:
 		throw std::out_of_range("There are no elements in this Stack");
 	}
 	void clear() {
-		this->~TStack();
-		this->TStack();
+		count = 0;
 	}
 };

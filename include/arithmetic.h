@@ -23,5 +23,5 @@ public:
 	
 	double count(); //Count a string stored in a class element. User enter variables
 
-	double count(double* variables, int number_of_variables); //Count a string stored in a class element. Variables is entered by programm.
+	double TPostfix::count(double* variables, int number_of_variables); //Count a string stored in a class element. Variables is entered by programm.
 };
