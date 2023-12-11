@@ -53,6 +53,10 @@ public:
 		throw std::out_of_range("There are no elements in this Stack");
 	}
 	void clear() {
+		T* tmp = new T[10];
 		count = 0;
+		size = 10;
+		delete[] mas;
+		mas= tmp
 	}
 };
