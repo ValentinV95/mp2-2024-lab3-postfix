@@ -13,8 +13,7 @@ std::string TPostfix::Error_string(const std::string& s, int i) {
 int TPostfix::get_prior(const std::string& s) noexcept {
 	if (s == "+" || s == "-") return 1;
 	if (s == "*" || s == "/") return 2;
-	if (s == "~") return 3;
-	if ( s == "sin" || s == "cos" || s == "tan" || s == "cot" || s == "exp" || s == "log") return 4;
+	if (s == "~" || s == "sin" || s == "cos" || s == "tan" || s == "cot" || s == "exp" || s == "log") return 3;
 	return 0;
 }
 
@@ -88,21 +87,24 @@ std::string TPostfix::number_check(const std::string& s, int& i) {
 	i--;
 	return tmp;
 }
-TPostfix::TPostfix(const std::string& s) {
+TPostfix::TPostfix(const std::string& str) {
 	int i = 0;
-	std::string tmp;
+	std::string tmp, s;
+	for (int j = 0; j < str.size(); j++) 
+		if (str[j] != ' ') 
+			s += str[j];
 	TStack<std::string> St;
 	TStack<int> bracket; //This stack is needed to indicate the first incorrectly plcaed bracket
 	while (i < s.size()) {
 		tmp = s[i];
 		if (get_prior(s[i])) { //Work with operators
-			if ( i == 0 || s[i - 1] == '(' /* || get_prior(s[i - 1])*/) {
+			if ( i == 0 || s[i - 1] == '(' || get_prior(s[i - 1])) {
 				if (tmp == "-") tmp = "~";
 				else throw std::invalid_argument(Error_string(s, i) + "Binary operators cannot be preceded by an opening parenthesis");
 			}
 			else if (get_prior(s[i - 1])) throw std::invalid_argument(Error_string(s, i) + "Two operators cannot stand in a row");
 			if (i == s.size() - 1 || s[i + 1] == ')') throw std::invalid_argument(Error_string(s, i) + "The operator must be followed by an operand");
-			while (!St.isEmpty() && St.top() != "(" /* && get_prior(tmp) != 3*/ && get_prior(St.top()) >= get_prior(tmp)) RPN.push_back(St.pop_back());
+			while (!St.isEmpty() && St.top() != "("  && get_prior(tmp) != 3 && get_prior(St.top()) >= get_prior(tmp)) RPN.push_back(St.pop_back());
 			St.push_back(tmp);
 		}
 		else if ((s[i] == '(') && (i < s.size() - 1) && (s[i + 1] != ')')) { //Work with opening bracket

@@ -2,10 +2,10 @@
 #include "arithmetic.h"
 int main()
 {
+	std::string str;
 	while (true) {
 	try {
 			int fl = 0;
-			std::string str;
 			std::cout << "Enter a string what you want to count or enter \"end\" to end work with program \n";
 			std::cout << "Availble math fuctions:sin, cos, tan, cot, exp, log \n";
 			std::cout << "After functions you need to enter \'(\'\n";
@@ -30,6 +30,8 @@ int main()
 			while (fl);
 	}
 	catch (std::exception& e) {
+		system("cls");
+		std::cout << str << '\n';
 		std::cout << e.what() << '\n';
 	}
 	}
