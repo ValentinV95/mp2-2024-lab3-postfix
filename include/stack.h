@@ -18,9 +18,9 @@ class TStack {
 		return count == size;
 	}
 	void resize() {
-		size *= 2;
-		T* tmp = new T[size];
+		T* tmp = new T[size*2];
 		std::copy(mas, mas + size, tmp);
+		size *= 2;
 		delete[] mas;
 		mas = tmp;
 	}
@@ -53,6 +53,7 @@ public:
 		throw std::out_of_range("There are no elements in this Stack");
 	}
 	void clear() {
-		count = 0;
+		this->~TStack();
+		this->TStack();
 	}
 };

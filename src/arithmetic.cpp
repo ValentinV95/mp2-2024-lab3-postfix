@@ -13,8 +13,7 @@ std::string TPostfix::Error_string(const std::string& s, int i) {
 int TPostfix::get_prior(const std::string& s) noexcept {
 	if (s == "+" || s == "-") return 1;
 	if (s == "*" || s == "/") return 2;
-	if (s == "~") return 3;
-	if (s == "sin" || s == "cos" || s == "tan" || s == "cot" || s == "exp" || s == "log") return 4;
+	if (s== "~" || s == "sin" || s == "cos" || s == "tan" || s == "cot" || s == "exp" || s == "log") return 3;
 	return 0;
 }
 
@@ -96,13 +95,13 @@ TPostfix::TPostfix(const std::string& s) {
 	while (i < s.size()) {
 		tmp = s[i];
 		if (get_prior(s[i])) { //Work with operators
-			if ((i == 0) || (s[i - 1] == '(')) {
+			if ( i == 0 || s[i - 1] == '(' || get_prior(s[i-1])) {
 				if (tmp == "-") tmp = "~";
 				else throw std::invalid_argument(Error_string(s, i) + "Binary operators cannot be preceded by an opening parenthesis");
 			}
 			else if (get_prior(s[i - 1])) throw std::invalid_argument(Error_string(s, i) + "Two operators cannot stand in a row");
 			if (i == s.size() - 1 || s[i + 1] == ')') throw std::invalid_argument(Error_string(s, i) + "The operator must be followed by an operand");
-			while (!St.isEmpty() && St.top() != "(" && get_prior(St.top()) >= get_prior(tmp)) RPN.push_back(St.pop_back());
+			while (!St.isEmpty() && St.top() != "(" && get_prior(tmp)!=3 && get_prior(St.top()) >= get_prior(tmp)) RPN.push_back(St.pop_back());
 			St.push_back(tmp);
 		}
 		else if ((s[i] == '(') && (i < s.size() - 1) && (s[i + 1] != ')')) { //Work with opening bracket
@@ -171,6 +170,41 @@ double TPostfix::count() {
 					std::cin >> tmp;
 					variables.insert(std::pair<std::string, double> {RPN[i], tmp});
 					St.push_back(tmp);
+				}
+			}
+			else St.push_back(valid(RPN[i]));
+		}
+	}
+	return St.pop_back();
+}
+double TPostfix::count(double* variables, int number_of_variables) {
+	TStack<double> St;
+	std::map <std::string, double> usedvar;
+	int j = 0;
+	for (int i = 0; i < RPN.size(); i++) {
+		if (get_prior(RPN[i])) {
+			if (RPN[i] == "+") St.push_back(St.pop_back() + St.pop_back());
+			else if (RPN[i] == "-") St.push_back(-St.pop_back() + St.pop_back());
+			else if (RPN[i] == "*") St.push_back(St.pop_back() * St.pop_back());
+			else if (RPN[i] == "/") St.push_back(1 / St.pop_back() * St.pop_back());
+			else if (RPN[i] == "~") St.push_back(-St.pop_back());
+			else if (RPN[i] == "sin") St.push_back(sin(St.pop_back()));
+			else if (RPN[i] == "cos") St.push_back(cos(St.pop_back()));
+			else if (RPN[i] == "tan") St.push_back(tan(St.pop_back()));
+			else if (RPN[i] == "cot") St.push_back(1 / tan(St.pop_back()));
+			else if (RPN[i] == "exp") St.push_back(exp(St.pop_back()));
+			else St.push_back(log(St.pop_back()));
+		}
+		else {
+			if (RPN[i][0] == 'x') {
+				if (usedvar.count(RPN[i]))
+					St.push_back(usedvar.find(RPN[i])->second);
+				else {
+					if (j <= number_of_variables - 1) {
+						usedvar.insert(std::pair<std::string, double> {RPN[i], variables[j++]});
+						St.push_back(variables[j - 1]);
+					}
+					else throw std::invalid_argument("Number of variables was entered incorrectly");
 				}
 			}
 			else St.push_back(valid(RPN[i]));

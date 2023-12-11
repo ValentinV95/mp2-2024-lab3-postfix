@@ -21,5 +21,7 @@ class TPostfix {
 public:
 	TPostfix(const std::string& s); //Turns string into a Reverse Polish Notation, if it possible.
 	
-	double count(); //Count a string stored in a class element
+	double count(); //Count a string stored in a class element. User enter variables
+
+	double count(double* variables, int number_of_variables); //Count a string stored in a class element. Variables is entered by programm.
 };
