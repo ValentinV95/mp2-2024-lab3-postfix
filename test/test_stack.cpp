@@ -20,7 +20,7 @@ TEST(TStack, empty_stack_is_null)
     EXPECT_EQ(0, st.GetSize());
 }
 
-TEST(TDynamicStack, can_work_isempty)
+TEST(TStack, can_work_isempty)
 {
     TStack<int> st;
     st.push(1);
