@@ -56,21 +56,21 @@ double TPostfix::valid(const std::string& s) {
 std::string TPostfix::number_check(const std::string& s, int& i) {
 	std::string tmp;
 	tmp = s[i++];
-	while (i != s.size() && ((int)s[i] >= 48 && (int)s[i] <= 57)) tmp += s[i++];
+	while (i != s.size() && (s[i] >= '0' && s[i] <= '9')) tmp += s[i++];
 	if (s[i] == '.') tmp += s[i++];
-	while ((i != s.size()) && (int)s[i] >= 48 && (int)s[i] <= 57) tmp += s[i++];
+	while (i != s.size() && s[i] >= '0' && s[i] <= '9') tmp += s[i++];
 	if (tmp == ".") throw std::invalid_argument(Error_string(s, i - 1) + "Writing a number in the form of \".\" is not possible");
 	if (i != s.size() && s[i] == 'e') {
 		tmp += s[i++];
-		if ((i < s.size() - 1) && ((s[i] == '+') || (s[i] == '-'))) {
+		if ((i < s.size() - 1) && (s[i] == '+' || s[i] == '-')) {
 			tmp += s[i++];
-			if ((int)s[i] < 49 || (int)s[i]>57)
+			if (s[i] < '1' || s[i]>'9')
 				throw std::invalid_argument(Error_string(s, i) + "When specifying a number with \'e\', there must be a natural number after the \'+\' or \'-\' sign");
 			tmp += s[i++];
 		}
-		else throw std::invalid_argument(Error_string(s, i) + "After \'e\' there should be a + or sign -");
+		else throw std::invalid_argument(Error_string(s, i) + "After \'e\' there should be a \'+\' or \'-\'");
 	};
-	while (i != s.size() && ((int)s[i] >= 48 && (int)s[i] <= 57)) tmp += s[i++];
+	while (i != s.size() && (s[i] >= '0' && s[i] <= '9')) tmp += s[i++];
 	if (i != s.size() && !get_prior(s[i]) && s[i] != ')') throw std::invalid_argument(Error_string(s, i) + "The operand must be followed by an operator or a closing parenthesis");
 	i--;
 	return tmp;
@@ -78,9 +78,8 @@ std::string TPostfix::number_check(const std::string& s, int& i) {
 TPostfix::TPostfix(const std::string& str) {
 	int i = 0;
 	std::string tmp, s;
-	for (int j = 0; j < str.size(); j++) 
-		if (str[j] != ' ') 
-			s += str[j];
+	for (int j = 0; j < str.size(); j++) if (str[j] != ' ') s += str[j];
+	if (s.size() == 0) throw std::invalid_argument("Nothing can be done with an empty string");
 	TStack<std::string> St;
 	TStack<int> bracket; //This stack is needed to indicate the first incorrectly plcaed bracket
 	while (i < s.size()) {
@@ -94,7 +93,7 @@ TPostfix::TPostfix(const std::string& str) {
 			while (!St.isEmpty() && St.top() != "("  && get_prior(tmp) != 3 && get_prior(St.top()) >= get_prior(tmp)) RPN.push_back(St.pop_back());
 			St.push_back(tmp);
 		}
-		else if ((s[i] == '(') && (i < s.size() - 1) && (s[i + 1] != ')')) { //Work with opening bracket
+		else if (s[i] == '(' && i < s.size() - 1 && s[i + 1] != ')') { //Work with opening bracket
 			bracket.push_back(i);
 			St.push_back(tmp);
 		}
@@ -105,18 +104,18 @@ TPostfix::TPostfix(const std::string& str) {
 			while (St.top() != "(") RPN.push_back(St.pop_back());
 			St.pop_back();
 		}
-		else if (i < s.size() - 2 && s.size()>2 && (get_prior(tmp + s[i + 1] + s[i + 2]))) { //Work with functions
+		else if (i < s.size() - 2 && s.size()>2 && get_prior(tmp + s[i + 1] + s[i + 2])) { //Work with functions
 			if (i > s.size() - 6 || s.size() < 6 || s[i + 3] != '(') throw std::invalid_argument(Error_string(s, i + 3) + "After a function must be a \'(\'");
 			tmp = tmp + s[i + 1] + s[i + 2];
 			i += 2;
 			St.push_back(tmp);
 		}
-		else if (((int)s[i] >= 48 && (int)s[i] <= 57) || (s[i] == '.')) { //Work with numbers
+		else if ((s[i] >= '0' && s[i] <= '9') || s[i] == '.') { //Work with numbers
 			RPN.push_back(number_check(s, i));
 		}
 		else if (s[i] == 'x') { //Work with variables
 			i++;
-			while ((i != s.size()) && ((int)s[i] >= 48 && (int)s[i] <= 57)) {
+			while ((i != s.size()) && (s[i] >= '0' && s[i] <= '9')) {
 				tmp += s[i];
 				i++;
 			}

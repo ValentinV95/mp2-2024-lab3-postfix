@@ -10,8 +10,12 @@ int main()
 			std::cout << "Availble math fuctions:sin, cos, tan, cot, exp, log \n";
 			std::cout << "After functions you need to enter \'(\'\n";
 			std::cout << "You can enter an unlimited number of variables. Available variable names: x, x#any set of numbers#\n";
-			std::cin >> str;
+			std::getline(std::cin, str);
 			if (str == "end") break;
+			if (str == "") {
+				system("cls");
+				continue;
+			}
 			for (int i = 0; i < str.size(); i++) if (str[i] == 'x') fl = 1;
 			TPostfix solution(str);
 			system("cls");
@@ -32,7 +36,7 @@ int main()
 	catch (std::exception& e) {
 		system("cls");
 		std::cout << str << '\n';
-		std::cout << e.what() << '\n';
+		std::cout << e.what() << "\n\n";
 	}
 	}
 }

@@ -7,23 +7,68 @@ TEST(TPostfix, can_create_TPostfix_from_valid_string) {
 	ASSERT_NO_THROW (TPostfix str("1"));
 }
 
-TEST(TPostfix, throws_when_number_is_invalid) {
+TEST(TPostfix, throws_when_number_is_a_dot) {
 	ASSERT_ANY_THROW(TPostfix str("."));
+}
+
+TEST(TPostfix, throws_when_number_has_more_than_one_dot) {
 	ASSERT_ANY_THROW(TPostfix str("1.2.3"));
+}
+
+TEST(TPostfix, throws_when_number_starts_with_e) {
 	ASSERT_ANY_THROW(TPostfix str("e+1"));
+}
+
+TEST(TPostfix, throws_when_there_is_no_sign_after_e) {
 	ASSERT_ANY_THROW(TPostfix str("1.2e"));
+}
+
+TEST(TPostfix, throws_when_there_is_no_number_after_sign) {
 	ASSERT_ANY_THROW(TPostfix str("1.2e+"));
+}
+
+TEST(TPostfix, throws_when_number_atfer_sign_is_not_natural) {
 	ASSERT_ANY_THROW(TPostfix str("1.2e+0"));
+}
+
+TEST(TPostfix, throws_when_there_is_a_dot_after_e) {
 	ASSERT_ANY_THROW(TPostfix str("1.2e+1.5"));
+}
+
+TEST(TPostfix, throws_when_number_has_more_than_one_e) {
 	ASSERT_ANY_THROW(TPostfix str("1.2e+1e+2"));
 }
 
+TEST(TPostfix, throws_when_variable_contains_any_char_except_x) {
+	ASSERT_ANY_THROW(TPostfix str("xf"));
+}
+
+TEST(TPostfix, throws_when_variable_has_more_than_one_x) {
+	ASSERT_ANY_THROW(TPostfix str("xx"));
+}
+
+TEST(TPostfix, throws_when_in_variable_numbers_stays_before_x) {
+	ASSERT_ANY_THROW(TPostfix str("123x"));
+}
+
+TEST(TPostfix, throws_when_in_variable_number_after_x_contains_a_dot) {
+	ASSERT_ANY_THROW(TPostfix str("x1.2"));
+}
+
+TEST(TPostfix, throws_when_in_variable_number_after_x_contains_e) {
+	ASSERT_ANY_THROW(TPostfix str("x1e"));
+}
+
+TEST(TPostfix, throws_when_string_is_invalid) {
+	ASSERT_ANY_THROW(TPostfix str("abcdefg"));
+}
+
 TEST(TPostfix, throws_when_brackets_next_to_each_other) {
-	ASSERT_ANY_THROW (TPostfix str("()"));
+	ASSERT_ANY_THROW(TPostfix str("()"));
 }
 
 TEST(TPostfix, throws_when_different_number_of_opening_and_closing_brackets) {
-	ASSERT_ANY_THROW (TPostfix str("((5)-3"));
+	ASSERT_ANY_THROW(TPostfix str("((5)-3"));
 }
 
 TEST(TPostfix, throws_when_brackets_are_placed_incorrectly) {
@@ -32,18 +77,6 @@ TEST(TPostfix, throws_when_brackets_are_placed_incorrectly) {
 
 TEST(TPostfix, throws_when_after_function_there_are_no_brackets) {
 	ASSERT_ANY_THROW(TPostfix str("sin6"));
-}
-
-TEST(TPostfix, throws_when_variable_name_is_invalid) {
-	ASSERT_ANY_THROW(TPostfix str("xf"));
-	ASSERT_ANY_THROW(TPostfix str("xx"));
-	ASSERT_ANY_THROW(TPostfix str("123x"));
-	ASSERT_ANY_THROW(TPostfix str("x1.2"));
-	ASSERT_ANY_THROW(TPostfix str("x1e"));
-}
-
-TEST(TPostfix, throws_when_string_is_invalid) {
-	ASSERT_ANY_THROW(TPostfix str("abcdefg"));
 }
 
 TEST(TPostfix, throws_when_two_operators_except_minus_stays_in_row) {
