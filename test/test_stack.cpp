@@ -26,7 +26,8 @@ TEST(TDynamicStack, can_create_stack_with_null_length)
 TEST(TDynamicStack, correct_see_empty_1)
 {
 	TDynamicStack<int> s(5);
-	ASSERT_NO_THROW(s.isEmpty());
+	s.push(7);
+	EXPECT_EQ(0,s.isEmpty());
 }
 
 TEST(TDynamicStack, correct_see_empty_2)
@@ -34,7 +35,7 @@ TEST(TDynamicStack, correct_see_empty_2)
 	TDynamicStack<int> s(5);
 	s.push(7);
 	s.pop();
-	ASSERT_NO_THROW(s.isEmpty());
+	EXPECT_EQ(1,s.isEmpty());
 }
 
 TEST(TDynamicStack, can_push_element)
@@ -83,11 +84,19 @@ TEST(TDynamicStack, can_clear_stack)
 	TDynamicStack<int> s(5);
 	s.push(7);
 	s.push(5);
-	s.clear();
-	EXPECT_EQ(1,s.isEmpty());
+	ASSERT_NO_THROW(s.clear(););
 }
 
-TEST(TDynamicStack, can_get_size)
+TEST(TDynamicStack, correct_clear_stack)
+{
+	TDynamicStack<int> s(5);
+	s.push(7);
+	s.push(5);
+	s.clear();
+	EXPECT_EQ(1, s.isEmpty());
+}
+
+TEST(TDynamicStack, correct_get_size)
 {
 	TDynamicStack<int> s(5);
 	s.push(7);

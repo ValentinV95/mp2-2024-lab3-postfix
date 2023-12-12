@@ -9,7 +9,7 @@ TEST(Arithmetic, can_create_postfix_to_infix)
 	ASSERT_NO_THROW(Arithmetic s(str));
 }
 
-TEST(Arithmetic, can_correct_create_postfix_to_infix)
+TEST(Arithmetic, correct_create_postfix_to_infix)
 {
 	string str = "x+y";
 	string correct = "x y + ";
@@ -17,7 +17,25 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix)
 	EXPECT_EQ(correct, s.getPostfix());
 }
 
-TEST(Arithmetic, can_correct_create_postfix_to_infix_with_unary_minus)
+TEST(Arithmetic, can_set_infix)
+{
+	string str = "x+y";
+	Arithmetic s(str);
+	string str1 = "x-y";
+	ASSERT_NO_THROW(s.setInfix(str1));
+}
+
+TEST(Arithmetic, correct_create_postfix_to_set_infix)
+{
+	string str = "x+y";
+	string str1 = "x-y";
+	string correct = "x y - ";
+	Arithmetic s(str);
+	s.setInfix(str1);
+	EXPECT_EQ(correct, s.getPostfix());
+}
+
+TEST(Arithmetic, correct_create_postfix_to_infix_with_unary_minus)
 {
 	string str = "-(x+(-y))";
 	string correct = "x y ~ + ~ ";
@@ -25,7 +43,7 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix_with_unary_minus)
 	EXPECT_EQ(correct, s.getPostfix());
 }
 
-TEST(Arithmetic, can_correct_create_postfix_to_infix_with_operation_with_different_priorities)
+TEST(Arithmetic, correct_create_postfix_to_infix_with_operation_with_different_priorities)
 {
 	string str = "-(x+y)*z";
 	string correct = "x y + ~ z * ";
@@ -33,7 +51,7 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix_with_operation_with_differe
 	EXPECT_EQ(correct, s.getPostfix());
 }
 
-TEST(Arithmetic, can_correct_create_postfix_to_infix_with_long_variable_names)
+TEST(Arithmetic, correct_create_postfix_to_infix_with_long_variable_names)
 {
 	string str = "-(_xt+y_b)*z1k";
 	string correct = "_xt y_b + ~ z1k * ";
@@ -41,7 +59,7 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix_with_long_variable_names)
 	EXPECT_EQ(correct, s.getPostfix());
 }
 
-TEST(Arithmetic, can_correct_create_postfix_to_infix_with_double)
+TEST(Arithmetic, correct_create_postfix_to_infix_with_double)
 {
 	string str = "-(x+y)*8.9";
 	string correct = "x y + ~ 8.9 * ";
@@ -49,7 +67,7 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix_with_double)
 	EXPECT_EQ(correct, s.getPostfix());
 }
 
-TEST(Arithmetic, can_correct_create_postfix_to_infix_with_double_first_point)
+TEST(Arithmetic, correct_create_postfix_to_infix_with_double_first_point)
 {
 	string str = "-(x+y)*.9";
 	string correct = "x y + ~ .9 * ";
@@ -57,7 +75,7 @@ TEST(Arithmetic, can_correct_create_postfix_to_infix_with_double_first_point)
 	EXPECT_EQ(correct, s.getPostfix());
 }
 
-TEST(Arithmetic, can_correct_create_postfix_to_infix_with_double_with_e)
+TEST(Arithmetic, correct_create_postfix_to_infix_with_double_with_e)
 {
 	string str = "-(x+y)*8.e-4";
 	string correct = "x y + ~ 8.e-4 * ";
@@ -119,7 +137,7 @@ TEST(Arithmetic, cant_create_postfix_to_infix_with_wrong_last_symbol)
 	ASSERT_ANY_THROW(Arithmetic s(str));
 }
 
-TEST(Arithmetic, can_get_operands)
+TEST(Arithmetic, correct_get_operands)
 {
 	string str = "x+y";
 	string correct = "x y ";
@@ -127,7 +145,7 @@ TEST(Arithmetic, can_get_operands)
 	EXPECT_EQ(correct, s.getOperands());
 }
 
-TEST(Arithmetic, can_get_long_operands)
+TEST(Arithmetic, correct_get_long_operands)
 {
 	string str = "xn1+yn2";
 	string correct = "xn1 yn2 ";
@@ -135,7 +153,7 @@ TEST(Arithmetic, can_get_long_operands)
 	EXPECT_EQ(correct, s.getOperands());
 }
 
-TEST(Arithmetic, can_get_long_operands_with_the_same_first_symbol)
+TEST(Arithmetic, correct_get_long_operands_with_the_same_first_symbol)
 {
 	string str = "xn1+yn2+xn2";
 	string correct = "xn1 yn2 xn2 ";
@@ -143,7 +161,7 @@ TEST(Arithmetic, can_get_long_operands_with_the_same_first_symbol)
 	EXPECT_EQ(correct, s.getOperands());
 }
 
-TEST(Arithmetic, can_get_operands_without_repeate)
+TEST(Arithmetic, correct_get_operands_without_repeate)
 {
 	string str = "xn1+yn2*yn2";
 	string correct = "xn1 yn2 ";
@@ -151,7 +169,7 @@ TEST(Arithmetic, can_get_operands_without_repeate)
 	EXPECT_EQ(correct, s.getOperands());
 }
 
-TEST(Arithmetic, can_get_infix)
+TEST(Arithmetic, correct_get_infix)
 {
 	string str = "x+y";
 	string correct = "x+y";
@@ -159,7 +177,7 @@ TEST(Arithmetic, can_get_infix)
 	EXPECT_EQ(correct, s.getInfix());
 }
 
-TEST(Arithmetic, can_correct_make_double_from_string_with_dote)
+TEST(Arithmetic, correct_make_double_from_string_with_dote)
 {
 	string str = "-(x+y)*8.9";
 	Arithmetic s(str);
@@ -167,7 +185,7 @@ TEST(Arithmetic, can_correct_make_double_from_string_with_dote)
 	EXPECT_EQ(doub, s.makeDouble("8.9"));
 }
 
-TEST(Arithmetic, can_correct_make_double_from_string_without_dote)
+TEST(Arithmetic, correct_make_double_from_string_without_dote)
 {
 	string str = "-(x+y)*8.9";
 	Arithmetic s(str);
@@ -175,7 +193,7 @@ TEST(Arithmetic, can_correct_make_double_from_string_without_dote)
 	EXPECT_EQ(doub, s.makeDouble("89"));
 }
 
-TEST(Arithmetic, can_correct_make_double_from_string_without_end)
+TEST(Arithmetic, correct_make_double_from_string_without_end)
 {
 	string str = "-(x+y)*8.9";
 	Arithmetic s(str);
@@ -183,7 +201,7 @@ TEST(Arithmetic, can_correct_make_double_from_string_without_end)
 	EXPECT_EQ(doub, s.makeDouble("8."));
 }
 
-TEST(Arithmetic, can_correct_make_double_from_string_without_start)
+TEST(Arithmetic, correct_make_double_from_string_without_start)
 {
 	string str = "-(x+y)";
 	Arithmetic s(str);
@@ -191,7 +209,7 @@ TEST(Arithmetic, can_correct_make_double_from_string_without_start)
 	EXPECT_EQ(doub, s.makeDouble(".90"));
 }
 
-TEST(Arithmetic, can_correct_make_double_from_string_with_e_positive)
+TEST(Arithmetic, correct_make_double_from_string_with_e_positive)
 {
 	string str = "-(x+y)*8.9";
 	Arithmetic s(str);
@@ -199,7 +217,7 @@ TEST(Arithmetic, can_correct_make_double_from_string_with_e_positive)
 	EXPECT_EQ(doub, s.makeDouble("1.e10"));
 }
 
-TEST(Arithmetic, can_correct_make_double_from_string_with_e_negativ)
+TEST(Arithmetic, correct_make_double_from_string_with_e_negativ)
 {
 	string str = "-(x+y)*8.9";
 	Arithmetic s(str);
@@ -207,7 +225,7 @@ TEST(Arithmetic, can_correct_make_double_from_string_with_e_negativ)
 	EXPECT_EQ(doub, s.makeDouble("4.e-2"));
 }
 
-TEST(Arithmetic, can_correct_make_negative_double_from_string_with_e_negativ)
+TEST(Arithmetic, correct_make_negative_double_from_string_with_e_negativ)
 {
 	string str = "-(x+y)*8.9";
 	Arithmetic s(str);
@@ -216,7 +234,7 @@ TEST(Arithmetic, can_correct_make_negative_double_from_string_with_e_negativ)
 }
 
 
-TEST(Arithmetic, can_get_priorytets_of_operations)
+TEST(Arithmetic, correct_get_priorytets_of_operations)
 {
 	string str = "x+y";
 	Arithmetic s(str);
@@ -226,7 +244,7 @@ TEST(Arithmetic, can_get_priorytets_of_operations)
 	EXPECT_EQ(2, s.priority('/'));
 }
 
-TEST(Arithmetic, can_spot_user_operations)
+TEST(Arithmetic, correct_spot_user_operations)
 {
 	string str = "x+y";
 	Arithmetic s(str);
