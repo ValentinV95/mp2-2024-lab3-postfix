@@ -232,7 +232,7 @@ void Arithmetic::infixCheck()
 					error += arrow + "The mistake in a digit";
 					throw invalid_argument(error.c_str());
 				}
-			if (infix[op]== '/' && name == "0")
+			if (op > 0 && (infix[op] == '/' && name == "0"))
 			{
 				error += arrow + "Division by zero isn`t correct";
 				throw invalid_argument(error.c_str());
