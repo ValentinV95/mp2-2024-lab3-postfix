@@ -15,23 +15,19 @@ private:
 	size_t size;
 	string infix, postfix;
 	string* data;
-	TStack<string> operations;
 	TStack<double> numbers;
 	double result;
+	string error;
 
 public:
 
-	TPostfix();
-
 	TPostfix(string _infix);
-
-	void setTPostfix(string _infix);
 
 	void toLexem();
 
 	void value_of_variable();
 
-	size_t getPriority(string operation);
+	size_t getPriority(string operation) const;
 
 	void toPostfix();
 
@@ -39,11 +35,13 @@ public:
 
 	void toCalculate();
 
-	string getPostfix();
+	string getPostfix() const;
 
-	string getInfix();
+	string getInfix() const;
 
-	double getResult();
+	double getResult() const;
+
+	bool isDigit(const char& elem);
 
 	~TPostfix();
 };
