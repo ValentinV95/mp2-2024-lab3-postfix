@@ -13,7 +13,7 @@ class TPostfix {
 
 	int get_prior(const std::string& s) noexcept; //Method that return the priority of an operation. If it is not an operation returns 0
 	
-	int TPostfix::get_prior(char c) noexcept; //similar method for characters
+	int get_prior(char c) noexcept; //similar method for characters
 
 	double valid(const std::string& s); //Method that turns correct string into a number
 	
@@ -23,5 +23,5 @@ public:
 	
 	double count(); //Count a string stored in a class element. User enter variables
 
-	double TPostfix::count(double* variables, int number_of_variables); //Count a string stored in a class element. Variables is entered by programm.
+	double count(double* variables, int number_of_variables); //Count a string stored in a class element. Variables is entered by programm.
 };
