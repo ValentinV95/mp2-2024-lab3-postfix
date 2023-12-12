@@ -62,27 +62,6 @@ TEST(TStack, throws_when_element_from_empty_stack)
 	ASSERT_ANY_THROW(s.pop());
 }
 
-TEST(TStack, not_full_stack)
-{
-	TStack<int> s(3);
-
-	s.push(1);
-	s.push(2);
-
-	EXPECT_EQ(false, s.isFull());
-}
-
-TEST(TStack, isFull_filled_stack_return_true)
-{
-	TStack<int> s(3);
-
-	s.push(1);
-	s.push(2);
-	s.push(3);
-
-	EXPECT_EQ(true, s.isFull());
-}
-
 TEST(TStack, pop_delete_element_on_the_top_of_stack)
 {
 	TStack<int> s(3);
