@@ -63,10 +63,6 @@ int Arithmetic::InfixCheck() {
             }
         }
         else if (infix[i] == 'e'){
-            if (i == len-1){
-                cout << "error in " << i << " symbol";
-                throw invalid_argument("syntax's error");
-            }
             if((int(infix[i-1]) <48 && int(infix[i-1] > 57)) || (infix[i+1]) <46 && int(infix[i+1] > 57)){
                 if (infix[i-1] != '.'){
                     cout << "error in " << i << " symbol";
@@ -111,8 +107,12 @@ void Arithmetic::Parse() {
     for(int i = 0; i< len;i++){
         tmp = "";
         if ((infix[i] > 47 && infix[i] < 58) || infix[i] == '.'){
-            while(i<len && ((int(infix[i]) > 47 && int(infix[i]) < 58) || (int(infix[i]) == 101) || (int(infix[i]) == 46) || (int(infix[i-1]) == 101) && int(infix[i]) == 45)){
+            while(i<len && ((int(infix[i]) > 47 && int(infix[i]) < 58) || (int(infix[i]) == 101) || (int(infix[i]) == 46) || ((int(infix[i-1]) == 101) && (int(infix[i]) == 45 || int(infix[i]) == 43)))){
                 //48-58 == 0-9; 101 == e; 46 == .; 45 == -;
+                if (infix[i] == '+'){
+                    i++;
+                    continue;
+                }
                 tmp+=infix[i];
                 i++;
             }
@@ -380,6 +380,7 @@ double Arithmetic::StringToDouble(std::string str) {
                 throw logic_error ("double dot");
         }
         else if(str[i] == 'e'){
+            if (i == sz-1) throw logic_error ("e in the last");
             if(!wasE){
                 wasE = true;
                 indE = i;
