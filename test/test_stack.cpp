@@ -120,6 +120,31 @@ TEST(TStack, stack_size_decreases_on_pop)
 	ASSERT_EQ(1, s.size());
 }
 
+TEST(TStack, can_clear_stack)
+{
+	TStack<int> s;
+	ASSERT_NO_THROW(s.clear());
+}
+
+TEST(TStack, can_clear_large_stack)
+{
+	TStack<int> s;
+	for (int i = 0; i < 1000; i++)
+		s.push(i);
+	ASSERT_NO_THROW(s.clear());
+}
+
+TEST(TStack, clear_resets_stack_size)
+{
+	TStack<int> s;
+	s.push(42);
+	s.push(42);
+	s.push(42);
+	s.push(42);
+	s.clear();
+	EXPECT_TRUE(s.isEmpty());
+}
+
 TEST(TStack, isempty_returns_true_on_empty_stack)
 {
 	TStack<int> s;

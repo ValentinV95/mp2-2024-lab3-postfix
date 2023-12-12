@@ -12,11 +12,11 @@ template <class T>
 class TStack
 {
 public:
-	TStack() : sz(0), cap(256) { data = new T[cap](); }
+	TStack() : sz(0), cap(256) { data = new T[cap]; }
 	TStack(const TStack& s) : sz(s.sz), cap(s.cap)
 	{
 		data = new T[cap];
-		std::copy(s.data, s.data + cap, data);
+		std::copy(s.data, s.data + sz, data);
 	}
 
 	TStack(TStack&& s) noexcept
@@ -32,6 +32,7 @@ public:
 		sz = 0;
 		cap = 0;
 		delete[] data;
+		data = nullptr;
 	}
 
 	TStack& operator=(const TStack& s)
@@ -45,7 +46,10 @@ public:
 
 	TStack& operator=(TStack&& s) noexcept
 	{
-		TStack tmp(s);
+		delete[] data;
+		sz = 0;
+		cap = 0;
+		data = nullptr;
 		swap(*this, s);
 		return *this;
 	}
@@ -75,7 +79,11 @@ public:
 		else throw std::runtime_error("Trying to pop from empty stack");
 	}
 
-	void clear() { while (!isEmpty()) pop(); }
+	void clear()
+	{
+		TStack s;
+		swap(*this, s);
+	}
 
 	T& top() 
 	{ 
