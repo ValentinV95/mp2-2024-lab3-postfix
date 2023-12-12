@@ -10,6 +10,8 @@
 
 using namespace std;
 
+double calculate_expr(const string &expr, istream& values_stream = std::cin);
+
 double string_to_decimal(const string &expr);
 int string_to_integer(const string &expr);
 
@@ -114,8 +116,8 @@ void TPostfix<T>::askOperands(istream& from, ostream& log) {
 		else {
 			log << "\"" << it->first << "\": ";
 			from >> it->second;
-			from.clear();
-			getline(from, buf_to_ignore);
+			//from.clear();
+			//getline(from, buf_to_ignore);
 		}
 	}
 }

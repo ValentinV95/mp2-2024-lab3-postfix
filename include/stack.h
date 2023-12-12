@@ -26,6 +26,30 @@ public:
 		size = 0;
 		capacity = 0;
 	}
+	TStack(const TStack &copy) {
+		size = copy.size;
+		capacity = copy.capacity;
+		pMem = new T[capacity];
+		for (size_t i = 0; i < size; i++) {
+			pMem[i] = copy.pMem[i];
+		}
+	}
+	TStack& operator=(const TStack &sec) {
+		if (this == &sec) {
+			return *this;
+		}
+		size = sec.size;
+		if (capacity != sec.capacity) {
+			T *temp = pMem;
+			capacity = sec.capacity;
+			pMem = new T[capacity];
+			delete[] temp;
+		}
+		for (size_t i = 0; i < size; i++) {
+			pMem[i] = sec.pMem[i];
+		}
+		return *this;
+	}
 	void push(T elem) {
 		if (isFull()) {
 			rearrange();

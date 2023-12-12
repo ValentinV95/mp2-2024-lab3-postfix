@@ -2,6 +2,16 @@
 
 #include "arithmetic.h"
 
+double calculate_expr(const string &expr, istream& values_stream) {
+	TPostfix<double> postfix;
+	vector<string> lexems = arithmetic_to_lexems(expr);
+	postfix.toPostfix(lexems);
+	postfix.askOperands(values_stream);
+	double res;
+	res = postfix.calculate();
+	return res;
+}
+
 double string_to_decimal(const string &expr) {
 	double res = 0.0;
 	if (expr.size() == 0) {
