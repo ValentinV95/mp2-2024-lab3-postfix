@@ -8,79 +8,103 @@
 // - очистка стека
 // при вставке в полный стек должна перевыделяться память
 
-template <class T>
-class TStack {
+#ifndef __STACK_H__
+#define __STACK_H__
+
+#include <iostream>
+
+template<typename T>
+class TStack
+{
 private:
-    T* data;
-    size_t size;
-    size_t capacity;
+	T* data;
+	size_t size;
+	int index;
 public:
-    TStack() 
-    {
-        data = new T[10];
-        capacity = 10;
-        size = 0;
-    }
-    bool isEmpty() {
-        return size == 0;
-    }
-    T top() {
-        if (isEmpty())
-        {
-            throw std::out_of_range("stack is empty");
-        }
-        else
-        {
-            return data[--size];
-        }
-    }
-    T pop() {
-        if (isEmpty())
-        {
-            throw std::out_of_range("stack is empty");
-        }
-        else 
-        {
-            T mas = data[--size];
-            data[size - 1] = {};
-            size--;
-            return mas;
-        }
-    }
-    void push(T a) {
-        if (size == capacity)
-        {
-            resize();
-        }
-        data[size++] = a;
-    }
-    void resize() 
-    {
-        T* mas = new T[size];
-        std::memcpy(mas, data, this->size * sizeof(T));
-        delete[] data;
-        data = new T[size * 2];
-        for (int i = 0; i < size; i++) 
-        {
-            data[i] = mas[i];
-        }
-        capacity = size * 2;
-    }
-    size_t get_size() 
-    {
-        return size;
-    }
-    void clear() 
-    {
-        for (int i = 0; i < size; i++) 
-        {
-            data[i] = {};
-        }
-    }
-    ~TStack() 
-    {
-        delete[] data;
-        size = 0;
-        capacity = 0;
-    }
+	TStack()
+	{
+		data = new T[100];
+		index = -1;
+		size = 100;
+	}
+	TStack(size_t n)
+	{
+		if (n < 0)
+		{
+			throw "Incorrent size stack";
+		}
+		size = n;
+		data = new T[size];
+		index = -1;
+	}
+	TStack(const TStack& a)
+	{
+		size = a.size;
+		head = a.head;
+		data = new T[szie];
+		for (size_t i = 0; i < size; i++)
+		{
+			data[i] = a.data[i];
+		}
+	}
+	~TStack()
+	{
+		delete[] data;
+	}
+	bool isEmpty()
+	{
+		return index == -1;
+	}
+	bool isFull()
+	{
+		return index == size - 1;
+	}
+	void push(T a)
+	{
+		if (isFull())
+		{
+			T* s = new T[size * 2];
+			for (int i = 0; i < size; i++)
+				s[i] = data[i];
+			delete[]data;
+			size = size * 2;
+			data = s;
+		}
+		data[index + 1] = a;
+		index++;
+	}
+	T pop()
+	{
+		if (!isEmpty())
+		{
+			return data[index--];
+		}
+		else
+		{
+			throw "Stack is empty";
+		}
+	}
+	void clear()
+	{
+		delete[] data;
+		data = new T[size];
+		index = -1;
+	}
+	int Getsize()
+	{
+		return size;
+	}
+	T peek()
+	{
+		if (!isEmpty())
+		{
+			return data[index];
+		}
+		else
+		{
+			throw "Is Empty stack";
+		}
+	}
 };
+
+#endif

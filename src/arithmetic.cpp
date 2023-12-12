@@ -1,4 +1,4 @@
-//реализация функций и классов для вычисления арифметических выражений
+// реализация функций и классов для вычисления арифметических выражений
 
 #include "arithmetic.h"
 
@@ -23,6 +23,7 @@ int Postfix::operationPriority(char priority)
     }
     return false;
 }
+
 void Postfix::checkBrackets(const std::string& s)const
 {
     int leftBrackets = 0;
@@ -43,10 +44,12 @@ void Postfix::checkBrackets(const std::string& s)const
         throw myExcp("Incorrect line. Bracket placement error.");
     }
 }
+
 bool Postfix::isDigit(const char& s)
 {
     return (s >= '0' && s <= '9') || s == '.';
 }
+
 int Postfix::checkingLine(std::string& s)
 {
     if (s.length() == 0)
@@ -120,6 +123,7 @@ int Postfix::checkingLine(std::string& s)
     }
     return false;
 }
+
 double conversion(std::string s)
 {
     double result = 0.0;
@@ -130,28 +134,34 @@ double conversion(std::string s)
     }
     return result;
 }
+
 double NumConversion(std::string strlex)
 {
     if (strlex.size() == 0)
     {
         throw myExcp("Incorrect digit form");
     }
+
     if (strlex[0] == '+')
     {
         return NumConversion(strlex.substr(1, strlex.size()));
     }
+
     if (strlex[0] == '-')
     {
         return -1. * NumConversion(strlex.substr(1, strlex.size()));
     }
+
     if (std::count(strlex.begin(), strlex.end(), '.') > 1)
     {
         throw myExcp("Incorrect digit form");
     }
+
     int dot_ind = strlex.find('.');
     double digit = 0.0;
     std::string left_of_dot;
     std::string right_of_dot;
+
     if (dot_ind == std::string::npos)
     {
         digit = conversion(strlex);
@@ -169,6 +179,7 @@ double NumConversion(std::string strlex)
     }
     return digit;
 }
+
 std::string Postfix::ToPostfix(std::string infixString)
 {
     if (!infixString.length())
@@ -191,7 +202,9 @@ std::string Postfix::ToPostfix(std::string infixString)
     {
         throw myExcp("Incorrect line. Error in arranging operations.");
     }
+
     checkBrackets(infixString);
+
     std::map <char, int> operations;
     operations['~'] = 4;
     operations['*'] = 3;
@@ -199,6 +212,7 @@ std::string Postfix::ToPostfix(std::string infixString)
     operations['+'] = 2;
     operations['-'] = 2;
     operations['('] = 1;
+
     TStack<char> result;
     TStack<char> operationsStack;
     for (size_t i = 0; i < infixString.length(); i++)
@@ -209,9 +223,9 @@ std::string Postfix::ToPostfix(std::string infixString)
         }
         if (operations.count(infixString[i]))
         {
-            if ((!operationsStack.isEmpty()) && (operations[infixString[i]] <= operations[operationsStack.top()]) && (infixString[i] != '('))
+            if ((!operationsStack.isEmpty()) && (operations[infixString[i]] <= operations[operationsStack.peek()]) && (infixString[i] != '('))
             {
-                while ((!operationsStack.isEmpty()) && (operations[infixString[i]] <= operations[operationsStack.top()]))
+                while ((!operationsStack.isEmpty()) && (operations[infixString[i]] <= operations[operationsStack.peek()]))
                 {
                     result.push(' ');
                     result.push(operationsStack.pop());

@@ -1,4 +1,8 @@
 // объ€вление функций и классов дл€ вычислени€ арифметических выражений
+
+#ifndef _ARIFMETIC_H_
+#define _ARIFMETIC_H_
+
 #include <iostream>
 #include <stdexcept>
 #include "string"
@@ -29,3 +33,5 @@ public:
 		return error.c_str();
 	}
 };
+
+#endif

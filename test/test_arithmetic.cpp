@@ -11,7 +11,6 @@ TEST(Postfix, operation_plus)
 
 	EXPECT_EQ(str1, p.ToPostfix(str));
 }
-
 TEST(Postfix, operation_sub)
 {
 	std::string str = "a-b-c";
