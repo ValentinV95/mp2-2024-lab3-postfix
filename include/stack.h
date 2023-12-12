@@ -64,12 +64,12 @@ public:
 		return pMem[ind];
 	}
 
-	bool isEmpty()
+	bool isEmpty() const noexcept
 	{
 		return ind == -1;
 	}
 
-	size_t GetSize()
+	size_t GetSize() const noexcept
 	{
 		return ind + 1;
 	}
