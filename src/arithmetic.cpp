@@ -8,6 +8,8 @@ ArithmeticExpr::ArithmeticExpr(string infx) {
 }
 int StringIsAlmostCorrect(string s) { 
 	int count = 0;
+	if (s[0] == 'e' && s[1] != 'x') return 0; //e for numbers, it cannot be the first character
+	if (s[s.length() - 1] == 'e') return s.length() - 1; //e for numbers, it cannot be the last character
 	for (int i = 0; i < s.length(); i++) {
 		if ((s[i] == '('|| s[i] == '+' || s[i] == '-' || s[i] == '*' || s[i] == '/') && (s[i + 1] == ')' || s[i + 1] == '+' || s[i + 1] == '*' || s[i + 1] == '/')) {
 			return i; //checking for errors (*, +*, etc.
@@ -37,7 +39,7 @@ int StringIsAlmostCorrect(string s) {
 
 		
 		else if (i > 0 && s[i] == 'e' && s[i+1] != 'x' && s[i+2] != 'p') {
-			if (!(s[i + 1] == '+' || s[i + 1] == '-') &&!(s[i - 1] == '0' || s[i - 1] == '1' || s[i - 1] == '2' || s[i - 1] == '3' || s[i - 1] == '4' || s[i - 1] == '5' || s[i - 1] == '6' || s[i - 1] == '7' || s[i - 1] == '8' || s[i - 1] == '9' || s[i - 1] == '.')) return i;
+			if (!(s[i + 1] == '+' || s[i + 1] == '-') ||!(s[i - 1] == '0' || s[i - 1] == '1' || s[i - 1] == '2' || s[i - 1] == '3' || s[i - 1] == '4' || s[i - 1] == '5' || s[i - 1] == '6' || s[i - 1] == '7' || s[i - 1] == '8' || s[i - 1] == '9' || s[i - 1] == '.')) return i;
 		}// there are no incorrect characters near e
 
 		if ((s[i] == 's' && s[i + 1] == 'i' && s[i + 2] == 'n' && s[i + 3] != '(')) return i; //correctness of function input
@@ -48,8 +50,7 @@ int StringIsAlmostCorrect(string s) {
 		if ((s[i] == 'l' && s[i + 1] == 'n' && s[i + 2] != '(')) return i;
 		
 	}
-	if (s[0] == 'e' && s[1] != 'x' && s[2] != 'p') return 0; //e for numbers, it cannot be the first character
-	if (s[s.length()-1] == 'e') return s.length()-1; //e for numbers, it cannot be the last character
+	
 	if (s[s.length() - 1] == '(' || s[s.length() - 1] == '+' || s[s.length() - 1] == '-' || s[s.length() - 1] == '*' || s[s.length() - 1] == '/') return -1; // the line does not end with the or operation (
 	if (count != 0) return -2; // the quantities '(' and ')' are equal
 	return -128;
