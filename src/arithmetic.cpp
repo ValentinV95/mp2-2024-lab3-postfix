@@ -1,6 +1,7 @@
 // реализация функций и классов для вычисления арифметических выражений
 
 #include "arithmetic.h"
+#include <sstream>
 
 int Postfix::operationPriority(char priority)
 {
@@ -50,23 +51,30 @@ bool Postfix::isDigit(const char& s)
     return (s >= '0' && s <= '9') || s == '.';
 }
 
-int Postfix::checkingLine(std::string& s)
+void throw_err(size_t i)
+{
+    std::stringstream ss;
+    ss << "Error, position "<< i;
+    throw std::invalid_argument(ss.str());
+}
+
+void Postfix::checkingLine(std::string& s)
 {
     if (s.length() == 0)
     {
-        return true;
+        throw_err;
     }
     Postfix p;
     if (s.length() == 1)
     {
         if (p.operationPriority(s[0]))
         {
-            return true;
+            throw_err;
         }
     }
     if (p.operationPriority(s[0]) > 1)
     {
-        return true;
+        throw_err;
     }
 
     for (size_t i = 0, j = 1; j < s.length(); j++)
@@ -77,15 +85,15 @@ int Postfix::checkingLine(std::string& s)
         }
         if ((s[i] == '(') && ((s[j] == '+') || (s[j] == '*') || (s[j] == '/') || (s[j] == '-')))
         {
-            return true;
+            throw_err;
         }
         if ((s[j] == ')') && ((s[i] == '-') || (s[i] == '+') || (s[i] == '*') || (s[i] == '/')))
         {
-            return true;
+            throw_err;
         }
         if ((s[i] == ')') && (s[j] == '('))
         {
-            return true;
+            throw_err;
         }
         if ((s[i] == s[j]) && (s[i] == '('))
         {
@@ -97,31 +105,31 @@ int Postfix::checkingLine(std::string& s)
         }
         if ((s[i] == '*') && ((s[j] == '+') || (s[j] == '-') || (s[j] == '/') || (s[j] == '+') || (s[j] == ')')))
         {
-            return true;
+            throw_err;
         }
         if ((s[i] == '/') && ((s[j] == '+') || (s[j] == '-') || (s[j] == '*') || (s[j] == '+') || (s[j] == '/') || (s[j] == ')')))
         {
-            return true;
+            throw_err;
         }
         if ((s[i] == '+') && ((s[j] == '*') || (s[j] == '-') || (s[j] == '/') || (s[j] == '+') || (s[j] == ')')))
         {
-            return true;
+            throw_err;
         }
         if ((s[i] == '-') && ((s[j] == '+') || (s[j] == '-') || (s[j] == '/') || (s[j] == '+') || (s[j] == ')')))
         {
-            return true;
+            throw_err;
         }
         if ((s[j] == ')') && ((s[i] == '+') || (s[i] == '-') || (s[i] == '*') || (s[i] == '/')))
         {
-            return true;
+            throw_err;
         }
         if ((s[i] == '~') && ((s[j] == '+') || (s[j] == '-') || (s[j] == '/') || (s[j] == '*') || (s[j] == ')')))
         {
-            return true;
+            throw_err;
         }
         i++;
     }
-    return false;
+    throw_err;
 }
 
 double conversion(std::string s)
@@ -198,11 +206,8 @@ std::string Postfix::ToPostfix(std::string infixString)
             infixString[i] = '~';
         }
     }
-    if (checkingLine(infixString))
-    {
-        throw invalid_argument("Incorrect line. Error in arranging operations.");
-    }
-
+    checkingLine(infixString);
+    
     checkBrackets(infixString);
 
     std::map <char, int> operations;
@@ -223,9 +228,9 @@ std::string Postfix::ToPostfix(std::string infixString)
         }
         if (operations.count(infixString[i]))
         {
-            if ((!operationsStack.isEmpty()) && (operations[infixString[i]] <= operations[operationsStack.peek()]) && (infixString[i] != '('))
+            if ((!operationsStack.isEmpty()) && (operationPriority(infixString[i]) <= operations[operationsStack.peek()]) && (infixString[i] != '('))
             {
-                while ((!operationsStack.isEmpty()) && (operations[infixString[i]] <= operations[operationsStack.peek()]))
+                while ((!operationsStack.isEmpty()) && (operationPriority(infixString[i]) <= operations[operationsStack.peek()]))
                 {
                     result.push(' ');
                     result.push(operationsStack.pop());
@@ -351,10 +356,6 @@ double Postfix::calculate(const std::string& postfixString, std::map<char, doubl
         case '/':
             rightOperand = result.pop();
             leftOperand = result.pop();
-            if (rightOperand < 0.0001 && rightOperand > -0.0001)
-            {
-                throw invalid_argument("Division by zero.");
-            }
             result.push(leftOperand / rightOperand);
             break;
         case '~':

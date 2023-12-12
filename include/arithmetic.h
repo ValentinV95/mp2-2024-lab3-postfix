@@ -15,7 +15,8 @@ protected:
 	int operationPriority(char);
 	void checkBrackets(const std::string&)const;
 	bool isDigit(const char&);
-	int checkingLine(std::string&);
+	void checkingLine(std::string&);
+	void throw_err(size_t i);
 public:
 	std::string ToPostfix(std::string);
 	double calculate(const std::string&, std::map<char, double>&);

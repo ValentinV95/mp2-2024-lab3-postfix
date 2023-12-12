@@ -20,6 +20,10 @@ private:
 	T* data;
 	size_t size;
 	int index;
+	bool isFull()
+	{
+		return index == size - 1;
+	}
 public:
 	TStack()
 	{
@@ -51,10 +55,6 @@ public:
 	{
 		return index == -1;
 	}
-	bool isFull()
-	{
-		return index == size - 1;
-	}
 	void push(T a)
 	{
 		if (isFull())
@@ -83,6 +83,8 @@ public:
 	void clear()
 	{
 		delete[] data;
+		tmp = new T[100];
+		data = tmp;
 		index = -1;
 	}
 	int Getsize()
