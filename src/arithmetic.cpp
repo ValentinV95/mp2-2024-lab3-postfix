@@ -12,7 +12,7 @@ int Arithmetic::InfixCheck() {
     for(int i = 0; i < len; i++){
         if(int(infix[i])<48 || int(infix[i])>57){ //valid character check
             if (infix[i]!= '+' && infix[i] != '-' && infix[i] != '*' && infix[i] != '/' && infix[i] != '(' && infix[i] != ')'
-            && infix[i] != 'x' && infix[i] != 's' && infix[i] != 'i' && infix[i] != 'n' && infix[i] != 'c'
+            && infix[i] != '.' && infix[i] != 'x' && infix[i] != 's' && infix[i] != 'i' && infix[i] != 'n' && infix[i] != 'c'
             && infix[i] != 'o' && infix[i] != 't' && infix[i] != 'g' && infix[i] != 'l' && infix[i] != 'e' && infix[i] != 'p'){
                 cout << "error in " << i << "symbol";
                 throw invalid_argument("wrong symbol");
