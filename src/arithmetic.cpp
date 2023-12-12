@@ -111,6 +111,7 @@ TPostfix::TPostfix(const std::string& str) {
 			St.push_back(tmp);
 		}
 		else if ((s[i] >= '0' && s[i] <= '9') || s[i] == '.') { //Work with numbers
+			if (s[i] == '0'&&s[i+1]!='.') throw std::invalid_argument(Error_string(s, i) + "Number cannot be started from \'0\'");
 			RPN.push_back(number_check(s, i));
 		}
 		else if (s[i] == 'x') { //Work with variables
@@ -141,7 +142,7 @@ double TPostfix::count() {
 			else if (RPN[i] == "-") St.push_back(-St.pop_back() + St.pop_back());
 			else if (RPN[i] == "*") St.push_back(St.pop_back() * St.pop_back());
 			else if (RPN[i] == "/") St.push_back(1 / St.pop_back() * St.pop_back());
-			else if (RPN[i] == "~") St.push_back(-St.pop_back());
+			else if (RPN[i] == "~") St.top() *= -1;
 			else if (RPN[i] == "sin") St.push_back(sin(St.pop_back()));
 			else if (RPN[i] == "cos") St.push_back(cos(St.pop_back()));
 			else if (RPN[i] == "tan") St.push_back(tan(St.pop_back()));
@@ -176,7 +177,7 @@ double TPostfix::count(double* variables, int number_of_variables) {
 			else if (RPN[i] == "-") St.push_back(-St.pop_back() + St.pop_back());
 			else if (RPN[i] == "*") St.push_back(St.pop_back() * St.pop_back());
 			else if (RPN[i] == "/") St.push_back(1 / St.pop_back() * St.pop_back());
-			else if (RPN[i] == "~") St.push_back(-St.pop_back());
+			else if (RPN[i] == "~") St.top() *= -1;
 			else if (RPN[i] == "sin") St.push_back(sin(St.pop_back()));
 			else if (RPN[i] == "cos") St.push_back(cos(St.pop_back()));
 			else if (RPN[i] == "tan") St.push_back(tan(St.pop_back()));
