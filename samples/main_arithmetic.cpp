@@ -20,7 +20,17 @@ int main()
 			try
 			{
 				cout << "Give the expression without spaces: ";
-				cin >> exp;
+				getline(cin,exp);
+				string error;
+				for (int i = 0; i < exp.length(); i++)
+				{
+					error += exp[i];
+					if (exp[i] == ' ')
+					{
+						error += " <- You shouldn`t use spaces";
+							throw invalid_argument(error.c_str());
+					}
+				}
 				Arithmetic expression(exp);
 
 				int choice;
