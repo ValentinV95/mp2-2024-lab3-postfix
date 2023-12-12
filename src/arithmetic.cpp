@@ -5,6 +5,13 @@ Arithmetic::~Arithmetic()
 {
 	delete[] SetOfLexems;
 	delete[] variables;
+	variables = nullptr;
+	SetOfLexems = nullptr;
+	operands = ""; 
+	postfix = ""; 
+	infix = ""; 
+	lexemSize = 0; 
+	lexemSize = 0;
 }
 
 Arithmetic::Arithmetic(string& str): infix(str)
@@ -14,6 +21,36 @@ Arithmetic::Arithmetic(string& str): infix(str)
 	SetOfLexems = new string[size]();
 	Parser();
 	variables = new string[variableSize];
+	int nameSize = 0;
+	for (size_t i = 0; i < operands.length(); i++)
+		if (operands[i] != ' ')
+			variables[nameSize].push_back(operands[i]);
+		else
+		{
+			nameSize++;
+		}
+	makePostfix();
+}
+
+void Arithmetic::setInfix(string& str)
+{
+	postfix = "";
+	infix = "";
+	operands = "";
+	infix = str;
+	int size = infix.length();
+	infixCheck();
+
+	string* SetOfLexems_new = new string[size]();
+	delete[] SetOfLexems;
+	SetOfLexems = SetOfLexems_new;
+
+	Parser();
+
+	string* variables_new = new string[variableSize];
+	delete[] variables;
+	variables = variables_new;
+
 	int nameSize = 0;
 	for (size_t i = 0; i < operands.length(); i++)
 		if (operands[i] != ' ')
@@ -86,7 +123,7 @@ void Arithmetic::Parser()
 			}
 			if (isDigit(infix[i])) //if it`s a number
 			{
-				while (((!isOperation(infix[i])) || (infix[i - 1] == 'e')) && i < infix.length())
+				while ((!(isOperation(infix[i]) || infix[i] == '(' || infix[i] == ')') || infix[i - 1] == 'e') && i < infix.length())
 					SetOfLexems[lexemSize].push_back(infix[i++]);
 				lexemSize++;
 			}
@@ -169,9 +206,6 @@ void Arithmetic::infixCheck()
 	string arrow = " <- ";
 	int open = 0, close = 0;
 	int breckets = 0;
-	
-	if (infix.find(' ')!=-1)
-		throw invalid_argument("You shold not use spaces");
 
 	if ((!isOperand(infix[0])) && (!isDigit(infix[0])) && infix[0] != '(' && infix[0] != '-')
 	{
@@ -184,6 +218,7 @@ void Arithmetic::infixCheck()
 	for (size_t i = 0; i < infix.length() - 1; i++) {
 
 		if (i < infix.length() - 1 && isDigit(infix[i])) {
+			int op = i-1;
 			string name;
 			while (((!isOperation(infix[i])) && infix[i] != ')' && infix[i] != '(') && (i < infix.length()))
 			{
@@ -197,6 +232,11 @@ void Arithmetic::infixCheck()
 					error += arrow + "The mistake in a digit";
 					throw invalid_argument(error.c_str());
 				}
+			if (infix[op]== '/' && name == "0")
+			{
+				error += arrow + "Division by zero isn`t correct";
+				throw invalid_argument(error.c_str());
+			}
 			if (infix[i] == '(')
 			{
 				error += infix[i];
@@ -209,8 +249,13 @@ void Arithmetic::infixCheck()
 
 		if (i < infix.length() - 1 && isOperand(infix[i])) {
 			string name;
-			while (!(isOperation(infix[i]) || infix[i] == ')' || infix[i] == '(') && i < infix.length()) {
+			while (!(isOperation(infix[i]) || infix[i] == ')' || infix[i] == '(' || infix[i]==' ') && i < infix.length()) {
 
+				if (infix[i]==' ')
+				{
+					error += arrow + "You shold not use spaces";
+					throw invalid_argument(error.c_str());
+				}
 				name.push_back(infix[i]);
 				error += infix[i++];
 			}
@@ -266,11 +311,17 @@ void Arithmetic::infixCheck()
 
 	}
 
+	error += infix[infix.length() - 1];
 	if (!(isDigit(infix[infix.length() - 1]) || isOperand(infix[infix.length() - 1]) || infix[infix.length() - 1] == ')')) {
-		error += infix[infix.length() - 1];
 		error += arrow + "Here should be digit, veriable or ')'";
 		throw invalid_argument(error.c_str());
 	}
+	if (infix[infix.length() - 1] == '0' && infix[infix.length() - 2] == '/')
+	{
+		error += arrow + "Division by zero isn`t correct";
+		throw invalid_argument(error.c_str());
+	}
+
 
 	for (size_t i = 0; i < infix.length(); i++) {
 		if (infix[i] == '(') open++;
@@ -279,7 +330,8 @@ void Arithmetic::infixCheck()
 
 
 	if (open != close) {
-		throw invalid_argument("Wrong number of brackets");
+		error += arrow + "Here should be more closed breckets";
+		throw invalid_argument(error.c_str());
 	}
 
 
@@ -298,6 +350,7 @@ double Arithmetic::calculate()
 	}
 
 	TDynamicStack<double> st;
+	double eps = pow(10, -20);
 
 	for (size_t i = 0; i < postfix.size(); i++)
 	{
@@ -333,7 +386,10 @@ double Arithmetic::calculate()
 				st.push(val1 * val2);
 				break;
 			case '/':
-				st.push(val1 / val2);
+				if (abs(val2) < eps)
+					throw runtime_error ("There is division by zero, it isn't possible");
+				else
+					st.push(val1 / val2);
 				break;
 			}
 		}
@@ -361,11 +417,11 @@ double Arithmetic::makeDouble(string str)
 	double res = 0.0, sign = 1.0;
 
 
-	if (str.find('.') != -1 && str.find('e') == -1) {//there is dote
+	if (str.find('.') != -1 && str.find('e') == -1) {//there is dot
 
 		double beforepoint = 0, afterpoint = 0;
 		string beforepoint_s, afterpoint_s;
-		size_t p = str.find('.');//position of the dote
+		size_t p = str.find('.');//position of the dot
 
 		for (size_t i = 0; i < p; i++) { beforepoint_s += str[i]; }
 		for (size_t i = p + 1; i < str.size(); i++) { afterpoint_s += str[i]; }
@@ -399,7 +455,7 @@ double Arithmetic::makeDouble(string str)
 		}
 	}
 
-	else { //no dote, no e
+	else { //no dot, no e
 
 		if (str[0] == '~' || str[0] == '-') {
 
