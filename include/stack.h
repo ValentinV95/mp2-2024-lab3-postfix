@@ -80,5 +80,7 @@ public:
 	~TStack()
 	{
 		delete[] pMem;
+		pMem = nullptr;
+		ind = 0;
 	}
 };
