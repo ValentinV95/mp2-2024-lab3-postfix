@@ -10,7 +10,7 @@ int Arithmetic::InfixCheck() {
     int tmp;
     int bracketNum = 0;
     for(int i = 0; i < len; i++){
-        if(int(infix[i])<46 || int(infix[i])>57){ //valid character check
+        if(int(infix[i])<48 || int(infix[i])>57){ //valid character check
             if (infix[i]!= '+' && infix[i] != '-' && infix[i] != '*' && infix[i] != '/' && infix[i] != '(' && infix[i] != ')'
             && infix[i] != 'x' && infix[i] != 's' && infix[i] != 'i' && infix[i] != 'n' && infix[i] != 'c'
             && infix[i] != 'o' && infix[i] != 't' && infix[i] != 'g' && infix[i] != 'l' && infix[i] != 'e' && infix[i] != 'p'){
@@ -39,25 +39,27 @@ int Arithmetic::InfixCheck() {
             }
         }
         else if (infix[i] == '.'){
-            if (i==0 && int(infix[i+1]) <46 && int(infix[i+1] > 57)){
-                if (infix[i+1] != 'e'){
+            if (i==0 && int(infix[i+1]) <48 || int(infix[i+1] > 57)){
                     cout << "error in " << i << "symbol";
-                    throw invalid_argument("syntax's error");
-                }
+                    throw invalid_argument("syntax's error in num's form");
             }
-            else if (i == len-1 && int(infix[i-1]) <46 && int(infix[i-1] > 57)){
+            else if (i == len-1 && (int(infix[i-1]) <48 || int(infix[i-1] > 57))){
                 cout << "error in " << i << "symbol";
-                throw invalid_argument("syntax's error");
+                throw invalid_argument("syntax's error in num's form");
             }
-            else if((int(infix[i-1]) <46 && int(infix[i-1] > 57)) || (infix[i+1]) <46 && int(infix[i+1] > 57)){
+            else if((int(infix[i-1]) <48 || int(infix[i-1]) > 57) && (int(infix[i+1]) <48 || int(infix[i+1] > 57))){
                 if (infix[i+1] != 'e'){
                     cout << "error in " << i << "symbol";
-                    throw invalid_argument("syntax's error");
+                    throw invalid_argument("syntax's error in num's form");
+                }
+                else if (infix[i+1] == 'e' && (int(infix[i-1]) <48 || int(infix[i-1]) > 57)){
+                    cout << "error in " << i << "symbol";
+                    throw invalid_argument("syntax's error in num's form");
                 }
             }
         }
         else if (infix[i] == 'e'){
-            if((int(infix[i-1]) <46 && int(infix[i-1] > 57)) || (infix[i+1]) <46 && int(infix[i+1] > 57)){
+            if((int(infix[i-1]) <48 && int(infix[i-1] > 57)) || (infix[i+1]) <46 && int(infix[i+1] > 57)){
                 if (infix[i-1] != '.'){
                     cout << "error in " << i << "symbol";
                     throw invalid_argument("syntax's error");
@@ -102,7 +104,7 @@ void Arithmetic::Parse() {
         tmp = "";
         if ((infix[i] > 47 && infix[i] < 58) || infix[i] == '.'){
             while(i<len && ((int(infix[i]) > 47 && int(infix[i]) < 58) || (int(infix[i]) == 101) || (int(infix[i]) == 46) || (int(infix[i-1]) == 101) && int(infix[i]) == 45)){
-                //47-58 == 0-9; 101 == e; 46 == .; 45 == -;
+                //48-58 == 0-9; 101 == e; 46 == .; 45 == -;
                 tmp+=infix[i];
                 i++;
             }
@@ -401,7 +403,7 @@ double Arithmetic::StringToDouble(std::string str) {
         if(wasEMinus){
             tmp--;
         }
-        for (int i = indE+1 +(1*wasEMinus); i<sz; i++){
+        for (int i = indE+1 +(1*wasEMinus); i<sz; i++){ //number creation in int after e
             numE += (int(str[i])-48)*int(pow(10, tmp));
             tmp--;
         }
@@ -416,7 +418,7 @@ double Arithmetic::StringToDouble(std::string str) {
         }
     }
     tmp = 0;
-    for(int i = 0; i< sz; i++){
+    for(int i = 0; i< sz; i++){ //number creation in double before e
         if(int(str[i]) > 47 && int(str[i]) < 58){
             res+= (int(str[i])-48)*int(pow(10, (indDot-1+numDot-tmp)*wasDot+(sz-(sz-indE)-tmp-1)*wasE*!wasDot+(sz-1-tmp)*!wasE*!wasDot));
             tmp++;
@@ -425,6 +427,7 @@ double Arithmetic::StringToDouble(std::string str) {
             break;
         }
     }
+    //dividing and multiplying the finished number if there was a dot or e
     if(wasE && wasEMinus){
         res/=pow(10,numE+numDot) ;
     }
