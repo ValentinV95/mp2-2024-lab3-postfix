@@ -41,13 +41,12 @@ public:
     }
     
     void resize() {
-        T* tmp = new T[size];
-        std::memcpy(tmp, data, this->size * sizeof(T));
-        delete[] data;
-        data = new T[size*2];
+        T* tmp = new T[size*2];
         for (int i = 0; i < size; i++) {
-            data[i] = tmp[i];
+            tmp[i]= data[i];
         }
+        delete[] data;
+        data = tmp;
         capacity = size*2;
     }
     size_t get_size() {
