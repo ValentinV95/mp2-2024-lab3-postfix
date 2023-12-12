@@ -9,7 +9,7 @@
 // при вставке в полный стек должна перевыдел€тьс€ пам€ть
 //#include <cstdlib>
 //#include <iostream>
-//#include <exception>
+#include <exception>
 
 
 template <class T>
@@ -22,6 +22,7 @@ private:
 	{
 		T* tmp = new T[2*cap];
 		std::copy(data+0, data+cap,tmp);
+		delete[]data;
 		data = tmp;
 		cap *= 2;
 	}
@@ -46,12 +47,12 @@ public:
 	}
 	T pop()
 	{
-		if (isEmpty()) throw underflow_error("The stack is empty");
+		if (isEmpty()) throw std::underflow_error("The stack is empty");
 		else return data[--size];
 	}
-	T top()
+	T& top()
 	{
-		if (isEmpty()) throw underflow_error("The stack is empty");
+		if (isEmpty()) throw std::underflow_error("The stack is empty");
 		else return data[size-1];
 	}
 	void clear() //очистка стека. ƒва вопроса: зачем и правильно ли?

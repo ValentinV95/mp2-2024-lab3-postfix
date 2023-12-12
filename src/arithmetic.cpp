@@ -2,12 +2,17 @@
 
 #include "arithmetic.h"
 
-TPostfix::TPostfix(string& inp) {
+TPostfix::TPostfix(string& t) {
 	cap_RPN = 10;
 	Rev_Pol_Notation = new Lexeme[cap_RPN]();
 
 	cap_variable = 3;
 	arr_num_variable = new int[cap_variable]();
+
+	string inp;
+	for (i = 0; i < t.length(); i++)
+		if (t[i] != ' ') inp.push_back(t[i]);
+	i = 0;
 
 	size_t quan_open_braсkets = 0;
 
@@ -23,7 +28,7 @@ TPostfix::TPostfix(string& inp) {
 					*(char*)ops.top().lex == '/' || *(char*)ops.top().lex == '-' || *(char*)ops.top().lex == '+'))))
 				insert_result(ops.pop());
 
-			ops.push(tmp);
+			ops.push(move(tmp));
 
 			break;
 		}
@@ -36,7 +41,7 @@ TPostfix::TPostfix(string& inp) {
 					(*(char*)ops.top().lex == '/' || *(char*)ops.top().lex == '*'))))
 				insert_result(ops.pop());
 
-			ops.push(tmp);
+			ops.push(move(tmp));
 
 			break;
 		}
@@ -48,7 +53,7 @@ TPostfix::TPostfix(string& inp) {
 				ops.top().type_of_lex == 1 && *(char*)ops.top().lex == '/')))
 				insert_result(ops.pop());
 
-			ops.push(tmp);
+			ops.push(move(tmp));
 
 			break;;
 			break;
@@ -57,9 +62,11 @@ TPostfix::TPostfix(string& inp) {
 		case '(': {
 			quan_open_braсkets++;
 
+			if(inp[i+1]==')') throw invalid_argument("Incorrect brackets input: brackets are next to each other");
+
 			Lexeme tmp(2, '(');
 
-			ops.push(tmp);
+			ops.push(move(tmp));
 			break;
 		}
 
@@ -82,10 +89,12 @@ TPostfix::TPostfix(string& inp) {
 			{
 				if ((inp[i + 1] <= '9' && inp[i + 1] >= '0') ||
 					inp[i + 1] == '.' || inp[i + 1] == ',' || inp[i + 1] == 'x' ||
-					inp[i + 1] == 'X' || inp[i + 1] == '-' || inp[i + 1] == '(') //если за минусом следует операнд или ещё один минус
+					inp[i + 1] == 'X' || inp[i + 1] == '-' || inp[i + 1] == '(' ||
+					inp[i + 1] == 'e' || inp[i + 1] == 'c' || inp[i + 1] == 's' ||
+					inp[i + 1] == 'l' || inp[i + 1] == 't') //если за минусом следует операнд или ещё один минус
 				{
 					Lexeme tmp(5, '-', i); //определи его унарным минусом
-					ops.push(tmp);
+					ops.push(move(tmp));
 				}
 				else
 				{
@@ -104,7 +113,7 @@ TPostfix::TPostfix(string& inp) {
 						( *(char*)ops.top().lex == '*' || *(char*)ops.top().lex == '-' || *(char*)ops.top().lex == '/')))
 					insert_result(ops.pop());
 
-				ops.push(tmp);
+				ops.push(move(tmp));
 			}
 			break;
 		}
@@ -141,7 +150,7 @@ TPostfix::TPostfix(string& inp) {
 			if (inp[i + 1] == 'i' && inp[i + 2] == 'n')
 			{
 				Lexeme tmp_func(6, 1, i);
-				ops.push(tmp_func);
+				ops.push(move(tmp_func));
 
 				i += 2;
 			}
@@ -158,7 +167,7 @@ TPostfix::TPostfix(string& inp) {
 			if (inp[i + 1] == 'o' && inp[i + 2] == 's')
 			{
 				Lexeme tmp_func(6, 2, i);
-				ops.push(tmp_func);
+				ops.push(move(tmp_func));
 
 				i += 2;
 			}
@@ -175,7 +184,7 @@ TPostfix::TPostfix(string& inp) {
 			if (inp[i + 1] == 'a' && inp[i + 2] == 'n')
 			{
 				Lexeme tmp_func(6, 3, i);
-				ops.push(tmp_func);
+				ops.push(move(tmp_func));
 
 				i += 2;
 			}
@@ -192,7 +201,7 @@ TPostfix::TPostfix(string& inp) {
 			if (inp[i + 1] == 'x' && inp[i + 2] == 'p')
 			{
 				Lexeme tmp_func(6, 4, i);
-				ops.push(tmp_func);
+				ops.push(move(tmp_func));
 
 				i += 2;
 			}
@@ -209,7 +218,7 @@ TPostfix::TPostfix(string& inp) {
 			if (inp[i + 1] == 'n')
 			{
 				Lexeme tmp_func(6, 5, i);
-				ops.push(tmp_func);
+				ops.push(move(tmp_func));
 
 				i++;
 			}
@@ -307,20 +316,13 @@ TPostfix::TPostfix(string& inp) {
 	}
 	arr_value_variable = new double[ind_variable];
 
-	duplicate_RPN(1);
+	duplicate_RPN();
 }
 
-void TPostfix::duplicate_RPN(bool RPN_to_copyRPN) {
-	if (RPN_to_copyRPN)
-	{
+void TPostfix::duplicate_RPN() {
 		copy_Rev_Pol_Notation = new Lexeme[ind_RPN];
 		copy(Rev_Pol_Notation, Rev_Pol_Notation + ind_RPN, copy_Rev_Pol_Notation);
-	}
-	else
-	{
-		Rev_Pol_Notation = new Lexeme[ind_RPN];
-		copy(copy_Rev_Pol_Notation, copy_Rev_Pol_Notation + ind_RPN, Rev_Pol_Notation);
-	}
+
 }
 
 void TPostfix::insert_result(const Lexeme& lex)
@@ -358,6 +360,13 @@ void TPostfix::asker()
 		for (size_t j = 0; j < ind_variable; j++)
 			cin >> arr_value_variable[j];
 	}
+}
+
+void TPostfix::input_variables(double* arr, size_t quan)
+{
+	if (quan != ind_variable) throw("Quanity of variables inserted and quanity of variables in input line doesn't match");
+	for (size_t j = 0; j < ind_variable; j++)
+		arr_value_variable[j] = arr[j];
 }
 
 size_t TPostfix::Get_ind_variable()
@@ -461,7 +470,7 @@ double TPostfix::count()
 		}
 		case 4: {																	//встречена переменная
 			Lexeme tmp(7, arr_value_variable[*(size_t*)Rev_Pol_Notation[i].lex]);
-			ops.push(tmp);
+			ops.push(move(tmp));
 			break;
 		}
 		case 5: {																	//встречен унарный -
@@ -501,8 +510,9 @@ double TPostfix::count()
 					(*(double*)ops.top().lex) = log(r_operand);
 			}
 			break;
-		case 7: {																	//встречено число
-			ops.push(Rev_Pol_Notation[i]);
+		case 7: {//встречено число
+			Lexeme tmp = Rev_Pol_Notation[i];
+			ops.push(move(tmp));
 			break;
 		}
 		}
@@ -513,7 +523,7 @@ double TPostfix::count()
 
 	swap(Rev_Pol_Notation, copy_Rev_Pol_Notation);
 	delete[]copy_Rev_Pol_Notation;
-	duplicate_RPN(1);
+	duplicate_RPN();
 
 	if (ops.isEmpty())
 		return res;
