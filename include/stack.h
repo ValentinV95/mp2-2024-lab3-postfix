@@ -19,9 +19,9 @@ class TDynamicStack
     size_t capacity;
     void resize()
     {
+        T* newData = new T[capacity*2]();
+        copy(data, data+capacity, newData);
         capacity *= 2;
-        T* newData = new T[capacity];
-        memcpy(newData, data, ind);
         delete[] data;
         data = newData;
     }
@@ -64,7 +64,7 @@ public:
         else
             return data[--ind];
     }
-    void push(const T& e) noexcept
+    void push(const T& e) 
     {
         if (ind == capacity)
             resize();
@@ -78,5 +78,8 @@ public:
     ~TDynamicStack()
     {
         delete[] data;
+        data = nullptr;
+        ind = 0;
+        capacity = 0;
     }
 };

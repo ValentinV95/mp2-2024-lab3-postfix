@@ -20,6 +20,7 @@ class Arithmetic
 public:
 	~Arithmetic();
 	Arithmetic(string& str);
+	void setInfix(string& str);
 	string getInfix() const;
 	string getPostfix() const;
 	string getOperands() const;
