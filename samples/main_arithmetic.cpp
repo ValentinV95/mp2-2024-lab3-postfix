@@ -14,29 +14,42 @@ int main()
 	cout << " - The exponent is written using the English capital letter E (for example: 2.0E10 or 1.E-2)." << "\n" << "\n";
 
 	string infix;
-	TPostfix math_exp;
 
-	while (1)
+	cout << "Enter an arithmetic expression: ";
+	cin >> infix;
+
+	try 
 	{
-		cout << "Enter an arithmetic expression: ";
-		cin >> infix;
-
-		try
+		while (1)
 		{
-			math_exp.setTPostfix(infix);
-			cout << "Infix form: " << math_exp.getInfix() << "\n";
-			math_exp.toPostfix();
-			cout << "Postfix form: " << math_exp.getPostfix() << "\n";
-			math_exp.toCalculate();
-			cout << setprecision(10) << "Result: " << math_exp.getResult() << "\n";
-		}
-		catch (exception& e) {
-			cout << e.what() << "\n";
-			break;
-		}
+			int a;
+			cout << "Do you want to count? \n1. Yes 2. New expression 3. No " << endl;
+			cin >> a;
 
-		break;
+			if (a == 1)
+			{
+				TPostfix math_exp(infix);
+				cout << "Infix form: " << math_exp.getInfix() << "\n";
+				math_exp.toPostfix();
+				cout << "Postfix form: " << math_exp.getPostfix() << "\n";
+				math_exp.toCalculate();
+				cout << "Result: " << math_exp.getResult() << "\n" << "\n";
+			}
+
+			if (a == 2)
+			{
+				cout << "Enter an arithmetic expression: ";
+				cin >> infix;
+				TPostfix math_exp(infix);
+			}
+			if (a == 3)
+				break;
+		}
 	}
-
+	catch (exception& e)
+	{
+		cout << e.what() << "\n";
+	}
+	
 	return 0;
 }
