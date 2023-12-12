@@ -8,6 +8,16 @@ TEST(TStack, can_create_stack)
     ASSERT_NO_THROW(TStack<int> stack);
 }
 
+TEST(TStack, can_create_stack_with_positive_lenght)
+{
+    ASSERT_NO_THROW(TStack<int> s(1));
+}
+
+TEST(TStack, throws_when_create_stack_with_negative_lenght)
+{
+    ASSERT_ANY_THROW(TStack<int> s(-1));
+}   
+
 TEST(TStack, can_get_stack_size)
 {
     TStack<int> st;
