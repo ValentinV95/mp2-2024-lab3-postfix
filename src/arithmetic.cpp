@@ -2,35 +2,12 @@
 
 #include "arithmetic.h"
 
-TPostfix::TPostfix()
-{
-	size = 0;
-	infix = "";
-	postfix = "";
-	result = 0.0;
-	data = new string[size]();
-}
-
 TPostfix::TPostfix(string new_infix)
 {
 	size = new_infix.size();
 	infix = new_infix;
 	postfix = "";
 	result = 0.0;
-	data = new string[size]();
-
-	toLexem();
-}
-
-void TPostfix::setTPostfix(string infix_new)
-{
-	delete[] data;
-
-	infix = infix_new;
-	size = infix_new.size();
-	postfix = "";
-	result = 0.0;
-
 	data = new string[size]();
 
 	toLexem();
@@ -45,20 +22,31 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 	{
 		if (infix[i] == '+' || infix[i] == '*' || infix[i] == '/')
 		{
-			if (i == 0 || (i + 1) == size || (infix[i - 1] < '0' && infix[i - 1] != ')'))
-				throw invalid_argument("Operation was installed in wrong position");
+			if (i == 0 || (i + 1) == size || !isDigit(infix[i - 1]) && infix[i - 1] != ')')
+			{
+				error += "Operation was installed in wrong position. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
+				
+			}
 
 			data[lexnumber] = infix[i];
 			lexnumber++;
 			continue;
+			
 		}
 
 		else if (infix[i] == '-')
 		{
 			if ((i + 1) == size)
-				throw invalid_argument("Operation was installed in wrong position");
+			{
+				error += "Operation was installed in wrong position. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
 
-			if (i == 0 || (infix[i - 1] < '0' && infix[i - 1] != ')'))
+			}
+
+			if (i == 0 || (!isDigit(infix[i - 1]) && infix[i - 1] != ')'))
 			{
 				data[lexnumber] = '~';
 				lexnumber++;
@@ -80,38 +68,73 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 		else if (infix[i] == '(')
 		{
 			if (i + 1 == size)
-				throw invalid_argument("Opening bracket was installed in wrong position");
+			{
+				error += "Opening bracket was installed in wrong position. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
 
-			if (i != 0 && (infix[i - 1] > '0' || infix[i - 1] == ')'))
-				throw invalid_argument("There is no operation");
+			}
+
+			if (i != 0 && (infix[i - 1] >= '0' && infix[i - 1] <= '9' || infix[i - 1] == ')'))
+			{
+				error += "There is no operation. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
+
+			}
 
 			data[lexnumber] = infix[i];
 			lexnumber++;
 			summ_brackets++;
+
 			continue;
 		}
 
 		else if (infix[i] == ')')
 		{
-			if (i == 0 || (infix[i - 1] < '0' && infix[i - 1] != ')'))
-				throw invalid_argument("Closing bracket was installed in wrong position");
+			if (i == 0 || (!isDigit(infix[i - 1]) && infix[i - 1] != ')'))
+			{
+				error += "Closing bracket was installed in wrong position. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
+			}
 
 			data[lexnumber] = infix[i];
 			lexnumber++;
 			summ_brackets--;
+
+			if (summ_brackets < 0)
+			{
+				error += "Closing bracket was installed in wrong position. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
+			}
+
 			continue;
 		}
 
 		else if (i != 0 && infix[i - 1] == ')')
-			throw invalid_argument("There is no operation");
+		{
+			error += "There is no operation. We have error in position ";
+			error += i + 1 + '0';
+			throw invalid_argument(error.c_str());
+		}
 
 		else if (infix[i] >= 'a' && infix[i] <= 'z')
 		{
 			if (i != 0 && infix[i - 1] >= '0')
-				throw invalid_argument("There is no operation between a number and a variable");
+			{
+				error += "There is no operation between a number and a variable. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
+			}
 
 			if (i + 1 != size && infix[i + 1] == '.')
-				throw invalid_argument("The dot can't be placed after the variable");
+			{
+				error += "The dot can't be placed after the variable. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
+			}
 
 			data[lexnumber] = infix[i];
 			lexnumber++;
@@ -121,12 +144,13 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 		else if (infix[i] >= '0' && infix[i] <= '9')
 		{
 			if (i != 0 && infix[i - 1] >= 'a' && infix[i - 1] <= 'z')
-				throw invalid_argument("There is no operation between a number and a variable");
+			{
+				error += "There is no operation between a number and a variable. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
+			}
 
-			if (infix[i] == '0' && infix[i + 1] >= '0' && infix[i+1] <= '9')
-				throw invalid_argument("The number can't look like this");
-
-			else if (i + 1 == size || (infix[i + 1] < '0' && infix[i + 1] != '.'))
+			else if (i + 1 == size || (!isDigit(infix[i + 1]) && infix[i + 1] != '.'))
 			{
 				data[lexnumber] += infix[i];
 				lexnumber++;
@@ -138,8 +162,12 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 
 		else if (infix[i] == 'E')
 		{
-			if (i + 1 == size || i == 0 || infix[i - 1] < '0' && infix[i - 1] != '.' || infix[i + 1] < '0' && infix[i + 1] != '-')
-				throw invalid_argument("Error, wrong exponentional notation");
+			if (i + 1 == size || i == 0 || !isDigit(infix[i - 1]) && infix[i - 1] != '.' || !isDigit(infix[i + 1]) && infix[i + 1] != '-')
+			{
+				error += "Wrong exponentional notation. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
+			}
 
 			else
 				data[lexnumber] += infix[i];
@@ -148,8 +176,12 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 
 		else if (infix[i] == '.')
 		{
-			if (i == 0 || (i + 1) == size || infix[i - 1] < '0' || infix[i - 1] > '9' || infix[i + 1] < '0' || infix[i + 1] > '9' && infix[i + 1] != 'E')
-				throw invalid_argument("Number must be in math form");
+			if (i == 0 || (i + 1) == size || !isDigit(infix[i - 1]) || !isDigit(infix[i + 1]) && infix[i + 1] != 'E')
+			{
+				error += "Number must be in math form. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
+			}
 
 			else
 				data[lexnumber] += infix[i];
@@ -157,15 +189,21 @@ void TPostfix::toLexem() //converting an expression into lexem mas
 		}
 
 		else
-			throw invalid_argument("There is a foreign creature...");
+		{
+			error += "There is a foreign creature... We have error in position ";
+			error += i + 1 + '0';
+			throw invalid_argument(error.c_str());
+		}
 	}
 
 	if (summ_brackets != 0)
-		throw range_error("Opening and closing brackets must to have equal number");
+	{
+		error += "Opening bracket was installed in wrong position. We have error in position ";
+		throw invalid_argument(error.c_str());
+	}
 
 	size = lexnumber;
 }
-
 void TPostfix::value_of_variable() //assign a value to a variable
 {
 	string operand, value;
@@ -185,7 +223,7 @@ void TPostfix::value_of_variable() //assign a value to a variable
 	}
 }
 
-size_t TPostfix::getPriority(string operat)
+size_t TPostfix::getPriority(string operat) const
 {
 	if (operat == "+" || operat == "-")
 		return 1;
@@ -201,49 +239,41 @@ void TPostfix::toPostfix() //converting infix to postfix
 {
 	size_t psize = 0;
 	string* pform = new string[size];
+	TStack<string> operations;
 
 	for (size_t i = 0; i < size; i++)
 	{
-		if (data[i] == "(")
-			operations.push(data[i]);
-
-		else if (data[i] == ")")
+		if (data[i] < "0" || data[i] == "~")
 		{
-			while ((operations.top() != "(")) 
+			if (data[i] == "(")
+				operations.push(data[i]);
+
+			else if (data[i] == ")")
 			{
-				pform[psize] = operations.pop();
-				psize++;
+				while ((operations.top() != "("))
+					pform[psize++] = operations.pop();
+
+				operations.pop();
 			}
 
-			operations.pop();
-		}
-
-		else if (!(data[i] >= "a" && data[i] <= "z"))
-		{
-			if (!operations.isEmpty() && !(data[i] == "~") && (getPriority(operations.top()) >= getPriority(data[i])))
+			else
 			{
-				while ((!operations.isEmpty()) && (getPriority(operations.top()) >= getPriority(data[i])))
+				if (!(data[i] == "~"))
 				{
-					pform[psize] = operations.pop();
-					psize++;
+					while ((!operations.isEmpty()) && (getPriority(operations.top()) >= getPriority(data[i])))
+						pform[psize++] = operations.pop();
 				}
+
+				operations.push(data[i]);
 			}
-			operations.push(data[i]);
 		}
 
-		else
-		{
-			pform[psize] = data[i];
-			psize++;
-		}
+		else pform[psize++] = data[i];
 	}
 
 	while (!operations.isEmpty())
-	{
-		pform[psize] = operations.pop();
-		psize++;
-	}
-	
+		pform[psize++] = operations.pop();
+
 	size = psize;
 
 	for (size_t i = 0; i < size; i++)
@@ -264,12 +294,20 @@ double TPostfix::string_in_double(string number) //сonverting a string to a dou
 	for (size_t i = 0; i < number.size(); i++)
 	{
 		if (dot > 1)
-			throw runtime_error("There is can't be more than one dot in the number");
+		{
+			error += "There is can't be more than one dot in the number. We have error in position ";
+			error += i + 1 + '0';
+			throw invalid_argument(error.c_str());
+		}
 
 		if (number[i] == '~')
 		{
 			if (i != 0)
-				throw runtime_error("Minus can't stay in this place");
+			{
+				error += "Minus can't stay in this place. We have error in position ";
+				error += i + 1 + '0';
+				throw invalid_argument(error.c_str());
+			}
 
 			sign = -1.0;
 			continue;
@@ -289,7 +327,11 @@ double TPostfix::string_in_double(string number) //сonverting a string to a dou
 				if ((number[j] >= '0' && number[j] <= '9') || number[j] == '~' || number[j] == '-')
 					e_num += number[j];
 				else
-					throw invalid_argument("Exponential notation contains foreign characters");
+				{
+					error += "Exponential notation contains foreign characters. We have error in position ";
+					error += i + 1 + '0';
+					throw invalid_argument(error.c_str());
+				}
 			}
 
 			e_double = string_in_double(e_num);
@@ -298,7 +340,11 @@ double TPostfix::string_in_double(string number) //сonverting a string to a dou
 		}
 
 		if ((number[i] < '0') || (number[i] > '9'))
-			throw invalid_argument("Inccorect symbol");
+		{
+			error += "Inccorect symbol. We have error in position ";
+			error += i + 1 + '0';
+			throw invalid_argument(error.c_str());
+		}
 
 		if (flag) k++;
 
@@ -349,7 +395,11 @@ void TPostfix::toCalculate() //calculations
 		else if (data[i] == "/")
 		{
 			if (abs(numbers.top()) < exp)
-				throw domain_error("Division by zero isn't possible");
+			{
+				error += "Division by zero isn't possible. We have error in position ";
+				error += i + '0';
+				throw invalid_argument(error.c_str());
+			}
 
 			tmp = numbers.pop();
 			tmp = numbers.pop() / tmp;
@@ -368,20 +418,28 @@ void TPostfix::toCalculate() //calculations
 	result = numbers.pop();
 }
 
-string TPostfix::getPostfix()
+string TPostfix::getPostfix() const
 {
 	return postfix;
 }
 
-string TPostfix::getInfix()
+string TPostfix::getInfix() const
 {
 	return infix;
 }
 
-double TPostfix::getResult()
+double TPostfix::getResult() const
 {
 	return result;
 }
+
+bool TPostfix::isDigit(const char& elem)
+{
+	if ((elem <= '9' && elem >= '0') || elem == '.' || elem >= 'a' && elem <= 'z' || elem == 'E')
+		return true;
+	return false;
+}
+
 TPostfix::~TPostfix()
 {
 	delete[] data;
