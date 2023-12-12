@@ -63,6 +63,10 @@ int Arithmetic::InfixCheck() {
             }
         }
         else if (infix[i] == 'e'){
+            if (i == len-1){
+                cout << "error in " << i << " symbol";
+                throw invalid_argument("syntax's error");
+            }
             if((int(infix[i-1]) <48 && int(infix[i-1] > 57)) || (infix[i+1]) <46 && int(infix[i+1] > 57)){
                 if (infix[i-1] != '.'){
                     cout << "error in " << i << " symbol";
