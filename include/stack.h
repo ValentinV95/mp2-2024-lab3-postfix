@@ -29,10 +29,6 @@ public:
 	}
 	TStack(size_t n)
 	{
-		if (n < 0)
-		{
-			throw "Incorrent size stack";
-		}
 		size = n;
 		data = new T[size];
 		index = -1;
@@ -49,7 +45,7 @@ public:
 	}
 	~TStack()
 	{
-		delete[] data;
+		data = nullptr;
 	}
 	bool isEmpty()
 	{
@@ -87,7 +83,6 @@ public:
 	void clear()
 	{
 		delete[] data;
-		data = new T[size];
 		index = -1;
 	}
 	int Getsize()

@@ -35,6 +35,6 @@ int main()
         return 1;
     }
 
-    std::cout << "Result : " << res << std::endl;
+    std::cout << "Result : "<< res << std::endl;
     return 0;
 }

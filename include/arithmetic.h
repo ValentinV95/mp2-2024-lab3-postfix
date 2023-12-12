@@ -20,11 +20,11 @@ public:
 	std::string ToPostfix(std::string);
 	double calculate(const std::string&, std::map<char, double>&);
 };
-class myExcp : public std::exception {
+class invalid_argument: public std::exception {
 private:
 	std::string error;
 public:
-	myExcp(std::string s)
+	invalid_argument(std::string s)
 	{
 		error = s;
 	}

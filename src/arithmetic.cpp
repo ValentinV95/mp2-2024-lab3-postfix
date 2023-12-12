@@ -41,7 +41,7 @@ void Postfix::checkBrackets(const std::string& s)const
     }
     if (leftBrackets != rightBrackets)
     {
-        throw myExcp("Incorrect line. Bracket placement error.");
+        throw invalid_argument("Incorrect line. Bracket placement error.");
     }
 }
 
@@ -139,7 +139,7 @@ double NumConversion(std::string strlex)
 {
     if (strlex.size() == 0)
     {
-        throw myExcp("Incorrect digit form");
+        throw invalid_argument("Incorrect digit form");
     }
 
     if (strlex[0] == '+')
@@ -154,7 +154,7 @@ double NumConversion(std::string strlex)
 
     if (std::count(strlex.begin(), strlex.end(), '.') > 1)
     {
-        throw myExcp("Incorrect digit form");
+        throw invalid_argument("Incorrect digit form");
     }
 
     int dot_ind = strlex.find('.');
@@ -172,7 +172,7 @@ double NumConversion(std::string strlex)
         right_of_dot = strlex.substr(dot_ind + 1, strlex.size());
         if (left_of_dot.size() == 0 && right_of_dot.size() == 0)
         {
-            throw myExcp("Incorrect digit form");
+            throw invalid_argument("Incorrect digit form");
         }
         int pow = -1 * right_of_dot.size();
         digit = conversion(left_of_dot) + std::pow(10, pow) * conversion(right_of_dot);
@@ -184,7 +184,7 @@ std::string Postfix::ToPostfix(std::string infixString)
 {
     if (!infixString.length())
     {
-        throw myExcp("String is empty.");
+        throw invalid_argument("String is empty.");
     }
 
     if (infixString[0] == '-')
@@ -200,7 +200,7 @@ std::string Postfix::ToPostfix(std::string infixString)
     }
     if (checkingLine(infixString))
     {
-        throw myExcp("Incorrect line. Error in arranging operations.");
+        throw invalid_argument("Incorrect line. Error in arranging operations.");
     }
 
     checkBrackets(infixString);
@@ -260,7 +260,7 @@ std::string Postfix::ToPostfix(std::string infixString)
             }
             continue;
         }
-        throw myExcp("Incorrect symbol.");
+        throw invalid_argument("Incorrect symbol.");
     }
 
     while (!operationsStack.isEmpty())
@@ -271,7 +271,7 @@ std::string Postfix::ToPostfix(std::string infixString)
 
     if (result.isEmpty())
     {
-        throw myExcp("Line doesn't contain an expression.");
+        throw invalid_argument("Line doesn't contain an expression.");
     }
     std::string resultString = "";
     while (!result.isEmpty())
@@ -289,7 +289,7 @@ double Postfix::calculate(const std::string& postfixString, std::map<char, doubl
 {
     if (postfixString == "")
     {
-        throw myExcp("String is empty.");
+        throw invalid_argument("String is empty.");
     }
     TStack<double> result;
     char tmp;
@@ -329,7 +329,7 @@ double Postfix::calculate(const std::string& postfixString, std::map<char, doubl
         }
         if (result.isEmpty())
         {
-            throw myExcp("Error.");
+            throw invalid_argument("Error.");
         }
         switch (tmp)
         {
@@ -353,7 +353,7 @@ double Postfix::calculate(const std::string& postfixString, std::map<char, doubl
             leftOperand = result.pop();
             if (rightOperand < 0.0001 && rightOperand > -0.0001)
             {
-                throw myExcp("Division by zero.");
+                throw invalid_argument("Division by zero.");
             }
             result.push(leftOperand / rightOperand);
             break;
@@ -366,7 +366,7 @@ double Postfix::calculate(const std::string& postfixString, std::map<char, doubl
     }
     if (result.isEmpty())
     {
-        throw myExcp("Incorrect line.");
+        throw invalid_argument("Incorrect line.");
     }
     double res = result.pop();
     return res;
