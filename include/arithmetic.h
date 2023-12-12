@@ -21,9 +21,9 @@ public:
 	vector <string> GetLexems() const;
 	vector<string> GetOperands() const;
 	double Calculate(const map<string, double>& value);
-	string isNumberOrVar(string infx); // selects a substring from the zero character from the string, if it is a number or a variable
+	string strNumberOrVar(string infx); // selects a substring from the zero character from the string, if it is a number or a variable
 	double Translate(string snum);
-	string isFunc(string infx); //selects a substring from a string with a null character if it is a function
+	string strFunc(string infx); //selects a substring from a string with a null character if it is a function
 	int Priority(string item);
 };
 int StringIsAlmostCorrect(string s);  //eliminates most of the errors from the user needed to simplify the subsequent code

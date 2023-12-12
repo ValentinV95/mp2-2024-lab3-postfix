@@ -38,37 +38,37 @@ TEST(Arithmeticexpr, cant_Parse_when_string_is_not_correct) {
 }
 TEST(Arithmeticexpr, can_do_IsNumberOrVar_with_number) {
 	ArithmeticExpr el("1+1");
-	ASSERT_NO_THROW(el.isNumberOrVar("3.7e-67+8"));
+	ASSERT_NO_THROW(el.strNumberOrVar("3.7e-67+8"));
 }
 TEST(Arithmeticexpr, can_do_IsNumberOrVar_with_var) {
 	ArithmeticExpr el("1+1");
-	ASSERT_NO_THROW(el.isNumberOrVar("x67+8"));
+	ASSERT_NO_THROW(el.strNumberOrVar("x67+8"));
 }
 TEST(Arithmeticexpr, IsNumberOrVar_with_number_is_correct) {
 	ArithmeticExpr el("1+1");
-	string tmp = el.isNumberOrVar("3.7e-67+8");
+	string tmp = el.strNumberOrVar("3.7e-67+8");
 	EXPECT_EQ("3.7e-67", tmp);
 }
 TEST(Arithmeticexpr, IsNumberOrVar_with_var_is_corect) {
 	ArithmeticExpr el("1+1");
-	string tmp = el.isNumberOrVar("x67+8");
+	string tmp = el.strNumberOrVar("x67+8");
 	EXPECT_EQ(tmp, "x67");
 }
 TEST(Arithmeticexpr, cant_do_IsNumberOrVar_when_number_isnt_corect) {
 	ArithmeticExpr el("1+1");
-	ASSERT_ANY_THROW(el.isNumberOrVar("7.7.7+8"));
+	ASSERT_ANY_THROW(el.strNumberOrVar("7.7.7+8"));
 }
 TEST(Arithmeticexpr, do_IsNumberOrVar_when_there_is_not_number_or_var) {
 	ArithmeticExpr el("1+1");
-	EXPECT_EQ("",el.isNumberOrVar("+7-x2"));
+	EXPECT_EQ("",el.strNumberOrVar("+7-x2"));
 }
 TEST(Arithmeticexpr, can_do_Is_Func) {
 	ArithmeticExpr el("1+1");
-	ASSERT_NO_THROW(el.isFunc("sin(6)+x0"));
+	ASSERT_NO_THROW(el.strFunc("sin(6)+x0"));
 }
 TEST(Arithmeticexpr, Is_Func_is_correct) {
 	ArithmeticExpr el("1+1");
-	string t = el.isFunc("sin(6)+x0");
+	string t = el.strFunc("sin(6)+x0");
 	EXPECT_EQ(t, "sin");
 }
 TEST(Arithmeticexpr, can_do_ToPostfix) {

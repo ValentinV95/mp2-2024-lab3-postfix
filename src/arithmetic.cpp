@@ -31,7 +31,7 @@ int StringIsAlmostCorrect(string s) {
 			if (!(s[i + 1] == '0' || s[i + 1] == '1' || s[i + 1] == '2' || s[i + 1] == '3' || s[i + 1] == '4' || s[i + 1] == '5' || s[i + 1] == '6' || s[i + 1] == '7' || s[i + 1] == '8' || s[i + 1] == '9')) return i;
 		} // if . the first character, then a digit is required after it
 		else if (i > 0 && s[i] == '.') {
-			if (!(s[i + 1] == '+' || s[i + 1] == '-' || s[i + 1] == '*' || s[i + 1] == '/' || s[i + 1] == '0' || s[i + 1] == '1' || s[i + 1] == '2' || s[i + 1] == '3' || s[i + 1] == '4' || s[i + 1] == '5' || s[i + 1] == '6' || s[i + 1] == '7' || s[i + 1] == '8' || s[i + 1] == '9') &&
+			if (!(s[i + 1] == '+' || s[i + 1] == '-' || s[i + 1] == '*' || s[i + 1] == '/' || s[i + 1] == '0' || s[i + 1] == '1' || s[i + 1] == '2' || s[i + 1] == '3' || s[i + 1] == '4' || s[i + 1] == '5' || s[i + 1] == '6' || s[i + 1] == '7' || s[i + 1] == '8' || s[i + 1] == '9' || s[i + 1] == 'e') &&
 				!(s[i - 1] == '+' || s[i - 1] == '-' || s[i - 1] == '*' || s[i - 1] == '/' || s[i - 1] == '0' || s[i - 1] == '1' || s[i - 1] == '2' || s[i - 1] == '3' || s[i - 1] == '4' || s[i - 1] == '5' || s[i - 1] == '6' || s[i - 1] == '7' || s[i - 1] == '8' || s[i - 1] == '9')) return i;
 		} //near . there are no invalid characters
 
@@ -71,13 +71,13 @@ void ArithmeticExpr::Parse() {
 			else lexems.push_back(string(1, infix[i]));
 		}
 		else {
-			string tmp = isNumberOrVar(infix.substr(i)); 
+			string tmp = strNumberOrVar(infix.substr(i)); 
 			if (tmp.length() != 0) {
 				lexems.push_back(tmp);
 				i += tmp.length() - 1;  
 			}
-			else if (isFunc(infix.substr(i)) != "") {
-				tmp = isFunc(infix.substr(i));
+			else if (strFunc(infix.substr(i)) != "") {
+				tmp = strFunc(infix.substr(i));
 				lexems.push_back(tmp);
 				i += tmp.length() - 1;
 			}
@@ -89,7 +89,7 @@ void ArithmeticExpr::Parse() {
 	
 }
 
-string ArithmeticExpr::isNumberOrVar(string infx) {
+string ArithmeticExpr::strNumberOrVar(string infx) {
 	string tmp = "";
 	int i = 0, countd=0, counte=0;
 	while (infx[i] == 'x'||infx[i] == '0' || infx[i] == '1' || infx[i] == '2' || infx[i] == '3' || infx[i] == '4' || infx[i] == '5' || infx[i] == '6' || infx[i] == '7' || infx[i] == '8' || infx[i] == '9' || infx[i] == '.'|| (infx[i] == 'e'&&infx[i+1]!='x' && infx[i + 2] != 'p')) { 
@@ -105,7 +105,7 @@ string ArithmeticExpr::isNumberOrVar(string infx) {
 	return tmp;
 }
 
-string ArithmeticExpr::isFunc(string infx) {
+string ArithmeticExpr::strFunc(string infx) {
 	string tmp = "";
 	int i = 0;
 	if (infx[i] == 's' && infx[i + 1] == 'i' && infx[i + 2] == 'n') {
