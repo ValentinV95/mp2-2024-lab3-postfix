@@ -29,8 +29,6 @@ public:
 
 	TStack(size_t n)
 	{
-		if (n < 0)
-			throw invalid_argument("Incorrent size stack");
 		size = n;
 		pMem = new T[size];
 		ind = -1;
