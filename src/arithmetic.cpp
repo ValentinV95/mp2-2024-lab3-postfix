@@ -10,10 +10,13 @@ int Arithmetic::InfixCheck() {
     int tmp;
     int bracketNum = 0;
     for(int i = 0; i < len; i++){
-        if(infix[i]<47 && infix[i]>58){ //valid character check
+        if(int(infix[i])<46 || int(infix[i])>57){ //valid character check
             if (infix[i]!= '+' && infix[i] != '-' && infix[i] != '*' && infix[i] != '/' && infix[i] != '(' && infix[i] != ')'
             && infix[i] != 'x' && infix[i] != 's' && infix[i] != 'i' && infix[i] != 'n' && infix[i] != 'c'
-            && infix[i] != 'o' && infix[i] != 't' && infix[i] != 'g' && infix[i] != 'l' && infix[i] != 'e' && infix[i] != 'p');
+            && infix[i] != 'o' && infix[i] != 't' && infix[i] != 'g' && infix[i] != 'l' && infix[i] != 'e' && infix[i] != 'p'){
+                cout << "error in " << i << "symbol";
+                throw invalid_argument("wrong symbol");
+            };
         }
     }
     for(int i = 0; i < len; i++){
@@ -30,23 +33,23 @@ int Arithmetic::InfixCheck() {
             bracketNum--;
         }
         else if(infix[i] == 'x'){
-            if (i != 0 && ((infix[i-1]>47 && infix[i-1]<58) ||infix[i-1]==')')){
-                cout << "error in " << i-1 << "symbol";
-                throw invalid_argument("syntax's error");
+            if (i != 0 && ((int(infix[i-1])>47 && int(infix[i-1])<58) ||infix[i-1]==')')){
+                cout << "error in symbol before x in " << i-1 << " symbol";
+                throw invalid_argument("syntax's error in symbol before x");
             }
         }
         else if (infix[i] == '.'){
-            if (i==0 && int(infix[i+1]) <47 && int(infix[i+1] > 58)){
+            if (i==0 && int(infix[i+1]) <46 && int(infix[i+1] > 57)){
                 if (infix[i+1] != 'e'){
                     cout << "error in " << i << "symbol";
                     throw invalid_argument("syntax's error");
                 }
             }
-            else if (i == len-1 && int(infix[i-1]) <47 && int(infix[i-1] > 58)){
+            else if (i == len-1 && int(infix[i-1]) <46 && int(infix[i-1] > 57)){
                 cout << "error in " << i << "symbol";
                 throw invalid_argument("syntax's error");
             }
-            else if((int(infix[i-1]) <47 && int(infix[i-1] > 58)) || (infix[i+1]) <47 && int(infix[i+1] > 58)){
+            else if((int(infix[i-1]) <46 && int(infix[i-1] > 57)) || (infix[i+1]) <46 && int(infix[i+1] > 57)){
                 if (infix[i+1] != 'e'){
                     cout << "error in " << i << "symbol";
                     throw invalid_argument("syntax's error");
@@ -54,7 +57,7 @@ int Arithmetic::InfixCheck() {
             }
         }
         else if (infix[i] == 'e'){
-            if((int(infix[i-1]) <47 && int(infix[i-1] > 58)) || (infix[i+1]) <47 && int(infix[i+1] > 58)){
+            if((int(infix[i-1]) <46 && int(infix[i-1] > 57)) || (infix[i+1]) <46 && int(infix[i+1] > 57)){
                 if (infix[i-1] != '.'){
                     cout << "error in " << i << "symbol";
                     throw invalid_argument("syntax's error");
@@ -62,7 +65,7 @@ int Arithmetic::InfixCheck() {
             }
         }
         else if(infix[i] == '+' || infix[i] == '-' || infix[i] == '/' || infix[i] == '*'){
-            if (infix[i-1] == '+' || infix[i-1] == '-' || infix[i-1] == '/' || infix[i-1] == '*'){
+            if (i!= 0 && (infix[i-1] == '+' || infix[i-1] == '-' || infix[i-1] == '/' || infix[i-1] == '*')){
                 cout << "error in " << i-1 << "symbol";
                 throw invalid_argument("syntax's error");
             }
@@ -213,7 +216,7 @@ void Arithmetic::toPostfix() {
     int sz = lexems.size();
     string tmp;
     for (int i = 0; i< sz; i++){
-        if ((int(lexems[i][0]) > 47 && int(lexems[i][0]) < 58)|| lexems[i][0] == 'x'){
+        if ((int(lexems[i][0]) > 47 && int(lexems[i][0]) < 58)|| lexems[i][0] == 'x' || lexems[i][0] == '.'){
             if (lexems[i][0] == 'x'){
                 var[lexems[i]] = 0;   //по дефолту всегда 0
             }
