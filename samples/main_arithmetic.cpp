@@ -3,9 +3,10 @@
 
 int main()
 {
-	string input;
+	string tmp, input;
 	char recount = 'y';
 	char again = 'y';
+	bool flag;
 	setlocale(LC_ALL, "ru_RU.UTF-8");
 	while (again == 'y')
 	{
@@ -16,8 +17,26 @@ int main()
 				<< endl << " · Доступен ввод любого количества переменных вида x<натуральное_число>" << endl
 				<< " · Любое количество пробелов в любом месте вводимого выражения не влияет на его результат" << endl
 				<< " Для завершения ввода нажмите Enter" << endl;
-			getline(cin, input);
-			TPostfix T(input);
+			while (true)
+			{
+				getline(cin, tmp);
+
+				input.clear();
+				flag = false;
+				for (size_t i = 0; i < tmp.length(); i++)
+					if (tmp[i] != ' ') input.push_back(tmp[i]);
+					else flag = true;
+				if (input.length() != 0)
+				{
+					if(flag)
+						cout << input << endl;
+					break;
+				}
+					
+			}
+
+			TPostfix T(input, false);
+
 			while (recount == 'y')
 			{
 				switch (T.Get_ind_variable())

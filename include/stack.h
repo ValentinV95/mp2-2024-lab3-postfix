@@ -59,8 +59,9 @@ public:
 	{
 		size = 0;
 		cap = 10;
+		T* tmp = new T[cap];
 		delete[]data;
-		data = new T[cap];
+		data = tmp;
 	}
 	~TStack ()
 	{

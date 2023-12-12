@@ -2,7 +2,7 @@
 
 #include "arithmetic.h"
 
-TPostfix::TPostfix(string& t) {
+TPostfix::TPostfix(string& t, bool need_to_check) {
 	cap_RPN = 10;
 	Rev_Pol_Notation = new Lexeme[cap_RPN]();
 
@@ -10,9 +10,13 @@ TPostfix::TPostfix(string& t) {
 	arr_num_variable = new int[cap_variable]();
 
 	string inp;
-	for (i = 0; i < t.length(); i++)
-		if (t[i] != ' ') inp.push_back(t[i]);
-	i = 0;
+	if (need_to_check)
+	{
+		for (i = 0; i < t.length(); i++)
+			if (t[i] != ' ') inp.push_back(t[i]);
+		i = 0;
+	}
+	else inp = t;
 
 	size_t quan_open_brañkets = 0;
 
@@ -24,8 +28,7 @@ TPostfix::TPostfix(string& t) {
 
 			while (!ops.isEmpty() && (ops.top().type_of_lex == 6 ||
 				ops.top().type_of_lex == 5 ||
-				(ops.top().type_of_lex == 1 && (*(char*)ops.top().lex == '*' ||
-					*(char*)ops.top().lex == '/' || *(char*)ops.top().lex == '-' || *(char*)ops.top().lex == '+'))))
+				(ops.top().type_of_lex == 1)))
 				insert_result(ops.pop());
 
 			ops.push(move(tmp));
@@ -55,16 +58,21 @@ TPostfix::TPostfix(string& t) {
 
 			ops.push(move(tmp));
 
-			break;;
 			break;
 		}
 
 		case '(': {
 			quan_open_brañkets++;
 
-			if(inp[i+1]==')') throw invalid_argument("Incorrect brackets input: brackets are next to each other");
+			if (inp[i + 1] == ')')
+			{
+				string except("Incorrect brackets input: brackets at positions ");
+				except += to_string(i) + ", " + to_string(i + 1);
+				except += " are next to each other";
+				throw invalid_argument(except);
+			}
 
-			Lexeme tmp(2, '(');
+			Lexeme tmp(2, '(', i);
 
 			ops.push(move(tmp));
 			break;
@@ -79,7 +87,12 @@ TPostfix::TPostfix(string& t) {
 					insert_result(ops.pop());
 				ops.pop();
 			}
-			else throw invalid_argument("Incorrect brackets input");
+			else
+			{
+				string except("Incorrect brackets input at position ");
+				except += to_string(i);
+				throw invalid_argument(except);
+			}
 			break;
 		}
 
@@ -100,7 +113,7 @@ TPostfix::TPostfix(string& t) {
 				{
 					string except("Incorrect minus input at position ");
 					except += to_string(i);
-					throw invalid_argument(except.c_str());
+					throw invalid_argument(except);
 				}
 			}
 			else
@@ -157,7 +170,7 @@ TPostfix::TPostfix(string& t) {
 			else {
 				string except("Incorrect function input at position ");
 				except += to_string(i);
-				throw invalid_argument(except.c_str());
+				throw invalid_argument(except);
 			}
 			break;
 		}
@@ -174,7 +187,7 @@ TPostfix::TPostfix(string& t) {
 			else {
 				string except("Incorrect function input at position ");
 				except += to_string(i);
-				throw invalid_argument(except.c_str());
+				throw invalid_argument(except);
 			}
 			break;
 		}
@@ -191,7 +204,7 @@ TPostfix::TPostfix(string& t) {
 			else {
 				string except("Incorrect tan input at position ");
 				except += to_string(i);
-				throw invalid_argument(except.c_str());
+				throw invalid_argument(except);
 			}
 			break;
 		}
@@ -208,7 +221,7 @@ TPostfix::TPostfix(string& t) {
 			else {
 				string except("Incorrect function input at position ");
 				except += to_string(i);
-				throw invalid_argument(except.c_str());
+				throw invalid_argument(except);
 			}
 			break;
 		}
@@ -225,7 +238,7 @@ TPostfix::TPostfix(string& t) {
 			else {
 				string except("Incorrect function input at position ");
 				except += to_string(i);
-				throw invalid_argument(except.c_str());
+				throw invalid_argument(except);
 			}
 			break;
 		}
@@ -243,10 +256,11 @@ TPostfix::TPostfix(string& t) {
 				if (i < inp.length() && (inp[i] == '.' || inp[i] == ','))
 				{
 					i++;
-					if (inp[i] == 'e') {
+					if ((inp[i]>'9'|| inp[i] < '0') && inp[i] != 'e' ||
+						(inp[i] == 'e' && (i<2 || (inp[i - 2] > '9' || inp[i - 2] < '0')))) {
 						string except("Incorrect numerage input at position ");
 						except += to_string(i);
-						throw invalid_argument(except.c_str());
+						throw invalid_argument(except);
 					}
 					while (i < inp.length() && inp[i] <= '9' && inp[i] >= '0')
 					{
@@ -261,7 +275,7 @@ TPostfix::TPostfix(string& t) {
 					if (inp.length() - i < 1) {
 						string except("Incorrect numerage input at position ");
 						except += to_string(i);
-						throw invalid_argument(except.c_str());
+						throw invalid_argument(except);
 					}
 					else if (inp[i] == '-')
 					{
@@ -274,7 +288,7 @@ TPostfix::TPostfix(string& t) {
 					else {
 						string except("Incorrect numerage input at position ");
 						except += to_string(i);
-						throw invalid_argument(except.c_str());
+						throw invalid_argument(except);
 					}
 					i++;
 					if (i < inp.length() && inp[i] <= '9' && inp[i] >= '0')
@@ -287,7 +301,7 @@ TPostfix::TPostfix(string& t) {
 					else {
 						string except("Incorrect numerage input at position ");
 						except += to_string(i);
-						throw invalid_argument(except.c_str());
+						throw invalid_argument(except);
 					}
 				}
 				res *= pow(10, sign * power);
@@ -299,30 +313,36 @@ TPostfix::TPostfix(string& t) {
 			else {
 				string except("Incorrect character input at position ");
 				except += to_string(i);
-				throw invalid_argument(except.c_str());
+				throw invalid_argument(except);
 			}
 		}
 		}
 		i++;
 	}
-	while (!ops.isEmpty())
-		insert_result(ops.pop());
 	if (quan_open_brañkets != 0)
 	{
 		string except("There are ");
 		except += to_string(quan_open_brañkets);
-		except += " extra '(' in line";
-		throw invalid_argument(except.c_str());
+		except += " extra '(' in line: at positions ";
+		bool first = true;
+		while (!ops.isEmpty())
+		{
+			if (ops.top().type_of_lex == 2)
+				if (first)
+				{
+					except += to_string(ops.pop().pos);
+					first = false;
+				}
+				else
+					except += ", " + to_string(ops.pop().pos);
+			else
+				insert_result(ops.pop());
+		}
+		throw invalid_argument(except);
 	}
+	else while (!ops.isEmpty())
+		insert_result(ops.pop());
 	arr_value_variable = new double[ind_variable];
-
-	duplicate_RPN();
-}
-
-void TPostfix::duplicate_RPN() {
-		copy_Rev_Pol_Notation = new Lexeme[ind_RPN];
-		copy(Rev_Pol_Notation, Rev_Pol_Notation + ind_RPN, copy_Rev_Pol_Notation);
-
 }
 
 void TPostfix::insert_result(const Lexeme& lex)
@@ -331,6 +351,7 @@ void TPostfix::insert_result(const Lexeme& lex)
 	{
 		Lexeme* tmp = new Lexeme[cap_RPN *= 2];
 		copy(Rev_Pol_Notation + 0, Rev_Pol_Notation + ind_RPN, tmp);
+		delete[]Rev_Pol_Notation;
 		Rev_Pol_Notation = tmp;
 	}
 	Rev_Pol_Notation[ind_RPN++] = lex;
@@ -342,6 +363,7 @@ void TPostfix::insert_variable(int xi)
 	{
 		int* tmp = new int[cap_variable *= 2];
 		copy(arr_num_variable + 0, arr_num_variable + ind_variable, tmp);
+		delete[]arr_num_variable;
 		arr_num_variable = tmp;
 	}
 	arr_num_variable[ind_variable++] = xi;
@@ -390,7 +412,7 @@ double TPostfix::count()
 				{
 					string except("There asren't enought operands entered for operation in position ");
 					except += to_string(Rev_Pol_Notation[i].pos);
-					throw invalid_argument(except.c_str());
+					throw invalid_argument(except);
 				}
 				else r_operand = (*(double*)ops.pop().lex);
 
@@ -398,7 +420,7 @@ double TPostfix::count()
 				{
 					string except("There asren't enought operands entered for operation in position ");
 					except += to_string(Rev_Pol_Notation[i].pos);
-					throw invalid_argument(except.c_str());
+					throw invalid_argument(except);
 				}
 				else (*(double*)ops.top().lex) += r_operand;
 				break;
@@ -409,7 +431,7 @@ double TPostfix::count()
 				{
 					string except("There asren't enought operands entered for operation in position ");
 					except += to_string(Rev_Pol_Notation[i].pos);
-					throw invalid_argument(except.c_str());
+					throw invalid_argument(except);
 				}
 				else r_operand = (*(double*)ops.pop().lex);
 
@@ -417,7 +439,7 @@ double TPostfix::count()
 				{
 					string except("There asren't enought operands entered for operation in position ");
 					except += to_string(Rev_Pol_Notation[i].pos);
-					throw invalid_argument(except.c_str());
+					throw invalid_argument(except);
 				}
 				else (*(double*)ops.top().lex) -= r_operand;
 				break;
@@ -427,7 +449,7 @@ double TPostfix::count()
 				{
 					string except("There asren't enought operands entered for operation in position ");
 					except += to_string(Rev_Pol_Notation[i].pos);
-					throw invalid_argument(except.c_str());
+					throw invalid_argument(except);
 				}
 				else r_operand = (*(double*)ops.pop().lex);
 
@@ -435,7 +457,7 @@ double TPostfix::count()
 				{
 					string except("There asren't enought operands entered for operation in position ");
 					except += to_string(Rev_Pol_Notation[i].pos);
-					throw invalid_argument(except.c_str());
+					throw invalid_argument(except);
 				}
 				else (*(double*)ops.top().lex) *= r_operand;
 				break;
@@ -445,7 +467,7 @@ double TPostfix::count()
 				{
 					string except("There asren't enought operands entered for operation in position ");
 					except += to_string(Rev_Pol_Notation[i].pos);
-					throw invalid_argument(except.c_str());
+					throw invalid_argument(except);
 				}
 				else r_operand = (*(double*)ops.pop().lex);
 
@@ -453,14 +475,14 @@ double TPostfix::count()
 				{
 					string except("Division by zero in position ");
 					except += to_string(Rev_Pol_Notation[i].pos);
-					throw invalid_argument(except.c_str());
+					throw invalid_argument(except);
 				}
 
 				if (ops.isEmpty())
 				{
 					string except("There asren't enought operands entered for operation in position ");
 					except += to_string(Rev_Pol_Notation[i].pos);
-					throw invalid_argument(except.c_str());
+					throw invalid_argument(except);
 				}
 				else (*(double*)ops.top().lex) /= r_operand;
 				break;
@@ -478,7 +500,7 @@ double TPostfix::count()
 			{
 				string except("There asren't enought operands entered for operation in position ");
 				except += to_string(Rev_Pol_Notation[i].pos);
-				throw invalid_argument(except.c_str());
+				throw invalid_argument(except);
 			}
 			else
 				(*(double*)ops.top().lex) *= -1;
@@ -489,7 +511,7 @@ double TPostfix::count()
 			{
 				string except("There asren't enought operands entered for operation in position ");
 				except += to_string(Rev_Pol_Notation[i].pos);
-				throw invalid_argument(except.c_str());
+				throw invalid_argument(except);
 			}
 			else
 			{
@@ -507,7 +529,13 @@ double TPostfix::count()
 					(*(double*)ops.top().lex) = exp(r_operand);
 
 				else if (*(int*)(Rev_Pol_Notation[i].lex) == 5)
-					(*(double*)ops.top().lex) = log(r_operand);
+					if (r_operand > 0)
+						(*(double*)ops.top().lex) = log(r_operand);
+					else {
+						string except("Invalid argument for ln in position ");
+						except += to_string(Rev_Pol_Notation[i].pos);
+						throw invalid_argument(except);
+					}
 			}
 			break;
 		case 7: {//âñòðå÷åíî ÷èñëî
@@ -520,10 +548,6 @@ double TPostfix::count()
 	}
 
 	double res = *(double*)ops.pop().lex;
-
-	swap(Rev_Pol_Notation, copy_Rev_Pol_Notation);
-	delete[]copy_Rev_Pol_Notation;
-	duplicate_RPN();
 
 	if (ops.isEmpty())
 		return res;

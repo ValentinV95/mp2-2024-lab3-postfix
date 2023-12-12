@@ -9,14 +9,11 @@ TEST(TPostfix, can_create_easy_postfix)
 	EXPECT_NO_THROW(TPostfix Sol(inp));
 }
 
-TEST(TPostfix, can_count_easy_postfix)
+TEST(TPostfix, can_correctly_count_easy_postfix)
 {
 	string inp("1+2");
 	TPostfix Sol(inp);
 	EXPECT_EQ(3, Sol.count());
-	inp = "1*2+cos0";
-	TPostfix Sol1(inp);
-	EXPECT_EQ(3, Sol1.count());
 }
 
 TEST(TPostfix, throws_when_operation_input_is_incorrect)
@@ -71,8 +68,6 @@ TEST(TPostfix, throws_when_numerage_input_is_incorrect)
 	EXPECT_ANY_THROW(TPostfix Sol(inp); Sol.count());
 	inp = "1.0e*4";
 	EXPECT_ANY_THROW(TPostfix Sol(inp); Sol.count());
-	inp = "1.e+2";
-	EXPECT_ANY_THROW(TPostfix Sol(inp); Sol.count());
 }
 
 TEST(TPostfix, throws_when_brackets_input_is_incorrect)
@@ -124,6 +119,9 @@ TEST(TPostfix, can_count_easy_main_operations_with_brackets_unary_minus_and_extr
 	inp = "(4--1) * - 2";
 	TPostfix Sol4(inp);
 	EXPECT_EQ(-10, Sol4.count());
+	inp = "1*2+cos0";
+	TPostfix Sol5(inp);
+	EXPECT_EQ(3, Sol5.count());
 }
 
 TEST(TPostfix, can_count_with_function)
