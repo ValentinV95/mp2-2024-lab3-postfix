@@ -51,7 +51,7 @@ bool Postfix::isDigit(const char& s)
     return (s >= '0' && s <= '9') || s == '.';
 }
 
-void throw_err(size_t i)
+void Postfix::throw_err(size_t i)
 {
     std::stringstream ss;
     ss << "Error, position "<< i;
@@ -62,21 +62,20 @@ void Postfix::checkingLine(std::string& s)
 {
     if (s.length() == 0)
     {
-        throw_err;
+        throw std::invalid_argument("Empty string");
     }
     Postfix p;
     if (s.length() == 1)
     {
         if (p.operationPriority(s[0]))
         {
-            throw_err;
+            throw std::invalid_argument("error");
         }
     }
     if (p.operationPriority(s[0]) > 1)
     {
-        throw_err;
+        throw std::invalid_argument("error");
     }
-
     for (size_t i = 0, j = 1; j < s.length(); j++)
     {
         if (s[j] == ' ')
@@ -85,15 +84,15 @@ void Postfix::checkingLine(std::string& s)
         }
         if ((s[i] == '(') && ((s[j] == '+') || (s[j] == '*') || (s[j] == '/') || (s[j] == '-')))
         {
-            throw_err;
+            throw_err(i);
         }
         if ((s[j] == ')') && ((s[i] == '-') || (s[i] == '+') || (s[i] == '*') || (s[i] == '/')))
         {
-            throw_err;
+            throw_err(i);
         }
         if ((s[i] == ')') && (s[j] == '('))
         {
-            throw_err;
+            throw_err(i);
         }
         if ((s[i] == s[j]) && (s[i] == '('))
         {
@@ -105,31 +104,30 @@ void Postfix::checkingLine(std::string& s)
         }
         if ((s[i] == '*') && ((s[j] == '+') || (s[j] == '-') || (s[j] == '/') || (s[j] == '+') || (s[j] == ')')))
         {
-            throw_err;
+            throw_err(i);
         }
         if ((s[i] == '/') && ((s[j] == '+') || (s[j] == '-') || (s[j] == '*') || (s[j] == '+') || (s[j] == '/') || (s[j] == ')')))
         {
-            throw_err;
+            throw_err(i);
         }
         if ((s[i] == '+') && ((s[j] == '*') || (s[j] == '-') || (s[j] == '/') || (s[j] == '+') || (s[j] == ')')))
         {
-            throw_err;
+            throw_err(i);
         }
         if ((s[i] == '-') && ((s[j] == '+') || (s[j] == '-') || (s[j] == '/') || (s[j] == '+') || (s[j] == ')')))
         {
-            throw_err;
+            throw_err(i);
         }
         if ((s[j] == ')') && ((s[i] == '+') || (s[i] == '-') || (s[i] == '*') || (s[i] == '/')))
         {
-            throw_err;
+            throw_err(i);
         }
         if ((s[i] == '~') && ((s[j] == '+') || (s[j] == '-') || (s[j] == '/') || (s[j] == '*') || (s[j] == ')')))
         {
-            throw_err;
+            throw_err(i);
         }
         i++;
     }
-    throw_err;
 }
 
 double conversion(std::string s)

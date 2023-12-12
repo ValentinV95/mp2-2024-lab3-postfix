@@ -16,7 +16,7 @@ protected:
 	void checkBrackets(const std::string&)const;
 	bool isDigit(const char&);
 	void checkingLine(std::string&);
-	void throw_err(size_t i);
+	void throw_err(size_t);
 public:
 	std::string ToPostfix(std::string);
 	double calculate(const std::string&, std::map<char, double>&);
