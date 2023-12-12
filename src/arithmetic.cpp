@@ -105,13 +105,13 @@ TPostfix::TPostfix(const std::string& str) {
 			St.pop_back();
 		}
 		else if (i < s.size() - 2 && s.size()>2 && get_prior(tmp + s[i + 1] + s[i + 2])) { //Work with functions
-			if (i > s.size() - 6 || s.size() < 6 || s[i + 3] != '(') throw std::invalid_argument(Error_string(s, i + 3) + "After a function must be a \'(\'");
+			if (i > s.size() - 4 || s.size() < 4 || s[i + 3] != '(') throw std::invalid_argument(Error_string(s, i + 3) + "After a function must be a \'(\'");
 			tmp = tmp + s[i + 1] + s[i + 2];
 			i += 2;
 			St.push_back(tmp);
 		}
 		else if ((s[i] >= '0' && s[i] <= '9') || s[i] == '.') { //Work with numbers
-			if (s[i] == '0'&&s[i+1]!='.') throw std::invalid_argument(Error_string(s, i) + "Number cannot be started from \'0\'");
+			if (s[i] == '0'&& s[i+1] >= '0' && s[i+1] <= '9') throw std::invalid_argument(Error_string(s, i) + "A number cannot start with an insignificant \'0\'");
 			RPN.push_back(number_check(s, i));
 		}
 		else if (s[i] == 'x') { //Work with variables
