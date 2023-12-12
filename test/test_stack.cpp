@@ -1,4 +1,4 @@
-// тесты для стека
+// С‚РµСЃС‚С‹ РґР»СЏ СЃС‚РµРєР°
 
 #include "stack.h"
 #include <gtest.h>
@@ -18,6 +18,14 @@ TEST(TStack, empty_stack_is_null)
 {
     TStack<int> st;
     EXPECT_EQ(0, st.GetSize());
+}
+
+TEST(TDynamicStack, can_work_isempty)
+{
+    TStack<int> st;
+    st.push(1);
+    st.pop();
+    ASSERT_NO_THROW(st.isEmpty());
 }
 
 TEST(TStack, stack_have_correct_size)
