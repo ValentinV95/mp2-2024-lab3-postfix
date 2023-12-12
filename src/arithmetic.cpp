@@ -25,8 +25,12 @@ int Arithmetic::InfixCheck() {
             if(i!=0 && (infix[i-1] != '*' && infix[i-1] != '/' && infix[i-1] != '+' && infix[i-1] != '-'  && infix[i-1] != 'n'  && infix[i-1] != 's' && infix[i-1] != 'g' && infix[i-1] != 'p')){
                 //n => siN(; s => coS(; g => tG( or lG(; p => exP(
                 //check for an operand before '('
-                cout << "error in " << i-1 << "symbol";
+                cout << "error in " << i-1 << " symbol";
                 throw invalid_argument("syntax's error");
+            }
+            if (i!=len-1 && infix[i+1] == ')'){
+                cout << "error in " << i << " symbol";
+                throw invalid_argument("empty brackets");
             }
         }
         else if(infix[i] == ')'){
@@ -40,20 +44,20 @@ int Arithmetic::InfixCheck() {
         }
         else if (infix[i] == '.'){
             if (i==0 && int(infix[i+1]) <48 || int(infix[i+1] > 57)){
-                    cout << "error in " << i << "symbol";
+                    cout << "error in " << i << " symbol";
                     throw invalid_argument("syntax's error in num's form");
             }
             else if (i == len-1 && (int(infix[i-1]) <48 || int(infix[i-1] > 57))){
-                cout << "error in " << i << "symbol";
+                cout << "error in " << i << " symbol";
                 throw invalid_argument("syntax's error in num's form");
             }
             else if((int(infix[i-1]) <48 || int(infix[i-1]) > 57) && (int(infix[i+1]) <48 || int(infix[i+1] > 57))){
                 if (infix[i+1] != 'e'){
-                    cout << "error in " << i << "symbol";
+                    cout << "error in " << i << " symbol";
                     throw invalid_argument("syntax's error in num's form");
                 }
                 else if (infix[i+1] == 'e' && (int(infix[i-1]) <48 || int(infix[i-1]) > 57)){
-                    cout << "error in " << i << "symbol";
+                    cout << "error in " << i << " symbol";
                     throw invalid_argument("syntax's error in num's form");
                 }
             }
@@ -61,14 +65,14 @@ int Arithmetic::InfixCheck() {
         else if (infix[i] == 'e'){
             if((int(infix[i-1]) <48 && int(infix[i-1] > 57)) || (infix[i+1]) <46 && int(infix[i+1] > 57)){
                 if (infix[i-1] != '.'){
-                    cout << "error in " << i << "symbol";
+                    cout << "error in " << i << " symbol";
                     throw invalid_argument("syntax's error");
                 }
             }
         }
         else if(infix[i] == '+' || infix[i] == '-' || infix[i] == '/' || infix[i] == '*'){
             if (i!= 0 && (infix[i-1] == '+' || infix[i-1] == '-' || infix[i-1] == '/' || infix[i-1] == '*')){
-                cout << "error in " << i-1 << "symbol";
+                cout << "error in " << i-1 << " symbol";
                 throw invalid_argument("syntax's error");
             }
         }
@@ -90,7 +94,7 @@ int Arithmetic::InfixCheck() {
                 break;
             }
         }
-        cout << "error in " << tmp << "symbol";
+        cout << "error in " << tmp << " symbol";
         throw invalid_argument("syntax's error");
     }
     return 1;
@@ -132,7 +136,7 @@ void Arithmetic::Parse() {
         }
         else if(infix[i] == 'c'){
             if (len-i<6 || infix[i+1] != 'o' || infix[i+2] != 's' || infix[i+3] != '(' ){
-                cout << "Error in cos in" << i << "symbol";
+                cout << "Error in cos in" << i << " symbol";
                 throw logic_error("Error in cos");
             }
             else{
@@ -148,7 +152,7 @@ void Arithmetic::Parse() {
         }
         else if(infix[i] == 's'){
             if (infix[i+1] != 'i' || infix[i+2] != 'n' || infix[i+3] != '(' ){
-                cout << "Error in sin in" << i << "symbol";
+                cout << "Error in sin in" << i << " symbol";
                 throw logic_error("Error in sin");
             }
             else{
@@ -163,7 +167,7 @@ void Arithmetic::Parse() {
         }
         else if(infix[i] == 't'){
             if (infix[i+1] != 'g' || infix[i+2] != '('){
-                cout << "Error in th in" << i << "symbol";
+                cout << "Error in th in" << i << " symbol";
                 throw logic_error("Error in tg");
             }
             else{
@@ -177,7 +181,7 @@ void Arithmetic::Parse() {
         }
         else if(infix[i] == 'e'){
             if (infix[i+1] != 'x' || infix[i+2] != 'p' || infix[i+3] != '(' ){
-                cout << "Error in exp in" << i << "symbol";
+                cout << "Error in exp in" << i << " symbol";
                 throw logic_error("Error in exp");
             }
             else{
@@ -192,7 +196,7 @@ void Arithmetic::Parse() {
         }
         else if(infix[i] == 'l'){
             if (infix[i+1] != 'g' || infix[i+2] != '('){
-                cout << "Error in lg in" << i << "symbol";
+                cout << "Error in lg in" << i << " symbol";
                 throw logic_error("Error in lg");
             }
             else{
