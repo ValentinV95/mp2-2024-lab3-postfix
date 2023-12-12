@@ -82,6 +82,7 @@ public:
 	}
 	void clear()
 	{
+		T* tmp;
 		delete[] data;
 		tmp = new T[100];
 		data = tmp;
