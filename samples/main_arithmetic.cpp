@@ -48,8 +48,10 @@ int main()
 				}
 
 				if (choice == 2)
+				{
 					cin.ignore();
 					continue;
+				}
 			
 				if (choice == 3)
 					break;
