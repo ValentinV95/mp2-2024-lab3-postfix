@@ -332,7 +332,7 @@ void Arithmetic::infixCheck()
 			error += arrow + "Here should be digit, veriable or ')'";
 			throw invalid_argument(error.c_str());
 		}
-		if (infix[infix.length() - 1] == '0' && infix[infix.length() - 2] == '/')
+		if (infix.length()>1 && infix[infix.length() - 1] == '0' && infix[infix.length() - 2] == '/')
 		{
 			error += arrow + "Division by zero isn`t correct";
 			throw invalid_argument(error.c_str());
