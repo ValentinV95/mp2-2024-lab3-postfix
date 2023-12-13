@@ -207,131 +207,148 @@ void Arithmetic::infixCheck()
 	int open = 0, close = 0;
 	int breckets = 0;
 
-	if ((!isOperand(infix[0])) && (!isDigit(infix[0])) && infix[0] != '(' && infix[0] != '-')
+	if(infix.length()>0)
 	{
-		error += infix[0];
-		error += arrow;
-		throw invalid_argument(error.c_str());
-	}
-	if (infix[0] == '(')
-		breckets++;
-	for (size_t i = 0; i < infix.length() - 1; i++) {
 
-		if (i < infix.length() - 1 && isDigit(infix[i])) {
-			int op = i-1;
-			string name;
-			while (((!isOperation(infix[i])) && infix[i] != ')' && infix[i] != '(') && (i < infix.length()))
-			{
-				name.push_back(infix[i]);
-				error += infix[i++];
-			}
-			
-			for (size_t j = 0; j < name.length(); j++)
-				if (!(isDigit(name[j]) || name[j] == 'e'|| name[j] == '+' || name[j] == '-'))
+		if ((!isOperand(infix[0])) && (!isDigit(infix[0])) && infix[0] != '(' && infix[0] != '-')
+		{
+			error += infix[0];
+			error += arrow;
+			throw invalid_argument(error.c_str());
+		}
+		if (infix[0] == '(')
+			breckets++;
+		for (size_t i = 0; i < infix.length() - 1; i++) {
+
+			if (i < infix.length() - 1 && isDigit(infix[i])) {
+				int op = i - 1;
+				string name;
+				int e = 0, dot = 0;
+				while (((!isOperation(infix[i])) && infix[i] != ')' && infix[i] != '(') && (i < infix.length()))
+				{
+					name.push_back(infix[i]);
+					if (infix[i] == 'e') e++;
+					if (infix[i] == '.') dot++;
+					error += infix[i++];
+
+				}
+				if (e > 1 || dot > 1)
 				{
 					error += arrow + "The mistake in a digit";
 					throw invalid_argument(error.c_str());
 				}
-			if (op > 0 && (infix[op] == '/' && name == "0"))
-			{
-				error += arrow + "Division by zero isn`t correct";
-				throw invalid_argument(error.c_str());
-			}
-			if (infix[i] == '(')
-			{
-				error += infix[i];
-				error += arrow;
-				throw invalid_argument(error.c_str());
-
-			}
-
-		}
-
-		if (i < infix.length() - 1 && isOperand(infix[i])) {
-			string name;
-			while (!(isOperation(infix[i]) || infix[i] == ')' || infix[i] == '(' || infix[i]==' ') && i < infix.length()) {
-
-				if (infix[i]==' ')
+				if (name[name.length()-1]=='e')
 				{
-					error += arrow + "You shold not use spaces";
+					error += arrow + "The mistake in a digit";
 					throw invalid_argument(error.c_str());
 				}
-				name.push_back(infix[i]);
-				error += infix[i++];
-			}
-			for (size_t j = 0; j < name.length(); j++)
-				if (!(isDigit(name[j]) || isOperand(name[j])))
+				for (size_t j = 0; j < name.length(); j++)
+					if (!(isDigit(name[j]) || name[j] == 'e' || name[j] == '+' || name[j] == '-'))
+					{
+						error += arrow + "The mistake in a digit";
+						throw invalid_argument(error.c_str());
+					}
+				if (op > 0 && (infix[op] == '/' && name == "0"))
 				{
-					error += arrow + "The mistake in the name of variable";
+					error += arrow + "Division by zero isn`t correct";
 					throw invalid_argument(error.c_str());
 				}
-			if (infix[i] == '(')
-			{
-				error += infix[i];
-				error += arrow;
-				throw invalid_argument(error.c_str());
-			}
-		}
+				if (infix[i] == '(')
+				{
+					error += infix[i];
+					error += arrow;
+					throw invalid_argument(error.c_str());
 
-		if (i < infix.length() - 1 && infix[i] == ')') {
-			error += infix[i];
-			breckets--;
-			if (breckets < 0)
-			{
-				error += arrow + "Wrong brecket";
-				throw invalid_argument(error.c_str());
-			}
-			if ((!isOperation(infix[i+1])) && infix[i+1] != ')')
-			{
-				error += infix[i+1];
-				error += arrow + "Here should be an operation";
-				throw invalid_argument(error.c_str());
-			}
-		}
+				}
 
-		if (i < infix.length() - 1 && isOperation(infix[i])) {
+			}
+
+			if (i < infix.length() - 1 && isOperand(infix[i])) {
+				string name;
+				while (!(isOperation(infix[i]) || infix[i] == ')' || infix[i] == '(' || infix[i] == ' ') && i < infix.length()) {
+
+					if (infix[i] == ' ')
+					{
+						error += arrow + "You shold not use spaces";
+						throw invalid_argument(error.c_str());
+					}
+					name.push_back(infix[i]);
+					error += infix[i++];
+				}
+				for (size_t j = 0; j < name.length(); j++)
+					if (!(isDigit(name[j]) || isOperand(name[j])))
+					{
+						error += arrow + "The mistake in the name of variable";
+						throw invalid_argument(error.c_str());
+					}
+				if (infix[i] == '(')
+				{
+					error += infix[i];
+					error += arrow;
+					throw invalid_argument(error.c_str());
+				}
+			}
+
+			if (i < infix.length() - 1 && infix[i] == ')') {
 				error += infix[i];
-				if ((!isOperand(infix[i+1])) && (!isDigit(infix[i+1])) && infix[i+1] != '(') {
+				breckets--;
+				if (breckets < 0)
+				{
+					error += arrow + "Wrong brecket";
+					throw invalid_argument(error.c_str());
+				}
+				if ((!isOperation(infix[i + 1])) && infix[i + 1] != ')')
+				{
 					error += infix[i + 1];
-					error +=  arrow + "Here should be digit, variable or '('";
+					error += arrow + "Here should be an operation";
 					throw invalid_argument(error.c_str());
 				}
-		}
-
-		if (i < infix.length() - 1 && infix[i] == '(') {
-			error += infix[i];
-			breckets++;
-			if (infix[i+1] != '-' && infix[i+1] != '(' && (!isDigit(infix[i+1])) && (!isOperand(infix[i+1]))) {
-				error += infix[i+1];
-				error += arrow + "Here should be digit, variable,unary minus or '('";
-				throw invalid_argument(error.c_str());
 			}
+
+			if (i < infix.length() - 1 && isOperation(infix[i])) {
+				error += infix[i];
+				if ((!isOperand(infix[i + 1])) && (!isDigit(infix[i + 1])) && infix[i + 1] != '(') {
+					error += infix[i + 1];
+					error += arrow + "Here should be digit, variable or '('";
+					throw invalid_argument(error.c_str());
+				}
+			}
+
+			if (i < infix.length() - 1 && infix[i] == '(') {
+				error += infix[i];
+				breckets++;
+				if (infix[i + 1] != '-' && infix[i + 1] != '(' && (!isDigit(infix[i + 1])) && (!isOperand(infix[i + 1]))) {
+					error += infix[i + 1];
+					error += arrow + "Here should be digit, variable,unary minus or '('";
+					throw invalid_argument(error.c_str());
+				}
+			}
+
+
+		}
+
+		error += infix[infix.length() - 1];
+		if (!(isDigit(infix[infix.length() - 1]) || isOperand(infix[infix.length() - 1]) || infix[infix.length() - 1] == ')')) {
+			error += arrow + "Here should be digit, veriable or ')'";
+			throw invalid_argument(error.c_str());
+		}
+		if (infix[infix.length() - 1] == '0' && infix[infix.length() - 2] == '/')
+		{
+			error += arrow + "Division by zero isn`t correct";
+			throw invalid_argument(error.c_str());
 		}
 
 
-	}
-
-	error += infix[infix.length() - 1];
-	if (!(isDigit(infix[infix.length() - 1]) || isOperand(infix[infix.length() - 1]) || infix[infix.length() - 1] == ')')) {
-		error += arrow + "Here should be digit, veriable or ')'";
-		throw invalid_argument(error.c_str());
-	}
-	if (infix[infix.length() - 1] == '0' && infix[infix.length() - 2] == '/')
-	{
-		error += arrow + "Division by zero isn`t correct";
-		throw invalid_argument(error.c_str());
-	}
+		for (size_t i = 0; i < infix.length(); i++) {
+			if (infix[i] == '(') open++;
+			if (infix[i] == ')') close++;
+		}
 
 
-	for (size_t i = 0; i < infix.length(); i++) {
-		if (infix[i] == '(') open++;
-		if (infix[i] == ')') close++;
-	}
-
-
-	if (open != close) {
-		error += arrow + "Here should be more closed breckets";
-		throw invalid_argument(error.c_str());
+		if (open != close) {
+			error += arrow + "Here should be more closed breckets";
+			throw invalid_argument(error.c_str());
+		}
 	}
 
 
