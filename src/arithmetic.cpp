@@ -1,4 +1,4 @@
-// ðåàëèçàöèÿ ôóíêöèé è êëàññîâ äëÿ âû÷èñëåíèÿ àðèôìåòè÷åñêèõ âûðàæåíèé
+// Ã°Ã¥Ã Ã«Ã¨Ã§Ã Ã¶Ã¨Ã¿ Ã´Ã³Ã­ÃªÃ¶Ã¨Ã© Ã¨ ÃªÃ«Ã Ã±Ã±Ã®Ã¢ Ã¤Ã«Ã¿ Ã¢Ã»Ã·Ã¨Ã±Ã«Ã¥Ã­Ã¨Ã¿ Ã Ã°Ã¨Ã´Ã¬Ã¥Ã²Ã¨Ã·Ã¥Ã±ÃªÃ¨Ãµ Ã¢Ã»Ã°Ã Ã¦Ã¥Ã­Ã¨Ã©
 #include "arithmetic.h"
 
 Arithmetic::~Arithmetic()
@@ -232,7 +232,7 @@ void Arithmetic::infixCheck()
 					error += infix[i++];
 
 				}
-				if (e > 1 || dot > 1)
+				if (e > 1 || dot > 1 || name.find('e') < name.find('.'))
 				{
 					error += arrow + "The mistake in a digit";
 					throw invalid_argument(error.c_str());
