@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <iomanip>
 
 
 int main()
@@ -13,12 +14,13 @@ int main()
 		cout << "You can use operations +,-,/,*. If \"-\" is unary, use breckets for correct work." << endl;
 		cout << "Names of your variables can use letters, digits and dots (not on the first position) and \"_\"." << endl;
 		cout << "Double numbers should use dot instead of comma, can use form with \'e\'" << endl << endl;
-		
-		string exp;
+		cout << setprecision(8) << fixed;
+
 		while (true)
 		{
 			try
 			{
+				string exp;
 				cout << "Give the expression without spaces: ";
 				getline(cin,exp);
 				string error;
@@ -46,6 +48,7 @@ int main()
 				}
 
 				if (choice == 2)
+					cin.ignore();
 					continue;
 			
 				if (choice == 3)
@@ -55,5 +58,5 @@ int main()
 				cout << e.what() << endl << endl;
 			}
 		}
-
+		
 }
