@@ -1,9 +1,116 @@
-// объявление и реализация шаблонного стека
-// стек поддерживает операции: 
-// - вставка элемента, 
-// - извлечение элемента, 
-// - просмотр верхнего элемента (без удаления)
-// - проверка на пустоту, 
-// - получение количества элементов в стеке
-// - очистка стека
-// при вставке в полный стек должна перевыделяться память
+п»ї// РѕР±СЉСЏРІР»РµРЅРёРµ Рё СЂРµР°Р»РёР·Р°С†РёСЏ С€Р°Р±Р»РѕРЅРЅРѕРіРѕ СЃС‚РµРєР°
+// СЃС‚РµРє РїРѕРґРґРµСЂР¶РёРІР°РµС‚ РѕРїРµСЂР°С†РёРё: 
+// - РІСЃС‚Р°РІРєР° СЌР»РµРјРµРЅС‚Р°, 
+// - РёР·РІР»РµС‡РµРЅРёРµ СЌР»РµРјРµРЅС‚Р°, 
+// - РїСЂРѕСЃРјРѕС‚СЂ РІРµСЂС…РЅРµРіРѕ СЌР»РµРјРµРЅС‚Р° (Р±РµР· СѓРґР°Р»РµРЅРёСЏ)
+// - РїСЂРѕРІРµСЂРєР° РЅР° РїСѓСЃС‚РѕС‚Сѓ, 
+// - РїРѕР»СѓС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ РІ СЃС‚РµРєРµ
+// - РѕС‡РёСЃС‚РєР° СЃС‚РµРєР°
+// РїСЂРё РІСЃС‚Р°РІРєРµ РІ РїРѕР»РЅС‹Р№ СЃС‚РµРє РґРѕР»Р¶РЅР° РїРµСЂРµРІС‹РґРµР»СЏС‚СЊСЃСЏ РїР°РјСЏС‚СЊ
+
+template <class T>
+class TStack
+{
+public:
+	TStack() : sz(0), cap(256) { data = new T[cap]; }
+	TStack(const TStack& s) : sz(s.sz), cap(s.cap)
+	{
+		data = new T[cap];
+		std::copy(s.data, s.data + sz, data);
+	}
+
+	TStack(TStack&& s) noexcept
+	{
+		sz = 0;
+		cap = 0;
+		data = nullptr;
+		swap(*this, s);
+	}
+
+	~TStack()
+	{
+		sz = 0;
+		cap = 0;
+		delete[] data;
+		data = nullptr;
+	}
+
+	TStack& operator=(const TStack& s)
+	{
+		if (this == &s)
+			return *this;
+		TStack tmp(s);
+		swap(*this, tmp);
+		return *this;
+	}
+
+	TStack& operator=(TStack&& s) noexcept
+	{
+		delete[] data;
+		sz = 0;
+		cap = 0;
+		data = nullptr;
+		swap(*this, s);
+		return *this;
+	}
+
+	friend void swap(TStack& lhs, TStack& rhs) noexcept
+	{
+		std::swap(lhs.sz, rhs.sz);
+		std::swap(lhs.cap, rhs.cap);
+		std::swap(lhs.data, rhs.data);
+	}
+
+	void push(const T& value)
+	{
+		if (sz == cap) resize();
+		data[sz++] = value;
+	}
+
+	void push(T&& value)
+	{
+		if (sz == cap) resize();
+		data[sz++] = std::move(value);
+	}
+
+	void pop()
+	{
+		if (!isEmpty()) { sz--; }
+		else throw std::runtime_error("Trying to pop from empty stack");
+	}
+
+	void clear()
+	{
+		TStack s;
+		swap(*this, s);
+	}
+
+	T& top() 
+	{ 
+		if (sz == 0) throw std::runtime_error("Trying to get element from empty stack");
+		return data[sz-1];
+	}
+
+	const T& top() const
+	{
+		if (sz == 0) throw std::runtime_error("Trying to get element from empty stack");
+		return data[sz-1];
+	}
+
+	bool isEmpty() noexcept { return sz == 0; }
+	size_t size() noexcept { return sz; }
+
+private:
+	T* data;
+	size_t sz;
+	size_t cap;
+
+	void resize()
+	{
+		T* tmp = new T[cap * 2];
+		std::copy(data, data + sz, tmp);
+		cap *= 2;
+		delete[] data;
+		data = tmp;
+	}
+};
