@@ -1,4 +1,3 @@
-file(GLOB hdrs "*.h*" "../include/*.h")
-file(GLOB srcs "*.cpp" "../src/arithmetic.cpp")
-
-add_executable(postfix ${srcs} ${hdrs})
+add_executable(postfix "main_arithmetic.cpp")
+ 
+target_link_libraries(postfix arithm_lib)
