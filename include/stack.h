@@ -1,9 +1,72 @@
-// объявление и реализация шаблонного стека
-// стек поддерживает операции: 
-// - вставка элемента, 
-// - извлечение элемента, 
-// - просмотр верхнего элемента (без удаления)
-// - проверка на пустоту, 
-// - получение количества элементов в стеке
-// - очистка стека
-// при вставке в полный стек должна перевыделяться память
+#pragma once
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+template <class T>
+class Stack
+{
+private:
+    T* data;          // РЈРєР°Р·Р°С‚РµР»СЊ РЅР° РјР°СЃСЃРёРІ СЌР»РµРјРµРЅС‚РѕРІ СЃС‚РµРєР°
+    size_t capacity;  // РћР±С‰Р°СЏ С‘РјРєРѕСЃС‚СЊ СЃС‚РµРєР°
+    size_t size;      // РўРµРєСѓС‰РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РІ СЃС‚РµРєРµ
+public:
+    Stack()
+    {
+        data = new T[10];
+        capacity = 10;
+        size = 0;
+    }
+    bool isEmpty()
+    {
+        return size == 0;
+    }
+    T pop()
+    {
+        if (isEmpty())
+            throw invalid_argument("Stack is empty");
+        else
+            return data[--size];
+    }
+    T top()
+    {
+        if (isEmpty())
+            throw invalid_argument("Sorry, stack is empty");
+        else
+            return data[size - 1];
+    }
+    void push()
+    {
+        if (size == capcity)
+        {
+            T* tmp = new T[size * 2];
+            for (size_t i = 0; i < size; i++)
+            {
+                tmp[i] = data[i];
+            }
+            delete[] data;
+            data = tmp;
+            capacity = 2 * size;
+        }
+        data[size++] = elem;
+    }
+    size_t getSize()
+    {
+        return size;
+    }
+    void clear()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            data[i] = {};
+        }
+    }
+    ~Stack()
+    {
+        delete[] data;
+        data = nullptr;
+        capacity = 0;
+        size = 0;
+    }
+};
