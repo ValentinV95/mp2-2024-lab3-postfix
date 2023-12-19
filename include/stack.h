@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-using namespace std;
 template <class T>
 class Stack
 {
@@ -36,9 +35,9 @@ public:
         else
             return data[size - 1];
     }
-    void push()
+    void push(T elem)
     {
-        if (size == capcity)
+        if (size == capacity)
         {
             T* tmp = new T[size * 2];
             for (size_t i = 0; i < size; i++)
