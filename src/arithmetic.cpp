@@ -224,13 +224,15 @@ void Arithmetic::infixCheck()
 				int op = i - 1;
 				string name;
 				int e = 0, dot = 0;
-				while ((infix[i] != '*' && infix[i]!=  '/' && infix[i] != ')' && infix[i] != '(') && (i < infix.length()))
+				while (((!isOperation(infix[i])) && infix[i] != ')' && infix[i] != '(') && (i < infix.length()))
 				{
 					name.push_back(infix[i]);
+					if (infix[i] == 'e' && (infix[i + 1] == '+' || infix[i + 1] == '-'))
+						name.push_back(infix[i++]);
 					if (infix[i] == 'e') e++;
 					if (infix[i] == '.') dot++;
 					error += infix[i++];
-
+			
 				}
 				if (e > 1 || dot > 1 || name.find('e') < name.find('.'))
 				{
