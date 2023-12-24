@@ -10,7 +10,6 @@ using namespace std;class TPostfix
     string operands;
     string* var;
     string* setOfLexems;
-    double* varValue;
     int lexemSize;
     int varSize;
 
