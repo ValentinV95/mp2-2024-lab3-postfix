@@ -36,7 +36,7 @@ int main()
             if (choice == 1)
             {
                TPostfix mathexp(line);
-               double res = getResult.();
+               double res = mathexp.getResult();
                 cout << "The result: " << res << "\n";
             }
             if (choice == 2)
