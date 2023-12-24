@@ -30,23 +30,26 @@ int main()
             int choice;
             cout << "Do you want to calculate? \n";
             cout << "1. Yes \n";
-            cout << "2. No \n";
+            cout << "2. Again \n";
+            cout << "3. No \n";
             cin >> choice;
             if (choice == 1)
             {
-                TPostfix mathexp(line);
-                double res = mathexp.calculate();
+               TPostfix mathexp(line);
+               double res = mathexp.calculate();
                 cout << "The result: " << res << "\n";
-                cout << "Do you want to calculate? \n";
-                cout << "1. Yes \n";
-                cout << "2. No \n";
             }
             if (choice == 2)
             {
-                        break;
+                cout << "Enter the arifmetic expression: \n";
+                cin >> line;
+            }
+            if (choice == 3)
+            {
+                break;
             }
         }
-        catch (exception& e) 
+        catch (exception& e)
         {
             cout << e.what() << endl << endl;
         }
