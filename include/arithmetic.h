@@ -29,6 +29,5 @@ public:
     void check();
     void toPostfix();
     double toDouble(string number);
-    void valueofvars();
-    double calculate();
+    double calculate(); 
 };
