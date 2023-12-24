@@ -30,4 +30,5 @@ public:
     void toPostfix();
     double toDouble(string number);
     double calculate(); 
+    double getResult() const;
 };
