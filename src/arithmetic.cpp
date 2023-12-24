@@ -53,6 +53,9 @@ void TPostfix::checking_brackets(const std::string& s) const
 
 string TPostfix::check_string_is_a_number(const string& str, size_t start_number, size_t end_number) {
 	string str_number;
+	if (str[start_number] == '.' && start_number + 1 == end_number) {
+		throw invalid_argument("A number cannot be just a point");
+	}
 	str_number = str[start_number++];
 	while (start_number != end_number && str[start_number] != '.' && str[start_number] != 'e') {
 		str_number += str[start_number++];
@@ -77,11 +80,14 @@ string TPostfix::check_string_is_a_number(const string& str, size_t start_number
 				throw invalid_argument("after 'e-' there must be a natural number");
 			}
 		}
-		if (start_number != end_number && (str[start_number] >= '0' && str[start_number] <= '9')) {
-			str_number += str[start_number++];
-		}
-		else {
-			throw invalid_argument("after 'e' there must be a natural number");
+		else
+		{
+			if (start_number != end_number && (str[start_number] >= '0' && str[start_number] <= '9')) {
+				str_number += str[start_number++];
+			}
+			else {
+				throw invalid_argument("after 'e' there must be a natural number");
+			}
 		}
 	}
 	while (start_number != end_number) {
@@ -144,7 +150,7 @@ vector<string> TPostfix::to_postfix() {
 	while (j < str.size()) {
 		elem_str = str[j];
 		if (priority_of_operations(str[j])) {
-			if ((j == str.size() - 1 && str[j + 1] == ')') || (priority_of_operations(str[j + 1]) > 0 && priority_of_operations(str[j + 1]) < 3)) {
+			if (j == str.size() - 1 && str[j + 1] == ')') {
 				throw invalid_argument("after the operation there must be a number or a unary minus");
 			}
 			if (j == 0 || str[j - 1] == '(' || priority_of_operations(str[j - 1])) {
@@ -155,7 +161,7 @@ vector<string> TPostfix::to_postfix() {
 					throw invalid_argument("there must be a closing bracket or number before the operation");
 				}
 			}
-			while (stack_of_operations.isEmpty() == 0 && stack_of_operations.top() != "(" && priority_of_operations(elem_str) != 3 
+			while (!stack_of_operations.isEmpty() && stack_of_operations.top() != "(" && priority_of_operations(elem_str) != 3
 				&& priority_of_operations(stack_of_operations.top()) >= priority_of_operations(elem_str)) {
 				postfix.push_back(stack_of_operations.pop());
 			}

@@ -2,6 +2,7 @@
 
 #include "arithmetic.h"
 #include <map>
+#include <limits>
 
 int main()
 {
@@ -12,12 +13,14 @@ int main()
 	cout << "You can enter an unlimited number of variables of the form 'x...'." << endl;
 	cout << "You can enter numbers like '12.345e2', '12.345e-2'. " << endl;
 	cout << "Available operations : '+', '-'(also unary minus), '*', '/'" << endl;
+	cout << "If further actions do not appear, press Enter!!!" << endl;
 	cout << "Enter an arithmetic expression." << endl;
 	getline(cin, expression);
 	while (true) {
 		try
 		{
 			TPostfix postfix(expression);
+			cout << "change - change expression" << endl;
 			cout << "calculate - calculate your expression" << endl;
 			cout << "replacement - replacing variables" << endl;
 			cout << "0 - end program" << endl;
@@ -57,9 +60,18 @@ int main()
 				cout << endl;
 				cout << "Result of expression: " << postfix.calculate(variables) << endl;
 			}
+			else if (choice == "change") {
+				string new_expression;
+				cout << "Enter modified expression: ";
+				getline(cin, new_expression);
+				cout << endl;
+				expression = new_expression;
+				variables.clear();
+			}
 			else {
 				cout << "wrong choice" << endl;
 			}
+			cin.ignore();
 			}
 		catch (const std::exception& ex)
 		{

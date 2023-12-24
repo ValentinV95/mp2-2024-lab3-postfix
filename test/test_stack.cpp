@@ -64,9 +64,19 @@ TEST(TStack, throws_when_element_pop_from_empty_stack)
 	ASSERT_ANY_THROW(stack.pop());
 }
 
-TEST(TStack, stack_size_)
+TEST(TStack, stack_size_is_correct)
 {
 	TStack<int> stack;
 	stack.push(123);
 	ASSERT_EQ(1, stack.get_size());
+}
+
+TEST(TStack, pop_reduces_stack_size)
+{
+	TStack<int> stack;
+	stack.push(123);
+	stack.push(123);
+	stack.push(123);
+	stack.pop();
+	ASSERT_EQ(2, stack.get_size());
 }

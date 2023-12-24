@@ -27,7 +27,19 @@ TEST(TPostfix, calculate_is_correct) {
 	TPostfix postfix("1+2+3+4+5");
 	map<string, double> v;
 	postfix.to_postfix();
-	EXPECT_EQ(15, postfix.calculate(v));
+	EXPECT_NEAR(15.0, postfix.calculate(v), 0.01);
+}
+
+TEST(TPostfix, calculate_is_correct_two) {
+	TPostfix postfix("((2+3)*9-8)/5");
+	map<string, double> v;
+	postfix.to_postfix();
+	EXPECT_NEAR(7.4, postfix.calculate(v), 0.01);
+}
+
+TEST(TPostfix, throws_when_number_is_a_dot) {
+	TPostfix postfix(".");
+	ASSERT_ANY_THROW(postfix.to_postfix());
 }
 
 TEST(TPostfix, can_create_TPostfix_is_valid_expression) {
