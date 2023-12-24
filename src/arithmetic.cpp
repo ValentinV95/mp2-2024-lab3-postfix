@@ -11,30 +11,32 @@ TPostfix::~TPostfix()
 	postfix = "";
 	lexemSize = 0;
 }
-TPostfix::TPostfix(string& str) : infix(str)
+
+TPostfix::TPostfix(string& str): infix(str)
 {
-	int size = infix.length();
-	check();
-	setOfLexems = new string[size]();
-	toLexems();
-	var = new string[varSize];
-	int lineSize = 0;
-	for (int i = 0; i < operands.length(); i++)
-		if (operands[i] != ' ')
-			var[lineSize].push_back(operands[i]);
-		else
-		{
-			lineSize++;
-		}
-	toPostfix();
+		size_t size = infix.size();
+		check();
+		setOfLexems = new string[size]();
+		toLexems();
+		var = new string[varSize];
+		int lineSize = 0;
+		for (size_t i = 0; i < operands.length(); i++)
+			if (operands[i] != ' ')
+				var[lineSize].push_back(operands[i]);
+			else
+			{
+				lineSize++;
+			}
+		toPostfix();
 }
+
 void TPostfix::setInfix(string& str)
 {
 	postfix = "";
 	infix = "";
 	operands = "";
 	infix = str;
-	int size = infix.length();
+	size_t size = infix.size();
 	check();
 	string* SetOfLexems_new = new string[size]();
 	delete[] setOfLexems;
@@ -83,32 +85,26 @@ int TPostfix::priority(string operation)
 		return -1;
 }
 
-bool TPostfix::isOperation(const char& x)
+bool TPostfix::isOperation(const char& x) 
 {
-	if (x == '+' || x == '-' || x == '*' || x == '/')
-		return true;
-	else return false;
+	return (x == '+' || x == '-' || x == '*' || x == '/');
 }
 
 bool TPostfix::isOperand(const char& symbol)
 {
-	if ((symbol < char(91) && symbol > char(64)) || (symbol > char(96) && symbol < char(123)) || symbol == '_')
-		return true;
-	else return false;
+	return ((symbol < char(91) && symbol > char(64)) || (symbol > char(96) && symbol < char(123)) || symbol == ' ');
 }
 
 bool TPostfix::isDigitOrPoint(const char& symbol)
 {
-	if ((symbol <= '9' && symbol >= '0') || symbol == '.')
-		return true;
-	else return false;
+	return ((symbol <= '9' && symbol >= '0') || symbol == '.');
 }
 
 void TPostfix::toLexems()
 {
 	string line;
 	int lineSize = 0;
-	size_t infixLength = infix.length();
+	size_t infixLength = infix.size();
 	lexemSize = 0;
 	for (size_t i = 0; i < infixLength; i++)
 	{
@@ -141,9 +137,9 @@ void TPostfix::toLexems()
 			}
 		}
 		if (isOperation(infix[i]))
-			if ((infix[i] == '-') && (i == 0 || infix[i - 1] == '(' || isOperation(infix[i - 1])))
+			if ((infix[i] == '-') && (i == 0 || infix[i - 1] == '(' || isOperation(infix[i - 1]))) 
 				setOfLexems[lexemSize++] = '~';
-			else
+			else 
 				setOfLexems[lexemSize++] = infix[i];
 	}
 	varSize = lineSize;
@@ -154,7 +150,7 @@ void TPostfix::check()
 	int openbracket = 0;
 	int closebracket = 0;
 	int breckets = 0;
-	size_t infixLength = infix.length();
+	size_t infixLength = infix.size();
 	string error = "Incorrect element: ";
 	string cursor = "<<";
 	if (!(infix.empty()))
@@ -167,15 +163,15 @@ void TPostfix::check()
 		}
 		if (infix[0] == '(')
 			breckets++;
-		for (size_t i = 0; i < infix.length() - 1; i++)
+		for (int i = 0; i < infix.size() - 1; i++) 
 		{
 			if ((i < infixLength - 1) && (isDigitOrPoint(infix[i])))
 			{
-				size_t elem = i - 1;
+				int elem = i - 1;
 				string line;
 				int e = 0;
 				int point = 0;
-				size_t lineLength = line.length();
+				size_t lineLength = line.size();
 				size_t counte = line.find('e');
 				size_t countpoint = line.find('.');
 				while ((infix[i] != '*') && (infix[i] != '/') && (infix[i] != ')') && (infix[i] != '(') && (i < infixLength))
@@ -216,8 +212,8 @@ void TPostfix::check()
 			if (i < infixLength - 1 && isOperand(infix[i]))
 			{
 				string line;
-				size_t lineLength = line.length();
-				while (!(isOperation(infix[i]) || infix[i] == ')' || infix[i] == '(' || infix[i] == ' ') && i < infixLength)
+				size_t lineLength = line.size();
+				while (!(isOperation(infix[i]) || infix[i] == ')' || infix[i] == '(' || infix[i] == ' ') && i < infixLength) 
 				{
 					if (infix[i] == ' ')
 					{
@@ -240,7 +236,7 @@ void TPostfix::check()
 					throw invalid_argument(error.c_str());
 				}
 			}
-			if (i < infixLength - 1 && infix[i] == ')')
+			if (i < infixLength - 1 && infix[i] == ')') 
 			{
 				error += infix[i];
 				breckets--;
@@ -256,21 +252,21 @@ void TPostfix::check()
 					throw invalid_argument(error.c_str());
 				}
 			}
-			if (i < infixLength - 1 && isOperation(infix[i]))
+			if (i < infixLength - 1 && isOperation(infix[i])) 
 			{
 				error += infix[i];
-				if ((!isOperand(infix[i + 1])) && (!isDigitOrPoint(infix[i + 1])) && infix[i + 1] != '(')
+				if ((!isOperand(infix[i + 1])) && (!isDigitOrPoint(infix[i + 1])) && infix[i + 1] != '(') 
 				{
 					error += infix[i + 1];
 					error += cursor + "Here should be digit, var or '('";
 					throw invalid_argument(error.c_str());
 				}
 			}
-			if (i < infixLength - 1 && infix[i] == '(')
+			if (i < infixLength - 1 && infix[i] == '(') 
 			{
 				error += infix[i];
 				breckets++;
-				if (infix[i + 1] != '-' && infix[i + 1] != '(' && (!isDigitOrPoint(infix[i + 1])) && (!isOperand(infix[i + 1])))
+				if (infix[i + 1] != '-' && infix[i + 1] != '(' && (!isDigitOrPoint(infix[i + 1])) && (!isOperand(infix[i + 1]))) 
 				{
 					error += infix[i + 1];
 					error += cursor + "Here should be digit, var, unary minus or '('";
@@ -279,7 +275,7 @@ void TPostfix::check()
 			}
 		}
 		error += infix[infixLength - 1];
-		if (!(isDigitOrPoint(infix[infixLength - 1]) || isOperand(infix[infixLength - 1]) || infix[infixLength - 1] == ')'))
+		if (!(isDigitOrPoint(infix[infixLength - 1]) || isOperand(infix[infixLength - 1]) || infix[infixLength - 1] == ')')) 
 		{
 			error += cursor + "Here should be digit, var or ')'";
 			throw invalid_argument(error.c_str());
@@ -289,12 +285,12 @@ void TPostfix::check()
 			error += cursor + "Division by zero is impossible";
 			throw invalid_argument(error.c_str());
 		}
-		for (int i = 0; i < infixLength; i++)
+		for (int i = 0; i < infixLength; i++) 
 		{
 			if (infix[i] == '(') openbracket++;
 			if (infix[i] == ')') closebracket++;
 		}
-		if (openbracket != closebracket)
+		if (openbracket != closebracket) 
 		{
 			error += cursor + "Here are not enough brackets";
 			throw invalid_argument(error.c_str());
@@ -304,7 +300,7 @@ void TPostfix::check()
 
 void TPostfix::toPostfix()
 {
-	Stack<string> stack;
+	Stack<string> stack; 
 	for (int i = 0; i < lexemSize; i++)
 	{
 		if (setOfLexems[i][0] == '(')
@@ -315,19 +311,19 @@ void TPostfix::toPostfix()
 		{
 			while (stack.top()[0] != '(')
 				postfix += stack.pop() + " ";
-			stack.pop();
+			stack.pop(); 
 		}
 		else if (setOfLexems[i][0] == '+' || setOfLexems[i][0] == '-')
 		{
 			while (!stack.isEmpty() && priority(stack.top()) > 0)
 				postfix += stack.pop() + " ";
-			stack.push(setOfLexems[i]);
+			stack.push(setOfLexems[i]); 
 		}
 		else if (setOfLexems[i][0] == '*' || setOfLexems[i][0] == '/')
 		{
 			while (!stack.isEmpty() && priority(stack.top()) > 1)
 				postfix += stack.pop() + " ";
-			stack.push(setOfLexems[i]);
+			stack.push(setOfLexems[i]); 
 		}
 		else if (setOfLexems[i][0] == '~')
 		{
@@ -346,7 +342,7 @@ double TPostfix::toDouble(string number)
 {
 	double res = 0.0;
 	double sign = 1.0;
-	size_t n = number.length();
+	size_t n = number.size();
 	int pospoint = 0;
 	int pose = 0;
 
@@ -396,17 +392,17 @@ double TPostfix::toDouble(string number)
 	}
 	else if (pospoint == 0 && pose == 0)
 	{
-		if (number[0] == '~' || number[0] == '-')
+		if (number[0] == '~' || number[0] == '-') 
 		{
-			for (int i = 1; i < n; i++)
+			for (int i = 1; i < n; i++) 
 			{
 				res = res * 10.0 + static_cast<double>(number[i] - '0');
 			}
 			res *= -1.0;
 		}
-		else
+		else 
 		{
-			for (size_t i = 0; i < number.size(); i++)
+			for (size_t i = 0; i < number.size(); i++) 
 			{
 				res = res * 10.0 + static_cast<double>(number[i] - '0');
 			}
@@ -415,9 +411,7 @@ double TPostfix::toDouble(string number)
 	return res;
 }
 
-
-
-double TPostfix::calculate()
+void TPostfix::valueofvars()
 {
 	double* varValue = new double[varSize];
 	cout << "Write value for vars:" << endl;
@@ -428,9 +422,14 @@ double TPostfix::calculate()
 		cin >> str;
 		varValue[i] = toDouble(str);
 	}
+}
+
+double TPostfix::calculate()
+{
+	valueofvars();
 	Stack<double> stack;
 	double eps = pow(10, -20);
-	for (size_t i = 0; i < postfix.length(); i++)
+	for (size_t i = 0; i < postfix.size(); i++)
 	{
 		string line;
 		while (postfix[i] != ' ')
@@ -452,7 +451,7 @@ double TPostfix::calculate()
 			double var1, var2;
 			var2 = stack.pop();
 			var1 = stack.pop();
-			if (line[0] == '+')
+			if (line[0]=='+')
 				stack.push(var1 + var2);
 			if (line[0] == '-')
 				stack.push(var1 - var2);
@@ -479,9 +478,63 @@ double TPostfix::calculate()
 		}
 	}
 	delete[] varValue;
-	result = stack.pop();
+	return stack.pop();
 }
-double TPostfix::getResult() const
+
+
+#include <iostream>
+#include "Header1.h"
+
+int main()
 {
-	return result;
+    cout << "Hello, before you will use this calculator, you should read some rules: \n";
+    cout << "You can use 4 operations: addition +, subsrtaction -, multiplication *, division / \n";
+    cout << "Don't use spaces in your line \n";
+    cout << "You can denote vars by letters, digits and points \n";
+    cout << "You should put a point instead of a comma in floating point numbers \n";
+    cout << "You should avoid extra or misssing elements, be careful \n ";
+    cout << endl;
+    string line;
+    cout << "Enter the arifmetic expression: \n";
+    cin >> line;
+    string error;
+    while (true)
+    {
+        try
+        {
+            for (int i = 0; i < line.size(); i++)
+            {
+                error += line[i];
+                if (line[i] == ' ')
+                {
+                    error += "Don't forget, you can't use spaces in yor line";
+                    throw invalid_argument(error.c_str());
+                }
+            }
+            int choice;
+            cout << "Do you want to calculate? \n";
+            cout << "1. Yes \n";
+            cout << "2. No \n";
+            cin >> choice;
+            if (choice == 1)
+            {
+                TPostfix mathexp(line);
+                double res = mathexp.calculate();
+                cout << "The result: " << res << "\n";
+                cout << "Do you want to calculate? \n";
+                cout << "1. Yes \n";
+                cout << "2. No \n";
+            }
+            if (choice == 2)
+            {
+                        break;
+            }
+        }
+        catch (exception& e) 
+        {
+            cout << e.what() << endl << endl;
+        }
+    }
+    return 0;
 }
+
