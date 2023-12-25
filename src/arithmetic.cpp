@@ -411,7 +411,8 @@ double TPostfix::toDouble(string number)
 	return res;
 }
 
-void TPostfix::valueofvars()
+
+double TPostfix::calculate()
 {
 	double* varValue = new double[varSize];
 	cout << "Write value for vars:" << endl;
@@ -422,11 +423,6 @@ void TPostfix::valueofvars()
 		cin >> str;
 		varValue[i] = toDouble(str);
 	}
-}
-
-double TPostfix::calculate()
-{
-	valueofvars();
 	Stack<double> stack;
 	double eps = pow(10, -20);
 	for (size_t i = 0; i < postfix.size(); i++)
