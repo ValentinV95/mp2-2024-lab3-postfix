@@ -11,7 +11,6 @@ class TPostfix
     string operands;
     string* var;
     string* setOfLexems;
-    double* varValue;
     int lexemSize;
     int varSize;
 
@@ -30,6 +29,5 @@ public:
     void check();
     void toPostfix();
     double toDouble(string number);
-    void valueofvars();
     double calculate();
 };
