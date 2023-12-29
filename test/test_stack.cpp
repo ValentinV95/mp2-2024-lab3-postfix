@@ -51,13 +51,13 @@ TEST(Stack, pop_delete_element_on_the_top_of_stack)
 
 TEST(Stack, throws_when_do_top_when_stack_is_empty) 
 {
-	TStack<int> stack;
+	Stack<int> stack;
 	ASSERT_ANY_THROW(stack.top());
 }
 
 TEST(Stack, can_pop) 
 {
-	TStack<int> stack;
+	Stack<int> stack;
 	stack.push(123);
 	ASSERT_NO_THROW(stack.pop());
 }
