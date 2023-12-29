@@ -6,65 +6,76 @@ template<typename T>
 class Stack
 {
 	T* data;
+	size_t size;
 	size_t capacity;
-	int size=-1;
+	void resize() 
+	{
+		T* tmp = new T[size * 2];
+		for (int i = 0; i < size; i++) {
+			tmp[i] = data[i];
+		}
+		delete[] data;
+		data = tmp;
+		capacity = size * 2;
+	}
 public:
-	Stack()
+	Stack() 
 	{
 		data = new T[10];
 		capacity = 10;
+		size = 0;
 	}
-	Stack(size_t n)
-	{
-		capacity = n;
-		data = new T[capacity];
-		size = -1;
-	}
-	~Stack()
+	~Stack() 
 	{
 		delete[] data;
+		size = 0;
+		capacity = 0;
 		data = nullptr;
 	}
-	bool isEmpty()
+	bool isEmpty() 
 	{
 		return size == 0;
 	}
-	T top()
+	T top() 
 	{
-		if (isEmpty())
-			throw invalid_argument("Stack is empty");
-		else
+		if (isEmpty()) 
+		{
+			throw std::out_of_range("stack is empty");
+		}
+		else 
+		{
 			return data[size - 1];
+		}
 	}
 	T pop()
 	{
-		if (isEmpty())
-			throw invalid_argument("Stack is empty");
-		else
-			return data[--size];
-	}
-	void push(const T& elem)
-	{
-		if (++size == capacity)
+		if (isEmpty()) 
 		{
-			T* tmp = new T[capacity * 2];
-			for (size_t i = 0; i < capacity; i++)
-			{
-				tmp[i] = data[i];
-			}
-			delete[] data;
-			data = tmp;
-			capacity = 2 * capacity;
+			throw out_of_range("stack is empty");
 		}
-		data[size] = elem;
+		else 
+		{
+			return data[--size];
+		}
 	}
-	size_t getSize()
+	void push(const T& el) 
+	{
+		if (size == capacity) 
+		{
+			resize();
+		}
+		data[size++] = el;
+	}
+	size_t get_size()
 	{
 		return size;
 	}
-	void clear()
+	void clear() 
 	{
-		size = -1;
+		size = 0;
+		capacity = 10;
+		T* tmp = new T[capacity];
+		delete[] data;
+		data = tmp;
 	}
 };
-
