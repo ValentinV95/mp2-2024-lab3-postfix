@@ -7,7 +7,7 @@ TPostfix::~TPostfix()
 
 TPostfix::TPostfix(string str)
 {
-	length = str.length();
+	length = str.size();
 	infix = str;
 	postfix = "";
 	res = 0.0;
@@ -181,42 +181,44 @@ void TPostfix::toLexems()
  
 void TPostfix::toPostfix()
 {
-	Stack<string> stack;
+	size_t psize = 0;
+	string* pform = new string[length];
+	Stack<string> operations;
 	for (int i = 0; i < length; i++)
 	{
-		if (line[i] == "(")
+		if (line[i] < "0" || line[i] == "~")
 		{
-			stack.push(line[i]);
+			if (line[i] == "(")
+			{
+				operations.push(line[i]);
+			}
+			else if (line[i] == ")")
+			{
+				while (operations.top() != "(")
+					pform[psize++] = operations.pop();
+				operations.pop();
+			}
+			else
+			{
+				if (!(line[i] == "~"))
+				{
+					while ((!operations.isEmpty()) && (priority(operations.top()) >= priority(line[i])))
+						pform[psize++] = operations.pop();
+				}
+				operations.push(line[i]);
+			}
 		}
-		else if (line[i] == ")")
-		{
-			while (stack.top() != "(")
-				postfix += stack.pop() + " ";
-			stack.pop();
-		}
-		else if (line[i] == "+" || line[i] == "-")
-		{
-			while (!stack.isEmpty() && priority(stack.top()) > 0)
-				postfix += stack.pop() + " ";
-			stack.push(line[i]);
-		}
-		else if (line[i] == "*" || line[i] == "/")
-		{
-			while (!stack.isEmpty() && priority(stack.top()) > 1)
-				postfix += stack.pop() + " ";
-			stack.push(line[i]);
-		}
-		else if (line[i] == "~")
-		{
-			stack.push(line[i]);
-		}
-		else
-		{
-			postfix += line[i] + " ";
-		}
+		else pform[psize++] = line[i];
 	}
-	while (!stack.isEmpty())
-		postfix += stack.pop() + " ";
+	while (!operations.isEmpty())
+		pform[psize++] = operations.pop();
+	length = psize;
+	for (size_t i = 0; i < length; i++)
+	{
+		line[i] = pform[i];
+		postfix += pform[i];
+	}
+	delete[] pform;
 }
 
 void TPostfix::valueofvar() 
@@ -375,16 +377,14 @@ string TPostfix::getPostfix() const
 
 int TPostfix::priority(string operation)
 {
-	if (operation == "(" || operation == ")")
-		return 0;
-	else if (operation == "+" || operation == "-")
+	if (operation == "+" || operation == "-")
 		return 1;
 	else if (operation == "*" || operation == "/")
 		return 2;
 	else if (operation == "~")
 		return 3;
 	else
-		return -1;
+		return 0;
 }
 
 bool TPostfix::isOperand(const char& symbol)
