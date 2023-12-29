@@ -126,7 +126,7 @@ TEST(TPostfix, can_correct_div)
 
 TEST(TPostfix, impossible_div_by_zero)
 {
-	double str = 44.5 / 0;
-	s.toPostfix();
+	TPostfix("str = 44.5 / 0");
+	str.toPostfix();
 	ASSERT_ANY_THROW(s.calculate());
 }
