@@ -13,7 +13,7 @@ TEST(TPostfix, correct_create_postfix_to_infix)
 {
 	TPostfix str = "1+2";
 	str.toPostfix();
-	EXPECT_EQ("12+", s.getPostfix());
+	EXPECT_EQ("12+", str.getPostfix());
 }
 
 TEST(TPostfix, can_correct_get_infix)
