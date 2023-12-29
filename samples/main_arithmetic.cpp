@@ -10,7 +10,6 @@ int main()
     cout << "You should put a point instead of a comma in floating point numbers \n";
     cout << "You should avoid extra or misssing elements, be careful \n ";
     cout << endl;
-    cout << "Enter the arifmetic expression: \n";
     string expression;
     string error = "";
     while (true)
