@@ -3,16 +3,18 @@
 
 int main()
 {
+    int main()
+{
     cout << "Hello, before you will use this calculator, you should read some rules: \n";
     cout << "You can use 4 operations: addition +, subsrtaction -, multiplication *, division / \n";
     cout << "You can denote vars by letters, digits and points \n";
+    cout << "You can't use spaces in expression \n";
     cout << "You should put a point instead of a comma in floating point numbers \n";
     cout << "You should avoid extra or misssing elements, be careful \n ";
     cout << endl;
     string expression;
     cout << "Enter the arifmetic expression: \n";
     cin >> expression;
-    string error;
     while (true)
     {
         try
@@ -26,7 +28,9 @@ int main()
             if (choice == 1)
             {
                 TPostfix mathexp(expression);
+                cout << "Infix form: " << mathexp.getInfix() << "\n";
                 mathexp.toPostfix();
+                cout << "Postfix form: " << mathexp.getPostfix() << "\n";
                 mathexp.calculate();
                 cout << "The result: " << mathexp.getResult() << "\n";
             }
@@ -46,5 +50,6 @@ int main()
         }
     }
     return 0;
+}
 }
 
