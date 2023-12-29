@@ -11,10 +11,9 @@ TEST(TPostfix, can_create_postfix_to_infix)
 
 TEST(TPostfix, correct_create_postfix_to_infix)
 {
-	string str = "x+y";
-	string correct = "xy+";
-	TPostfix s(str);
-	EXPECT_EQ(correct, s.getPostfix());
+	TPostfix str = "1+2";
+	str.toPostfix();
+	EXPECT_EQ("12+", s.getPostfix());
 }
 
 TEST(TPostfix, can_correct_get_infix)
