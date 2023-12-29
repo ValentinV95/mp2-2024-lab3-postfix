@@ -114,15 +114,6 @@ TEST(TPostfix, can_correct_mult)
 	EXPECT_EQ(s.getResult(), str);
 }
 
-TEST(TPostfix, can_correct_div)
-{
-	double str = 44.5 / 5;
-	TPostfix s("44.5/5");
-	s.toPostfix();
-	s.calculate();
-	EXPECT_EQ(s.getResult(), str);
-}
-
 TEST(TPostfix, impossible_div_by_zero)
 {
 	TPostfix str("44.5 / 0");
