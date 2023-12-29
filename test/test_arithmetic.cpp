@@ -93,7 +93,7 @@ TEST(TPostfix, can_correct_sum)
 	double str = 44.5 + 4;
 	TPostfix s("44.5+4");
 	s.toPostfix();
-	s.toCalculate();
+	s.calculate();
 	EXPECT_EQ(s.getResult(), str);
 }
 
@@ -102,7 +102,7 @@ TEST(TPostfix, can_correct_sub)
 	double str = 44.5 - 4;
 	TPostfix s("44.5-4");
 	s.toPostfix();
-	s.toCalculate();
+	s.calculate();
 	EXPECT_EQ(s.getResult(), str);
 }
 
@@ -111,7 +111,7 @@ TEST(TPostfix, can_correct_mult)
 	double str = 44.5 * 4;
 	TPostfix s("44.5*4");
 	s.toPostfix();
-	s.toCalculate();
+	s.calculate();
 	EXPECT_EQ(s.getResult(), str);
 }
 
@@ -120,7 +120,7 @@ TEST(TPostfix, can_correct_div)
 	double str = 44.5 / 5;
 	TPostfix s("44.5/5");
 	s.toPostfix();
-	s.toCalculate();
+	s.calculate();
 	EXPECT_EQ(s.getResult(), str);
 }
 
