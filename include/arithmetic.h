@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <math.h>
 #include "stack.h"
 
 using namespace std;
@@ -9,25 +10,21 @@ class TPostfix
 {
     string infix, postfix;
     string operands;
-    string* var;
-    string* setOfLexems;
-    int lexemSize;
-    int varSize;
-
+    string* line;
+    size_t length;
+    Stack<double> numbers;
+    double res;
 public:
     ~TPostfix();
-    TPostfix(string& str);
-    void setInfix(string& str);
+    TPostfix(string str);
     string getInfix() const;
     string getPostfix() const;
-    string getOperands() const;
+    double getResult() const;
     int priority(string operation);
-    bool isOperation(const char& x);
     bool isOperand(const char& symbol);
-    bool isDigitOrPoint(const char& symbol);
     void toLexems();
-    void check();
     void toPostfix();
+    void valueofvar();
     double toDouble(string number);
-    double calculate();
+    void calculate();
 };
