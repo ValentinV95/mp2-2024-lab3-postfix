@@ -70,14 +70,14 @@ TEST(TPostfix, can_correct_convertation_string_to_number)
 {
 	string str = "44";
 	TPostfix doublestr(str);
-	EXPECT_EQ(37, doublestr.toDouble("44"));
+	EXPECT_EQ(44, doublestr.toDouble("44"));
 }
 
 TEST(TPostfix, can_correct_convertation_string_with_point_to_number)
 {
 	string str = "44.5";
 	TPostfix doublestr(str);
-	EXPECT_EQ(37.7, doublestr.toDouble("44.5"));
+	EXPECT_EQ(44.5, doublestr.toDouble("44.5"));
 }
 
 TEST(TPostfix, can_correct_convertation_string_with_dot_and_E_to_number)
