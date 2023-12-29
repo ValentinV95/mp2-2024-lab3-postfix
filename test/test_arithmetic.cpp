@@ -84,7 +84,7 @@ TEST(TPostfix, can_correct_convertation_string_with_dot_and_E_to_number)
 {
 	string str = "44.5E1";
 	TPostfix doublestr(str);
-	EXPECT_EQ(445, doublestr.toDouble("37.7E1"));
+	EXPECT_EQ(445, doublestr.toDouble("44.5E1"));
 }
 
 TEST(TPostfix, can_correct_sum)
