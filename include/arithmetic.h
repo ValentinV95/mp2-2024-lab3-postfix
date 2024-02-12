@@ -1,1 +1,28 @@
-// объявление функций и классов для вычисления арифметических выражений
+#pragma once
+#include <iostream>
+#include <string>
+#include <math.h>
+#include "stack.h"
+
+using namespace std;
+
+
+
+class TCalculator
+{
+    string  infix, postfix,str;
+    TStack<char> c = TStack <  char > (10); // СЃС‚РµРє РґР»СЏ РѕРїРµСЂР°С†РёР№
+    TStack<double> d = TStack<double>(10); // СЃС‚РµРє РґР»СЏ С‡РёСЃРµР»
+    int prioritet(char op);
+public:
+    TCalculator(string _str);
+    TCalculator(const  TCalculator& C);
+    void SetInfix(string str);
+    string GetPostfix();
+    string GetInfix();
+    double Calc();
+    double CalcPostfix();
+    void ToPostfix();
+
+
+};// РѕР±СЉСЏРІР»РµРЅРёРµ С„СѓРЅРєС†РёР№ Рё РєР»Р°СЃСЃРѕРІ РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёС… РІС‹СЂР°Р¶РµРЅРёР№
