@@ -1,9 +1,102 @@
-// объявление и реализация шаблонного стека
-// стек поддерживает операции: 
-// - вставка элемента, 
-// - извлечение элемента, 
-// - просмотр верхнего элемента (без удаления)
-// - проверка на пустоту, 
-// - получение количества элементов в стеке
-// - очистка стека
-// при вставке в полный стек должна перевыделяться память
+#pragma once
+using namespace std;
+
+template<class T>
+class TStack
+{
+    T* pMem; // РјР°СЃСЃРёРІ
+    int Msize; // СЂР°Р·РјРµСЂ СЃС‚РµРєР°
+    int Capacity; // РІРјРµСЃС‚РёРјРѕСЃС‚СЊ СЃС‚РµРєР°
+    void resize()
+    {
+        T* tmp = new T[Msize * 2];
+        for (int i = 0; i < Msize; i++) {
+            tmp[i] = pMem[i];
+        }
+        delete[] pMem;
+        pMem = tmp;
+        Capacity = Msize * 2;
+    }
+    int CurrInd; // РёРЅРґРµРєСЃ РІРµСЂС€РёРЅС‹
+public:
+    TStack(int _Msize = 15) // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
+    {
+        if (_Msize < 1) throw ("Wrong size!\n");
+        Msize = _Msize;
+        pMem = new T[Msize];
+        CurrInd = -1;
+    }
+    TStack(const TStack& s) // РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
+    {
+        Msize = s.Msize;
+        pMem = new T[Msize];
+        CurrInd = s.CurrInd;
+        for (int i = 0; i <= CurrInd; i++)
+            pMem[i] = s.pMem[i];
+    }
+    ~TStack() { delete[] pMem; }
+    bool IsEmpty() const // РїСЂРѕРІРµСЂРєР° РЅР° РїСѓСЃС‚РѕС‚Сѓ
+    {
+        if (CurrInd < 0)
+            return true;
+        else
+            return false;
+    }
+    bool IsFull() const // РїСЂРѕРІРµСЂРєР° РЅР° РїРѕР»РЅС‹Р№ СЃС‚РµРє
+    {
+        if (CurrInd == Msize - 1)
+            return true;
+        else
+            return false;
+    }
+    T Top() // - РїСЂРѕСЃРјРѕС‚СЂ РІРµСЂС…РЅРµРіРѕ СЌР»РµРјРµРЅС‚Р° (Р±РµР· СѓРґР°Р»РµРЅРёСЏ)
+    {
+        if (CurrInd == -1)
+            throw "Empty";
+        return pMem[CurrInd];
+
+    }
+    T Pop() //СѓРґР°Р»РµРЅРёРµ СЌР»РµРјРµРЅС‚Р° СЃ РІРµСЂС€РёРЅС‹ СЃС‚РµРєР°
+    {
+        if (CurrInd == -1)
+            throw "Empty";
+        CurrInd--;
+        return pMem[CurrInd + 1];
+    }
+    int size() //  РїРѕР»СѓС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ РІ СЃС‚РµРєРµ
+    {
+        if (CurrInd == -1)
+            throw "Empty";
+        return CurrInd + 1;
+    }
+    void Push(const T& val) //  РІСЃС‚Р°РІРєР° СЌР»РµРјРµРЅС‚Р°
+    {
+        if (CurrInd == Msize - 1) {
+            resize();
+        }
+    }
+    void Clear() // - РѕС‡РёСЃС‚РєР° СЃС‚РµРєР°
+    {
+        CurrInd = -1;
+        delete[] pMem;
+    }
+
+    friend istream& operator>>(istream& istr, TStack& s)
+    {
+        for (int i = 0; i < s.Msize; i++)
+            istr >> s.pMem[i];
+        return istr;
+    }
+    friend ostream& operator<<(ostream& ostr, const TStack& s)
+    {
+        if (s.CurrInd == -1) {
+            ostr << "Stack Is Empty" << endl;
+        }
+        else {
+            for (int i = 0; i < s.CurrInd; i++)
+                ostr << s.pMem[i] << ' ';
+            ostr << endl;
+        }
+        return ostr;
+    }
+};
