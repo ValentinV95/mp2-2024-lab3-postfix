@@ -1,28 +1,31 @@
-#pragma once
 #include <iostream>
-#include <string>
+#include <string.h>
 #include <math.h>
 #include "stack.h"
-
+#include <stdlib.h>
+#include <string>
 using namespace std;
 
-
-
-class TCalculator
+using namespace std;
+class TCalc
 {
-    string  infix, postfix,str;
-    TStack<char> c = TStack <  char > (10); // стек для операций
-    TStack<double> d = TStack<double>(10); // стек для чисел
-    int prioritet(char op);
+	string infix, postfix;
+	string operands;
+	string* stroka;
+	size_t ln;
+	TStack<double> numbers;
+	double result;
 public:
-    TCalculator(string _str);
-    TCalculator(const  TCalculator& C);
-    void SetInfix(string str);
-    string GetPostfix();
-    string GetInfix();
-    double Calc();
-    double CalcPostfix();
-    void ToPostfix();
-
-
-};// объявление функций и классов для вычисления арифметических выражений
+	TCalc(string str);
+	~TCalc();
+	int priority(string operation);
+	bool Operand(const char& symbol);
+	void Lexems();
+	void Postfix();
+	void valueofvar();
+	double Double(string number);
+	string getInfix() const;
+	string getPostfix() const;
+	double getResult() const;
+	void Calc();
+};
