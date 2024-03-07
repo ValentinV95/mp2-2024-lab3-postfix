@@ -1,9 +1,76 @@
-// объявление и реализация шаблонного стека
-// стек поддерживает операции: 
-// - вставка элемента, 
-// - извлечение элемента, 
-// - просмотр верхнего элемента (без удаления)
-// - проверка на пустоту, 
-// - получение количества элементов в стеке
-// - очистка стека
-// при вставке в полный стек должна перевыделяться память
+// РѕР±СЉСЏРІР»РµРЅРёРµ Рё СЂРµР°Р»РёР·Р°С†РёСЏ С€Р°Р±Р»РѕРЅРЅРѕРіРѕ СЃС‚РµРєР°
+// СЃС‚РµРє РїРѕРґРґРµСЂР¶РёРІР°РµС‚ РѕРїРµСЂР°С†РёРё:
+// - РІСЃС‚Р°РІРєР° СЌР»РµРјРµРЅС‚Р°,
+// - РёР·РІР»РµС‡РµРЅРёРµ СЌР»РµРјРµРЅС‚Р°,
+// - РїСЂРѕСЃРјРѕС‚СЂ РІРµСЂС…РЅРµРіРѕ СЌР»РµРјРµРЅС‚Р° (Р±РµР· СѓРґР°Р»РµРЅРёСЏ)
+// - РїСЂРѕРІРµСЂРєР° РЅР° РїСѓСЃС‚РѕС‚Сѓ,
+// - РїРѕР»СѓС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ РІ СЃС‚РµРєРµ
+// - РѕС‡РёСЃС‚РєР° СЃС‚РµРєР°
+// РїСЂРё РІСЃС‚Р°РІРєРµ РІ РїРѕР»РЅС‹Р№ СЃС‚РµРє РґРѕР»Р¶РЅР° РїРµСЂРµРІС‹РґРµР»СЏС‚СЊСЃСЏ РїР°РјСЏС‚СЊ
+#include <iostream>
+using namespace std;
+
+template <typename T>
+class DStack {
+private:
+    size_t size;
+    size_t capacity;
+    T* data;
+public:
+    DStack() {
+        size = 0;
+        capacity = 10;
+        data = new T [capacity];
+    }
+
+    ~DStack() {
+        size = 0;
+        delete[]data;
+        capacity = 0;
+    }
+
+    bool isFull(){
+        return (size == capacity);
+    }
+
+    int isEmpty() {
+        return (size == 0);
+    }
+
+    void resize(){
+        capacity*=2;
+        T* tmp = new T[capacity];
+        memcpy(tmp, data, (this->size)*sizeof(T));
+        delete[] data;
+        data = tmp;
+    }
+
+    void push(T elem) {
+        if (isFull()) {
+            resize();
+        }
+        data[size++] = elem;
+    }
+
+    T pop() {
+        if (!isEmpty()) {
+            return(data[--size]);
+        }
+        else throw logic_error("Stack is empty");
+    }
+
+    T current(){
+        if (!isEmpty()) {
+            return data[size-1];
+        }
+        else throw logic_error("Stack is empty");
+    }
+
+    size_t Size(){
+        return(size);
+    }
+
+    void del(){
+        size = 0;
+    }
+};
