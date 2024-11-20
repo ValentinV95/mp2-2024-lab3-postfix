@@ -1,30 +1,34 @@
 // реализация пользовательского приложения
 #include "stack.h"
+#include "parser.h"
 #include <iostream>
+#include <iomanip>
+#include <Windows.h>
 
 using namespace std;
 
-void Foo() {
-	myStack<int> st;
-
-	for (int i = 0; i < 1000; ++i) st.push(i);
-}
-
 int main()
 {
-	myStack<int> st;
-	st.push(1);
-	st.push(2);
-	st.push(123);
-	myStack<int> st2;
-	st2 = st;
-//	st2.clear();
+	string s;
+	double num;
 
-	for (int i = 0; i < 1000000; ++i) {
-		Foo();
-		cout << i << endl;
+	try {
+		while (true) {
+			getline(cin, s);
+			std::ios_base::fmtflags f(cout.flags());
+			num = parser(s);
+			cout << num << endl;
+			cout << fixed << setprecision(20) << num << endl;
+			cout.flags(f);
+		}
 	}
-	int a;
-	cin >> a;
+	catch (exception& e) {
+		int it = stoi(e.what());
+		cout << s.substr(0, it) << " ";
+		cout << "\033[31m" << s[it] << "\033[0m";
+		if (it >= s.length()) cout << " " << s.substr(it, s.length()) << endl;
+		else cout << " " << s.substr(it + 1, s.length()) << endl;
+	}
+
 	return 0;
 }
