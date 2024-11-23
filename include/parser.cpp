@@ -2,7 +2,7 @@
 
 using namespace std;
 
-double parser(string& s) {
+double parser(const string& s) {
 	double res = 0.0;
 	double ten = 10.0;
 	int counter = 0;

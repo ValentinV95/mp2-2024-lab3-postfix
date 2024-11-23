@@ -4,8 +4,12 @@
 #include <stdexcept>
 #include "myvector.h"
 #include "stack.h"
+#include "parser.h"
 
 using namespace std;
+
+// vector<double>
+// vector<operand>
 
 class lexem {
 private:
@@ -16,6 +20,8 @@ public:
 	const string& getSym() const noexcept { return sym; }
 	const int& getPos() const noexcept { return pos; }
 	virtual int getPriority() = 0;
+	virtual double getValue() = 0;
+	virtual ~lexem() {}
 };
 
 class operation : public lexem {
@@ -85,18 +91,27 @@ public:
 	int getPriority() override {
 		return priority;
 	}
+	virtual ~operation() {}
 };
 
 class operand : public lexem {
-
+private:
+	double value;
+	// *operand op
+public:
+	// operand(const lexem& lex) { op->create(lex) }
+	double getValue() override {
+		return value;
+	}
+	virtual ~operand() {}
 };
 
 class constant : public operand {
-
+	// create(lex) { parse(lex) }
 };
 
 class variable : public operand {
-
+	// create(lex) { getFromVariablesVector(lex) }
 };
 
 class RPN { // reverse polish notation
@@ -138,6 +153,7 @@ public:
 	double calculate() {
 		double res = 0.0;
 		myStack<lexem*> st;
+		
 		return res;
 	}
 };
