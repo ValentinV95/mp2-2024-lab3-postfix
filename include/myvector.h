@@ -1,4 +1,5 @@
 #include <algorithm>
+#pragma once
 
 template <typename T>
 class myVector {

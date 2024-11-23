@@ -1,4 +1,5 @@
 #include "myvector.h"
+#pragma once
 
 template <typename T>
 class myStack : protected myVector<T> {
