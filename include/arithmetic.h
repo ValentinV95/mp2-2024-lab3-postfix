@@ -19,8 +19,8 @@ public:
 	lexem(string s = "", int p = -1) : sym(s), pos(p) {}
 	const string& getSym() const noexcept { return sym; }
 	const int& getPos() const noexcept { return pos; }
-	virtual int getPriority() = 0;
-	virtual double getValue() = 0;
+	virtual int getPriority() { return -1; };
+	virtual double getValue() { return NAN; };
 	virtual ~lexem() {}
 };
 
