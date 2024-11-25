@@ -30,6 +30,13 @@ using namespace std;
 int main()
 {
     lexem lex;
+	myStack<int> st1;
+	myStack<int> st2;
+	st1.push(1);
+	st1.push(2);
+	st2 = st1;
+	while (!st2.isEmpty()) cout << st2.pop() << " ";
+	cout << endl;
 
     return 0;
 }

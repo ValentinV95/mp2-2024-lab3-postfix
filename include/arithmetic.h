@@ -19,11 +19,7 @@ public:
 	lexem(string s = "", int p = -1) : sym(s), pos(p) {}
 	const string& getSym() const noexcept { return sym; }
 	const int& getPos() const noexcept { return pos; }
-	virtual int getPriority() { return -1; };
-	virtual double getValue() { return NAN; };
-	virtual void fillValue() {}
-	virtual double execute(const myVector<double>& operands) { return NAN; }
-	virtual int getOperandsCount() { return 0; }
+	virtual bool isOperation() = 0;
 	virtual ~lexem() {}
 };
 
@@ -99,7 +95,9 @@ public:
 				break;
 			}
 		}
-		if (priority == -1) throw invalid_argument(to_string(lex.getPos()));
+	}
+	bool isOperation() override final {
+		return true;
 	}
 	bool static isOperation(const lexem& lex) {
 		for (size_t i = 0; i < availableOperations.size(); ++i)
@@ -107,13 +105,13 @@ public:
 				return true;
 		return false;
 	}
-	int getPriority() override {
+	int getPriority() {
 		return priority;
 	}
-	int getOperandsCount() override {
+	int getOperandsCount() {
 		return operandsCount;
 	}
-	double execute(const myVector<double>& operands) override { // operands = { a, b }. operation = +. return a + b (v[0] + v[1]). operation = ~. return ~a (-v[0])
+	double execute(const myVector<double>& operands) { // operands = { a, b }. operation = +. return a + b (v[0] + v[1]). operation = ~. return ~a (-v[0])
 		double res;
 		if (this->getSym() == "+")
 			res = operands[0] + operands[1];
@@ -148,8 +146,11 @@ protected:
 	// *operand op
 public:
 	// operand(const lexem& lex) { op->create(lex) }
-	double getValue() override final {
+	double getValue() {
 		return value;
+	}
+	bool isOperation() override final {
+		return false;
 	}
 	virtual ~operand() {}
 };
@@ -166,7 +167,7 @@ public:
 	static myVector<string> vectorOfVariablesNames;
 	static myVector<double> VectorOfVariablesValues;
 	// create(lex) { nan }
-	void fillValue() override {
+	void fillValue() {
 		for (size_t i = 0; i < vectorOfVariablesNames.size(); ++i) {
 			if (getSym() == vectorOfVariablesNames[i]) {
 				value = VectorOfVariablesValues[i];
@@ -177,13 +178,78 @@ public:
 	virtual ~variable() {}
 };
 
+class RPN { // reverse polish notation
+private:
+	myVector<lexem*> infix;
+	myVector<lexem*> postfix;
+	void toRpn() {
+		myStack<operation*> st;
+		for (size_t i = 0; i < infix.size(); ++i) {
+			if (infix[i]->getSym() == "(") {
+				st.push(dynamic_cast<operation*>(infix[i]));
+			}
+			if (infix[i]->getSym() == ")") {
+				st.pop();
+				if (st.isEmpty()) throw invalid_argument(to_string(infix[i]->getPos()) + "ENo opening bracket for this bracket"); // redundant check
+				while (st.top()->getSym() != "(") {
+					if (st.isEmpty()) throw invalid_argument(to_string(infix[i]->getPos()) + "ENo opening bracket for this bracket"); // redundant check
+					postfix.push_back(st.pop());
+				}
+				st.pop();
+			}
+			else if (infix[i]->isOperation()) { // if it is an opertion
+				while (!st.isEmpty() && (st.top()->getPriority() >= dynamic_cast<operation*>(infix[i])->getPriority())) {
+					postfix.push_back(st.pop());
+				}
+				st.push(dynamic_cast<operation*>(infix[i]));
+			}
+			else {
+				postfix.push_back(infix[i]);
+			}
+		}
+		while (!st.isEmpty()) {
+			if (st.top()->getSym() == "(") throw invalid_argument(to_string(st.top()->getPos()) + "ENo closing bracket for this bracket"); // redundant check
+			postfix.push_back(st.pop());
+		}
+	}
+public:
+	RPN(const myVector<lexem*>& s) : infix(s), postfix() { toRpn(); }
+	double calculate() {
+		myVector<double> operands;
+		myStack<double> st;
+		operation* tmpOperator;
+		operand* tmpOperand;
+		for (size_t i = 0; i < postfix.size(); ++i) {
+			if (!postfix[i]->isOperation()) // is operand
+				st.push( dynamic_cast<operand*>(postfix[i])->getValue());
+			else { // is operation
+				tmpOperator = dynamic_cast<operation*>(postfix[i]);
+				for (int _ = 0; _ <= tmpOperator->getOperandsCount(); ++_) {
+					if (st.isEmpty()) throw invalid_argument(to_string(tmpOperator->getPos()) + "ENo operand for this operator"); // redundant check
+					operands.push_back(st.pop());
+				}
+				st.push(tmpOperator->execute(operands));
+			}
+		}
+		if (st.isEmpty()) throw invalid_argument("0EUnknown error"); // redundant check. How is it possible?
+		return st.pop(); // if there is more than one - check
+	}
+};
+
 class calculator {
 private:
 	myVector<lexem*> notActuallyData; // new delete construction
 public:
-	calculator(const string& str) {
+	calculator(string str) {
 		// parse to vector of lexems
 		// remember than it should be unique names of variables
+		// prohibited names: sin(, cos(, +, etc. Avaliable names: sin, cos, nis(, soc(), etc.
+
+		for (auto it = str.begin(); it != str.end(); ++it) if (*it == ' ') str.erase(it);
+		for (auto it = str.begin(); it != str.end(); ++it) {
+
+		}
+
 	}
 	void askForVariablesValues() {
 		string str;
@@ -204,7 +270,7 @@ public:
 			}
 		}
 		for (size_t i = 0; i < notActuallyData.size(); ++i) {
-			notActuallyData[i]->fillValue();
+			dynamic_cast<variable*>(notActuallyData[i])->fillValue();
 		}
 	}
 	double calculate() {
@@ -215,60 +281,5 @@ public:
 		for (size_t i = 0; i < notActuallyData.size(); ++i) {
 			delete[] notActuallyData[i];
 		}
-	}
-};
-
-class RPN { // reverse polish notation
-private:
-	myVector<lexem*> infix;
-	myVector<lexem*> postfix;
-	void toRpn() {
-		myStack<lexem*> st;
-		for (size_t i = 0; i < infix.size(); ++i) {
-			if (infix[i]->getSym() == "(") {
-				st.push(infix[i]);
-			}
-			if (infix[i]->getSym() == ")") {
-				st.pop();
-				if (st.isEmpty()) throw invalid_argument(to_string(infix[i]->getPos())); // redundant check
-				while (st.top()->getSym() != "(") {
-					if (st.isEmpty()) throw invalid_argument(to_string(infix[i]->getPos())); // redundant check
-					postfix.push_back(st.pop());
-				}
-				st.pop();
-			}
-			else if (infix[i]->getPriority() != -1) {
-				while (!st.isEmpty() && (st.top()->getPriority() >= infix[i]->getPriority())) {
-					postfix.push_back(st.pop());
-				}
-				st.push(infix[i]);
-			}
-			else {
-				postfix.push_back(infix[i]);
-			}
-		}
-		while (!st.isEmpty()) {
-			if (st.top()->getSym() == "(") throw invalid_argument(to_string(st.top()->getPos())); // redundant check
-			postfix.push_back(st.pop());
-		}
-	}
-public:
-	RPN(const myVector<lexem*>& s) : infix(s), postfix() { toRpn(); }
-	double calculate() {
-		myVector<double> operands;
-		myStack<double> st;
-		for (size_t i = 0; i < postfix.size(); ++i) {
-			if (postfix[i]->getPriority() == -1)
-				st.push(postfix[i]->getValue());
-			else {
-				for (int i = 0; i <= postfix[i]->getOperandsCount(); ++i) {
-					if (st.isEmpty()) throw invalid_argument(to_string(postfix[i]->getPos())); // redundant check
-					operands.push_back(st.pop());
-				}
-				st.push(postfix[i]->execute(operands));
-			}
-		}
-		if (st.isEmpty()) throw invalid_argument("0"); // redundant check. How is it possible?
-		return st.pop(); // if there is more than one - check
 	}
 };
