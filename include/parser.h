@@ -2,4 +2,4 @@
 #include <string>
 #pragma once
 
-double parser(std::string& s);
+double parser(const std::string& s);

@@ -1,6 +1,7 @@
 // реализация пользовательского приложения
 #include "stack.h"
 #include "parser.h"
+#include "myvector.h"
 #include "arithmetic.h"
 #include <iostream>
 #include <iomanip>
@@ -29,14 +30,12 @@ using namespace std;
 
 int main()
 {
-    lexem lex;
-	myStack<int> st1;
-	myStack<int> st2;
-	st1.push(1);
-	st1.push(2);
-	st2 = st1;
-	while (!st2.isEmpty()) cout << st2.pop() << " ";
-	cout << endl;
+	cout << "enter the expression" << endl;
+	string str;
+	getline(cin, str);
+	calculator expr(str);
+	expr.askForVariablesValues();
+	cout << expr.calculate() << endl;
 
     return 0;
 }

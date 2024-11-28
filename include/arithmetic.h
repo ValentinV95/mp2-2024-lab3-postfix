@@ -16,7 +16,7 @@ private:
 	string sym;
 	int pos;
 public:
-	lexem(string s = "", int p = -1) : sym(s), pos(p) {}
+	lexem(const string& s, int p) : sym(s), pos(p) {}
 	const string& getSym() const noexcept { return sym; }
 	const int& getPos() const noexcept { return pos; }
 	virtual bool isOperation() = 0;
@@ -30,7 +30,7 @@ private:
 	static myVector<string> availableOperations;
 	static myVector<int> priotities;
 	static myVector<int> vOperandsCount;
-	static myVector<int> vCanBeAfterOperand;
+	static myVector<bool> vCanBeAfterOperand;
 	static void fillOperations() {
 		availableOperations.push_back("+");
 		availableOperations.push_back("-");
@@ -72,24 +72,24 @@ private:
 		vOperandsCount.push_back(0);
 		vOperandsCount.push_back(0);
 
-		vCanBeAfterOperand.push_back(1);
-		vCanBeAfterOperand.push_back(1);
-		vCanBeAfterOperand.push_back(0);
-		vCanBeAfterOperand.push_back(1);
-		vCanBeAfterOperand.push_back(1);
-		vCanBeAfterOperand.push_back(0);
-		vCanBeAfterOperand.push_back(0);
-		vCanBeAfterOperand.push_back(0);
-		vCanBeAfterOperand.push_back(0);
-		vCanBeAfterOperand.push_back(0);
-		vCanBeAfterOperand.push_back(0);
-		vCanBeAfterOperand.push_back(1);
+		vCanBeAfterOperand.push_back(true);
+		vCanBeAfterOperand.push_back(true);
+		vCanBeAfterOperand.push_back(false);
+		vCanBeAfterOperand.push_back(true);
+		vCanBeAfterOperand.push_back(true);
+		vCanBeAfterOperand.push_back(false);
+		vCanBeAfterOperand.push_back(false);
+		vCanBeAfterOperand.push_back(false);
+		vCanBeAfterOperand.push_back(false);
+		vCanBeAfterOperand.push_back(false);
+		vCanBeAfterOperand.push_back(false);
+		vCanBeAfterOperand.push_back(true);
 	}
 public:
-	operation(const lexem& lex) : priority(-1) { 
-		fillOperations(); 
+	operation(const string& s, int p) : lexem(s, p) {
+		fillOperations();
 		for (size_t i = 0; i < availableOperations.size(); ++i) {
-			if (lex.getSym() == availableOperations[i]) {
+			if (this->getSym() == availableOperations[i]) {
 				priority = priotities[i];
 				operandsCount = vOperandsCount[i];
 				break;
@@ -99,10 +99,16 @@ public:
 	bool isOperation() override final {
 		return true;
 	}
-	bool static isOperation(const lexem& lex) {
+	bool static isOperation(const string& s) {
 		for (size_t i = 0; i < availableOperations.size(); ++i)
-			if (lex.getSym() == availableOperations[i])
+			if (s == availableOperations[i])
 				return true;
+		return false;
+	}
+	bool static canBeAfterOperand(const string& s) {
+		for (size_t i = 0; i < availableOperations.size(); ++i)
+			if (s == availableOperations[i])
+				return static_cast<bool>(vCanBeAfterOperand[i]);
 		return false;
 	}
 	int getPriority() {
@@ -146,6 +152,7 @@ protected:
 	// *operand op
 public:
 	// operand(const lexem& lex) { op->create(lex) }
+	operand(const string& s, int p) : lexem(s, p) {}
 	double getValue() {
 		return value;
 	}
@@ -158,7 +165,9 @@ public:
 class constant : public operand { // constructor required
 	// create(lex) { parse(lex) }
 public:
-
+	constant(const string& s, int p) : operand(s, p) {
+		this->value = parser(s);
+	}
 	virtual ~constant() {}
 };
 
@@ -175,6 +184,7 @@ public:
 			}
 		}
 	}
+	variable(const string& s, int p) : operand(s, p) {}
 	virtual ~variable() {}
 };
 
@@ -221,7 +231,7 @@ public:
 		operand* tmpOperand;
 		for (size_t i = 0; i < postfix.size(); ++i) {
 			if (!postfix[i]->isOperation()) // is operand
-				st.push( dynamic_cast<operand*>(postfix[i])->getValue());
+				st.push(dynamic_cast<operand*>(postfix[i])->getValue());
 			else { // is operation
 				tmpOperator = dynamic_cast<operation*>(postfix[i]);
 				for (int _ = 0; _ <= tmpOperator->getOperandsCount(); ++_) {
@@ -244,12 +254,94 @@ public:
 		// parse to vector of lexems
 		// remember than it should be unique names of variables
 		// prohibited names: sin(, cos(, +, etc. Avaliable names: sin, cos, nis(, soc(), etc.
+		// in my case, it is possible to write sin5, logx etc., It means, brackets priority brackets
+		// please, enter numbers 
 
-		for (auto it = str.begin(); it != str.end(); ++it) if (*it == ' ') str.erase(it);
-		for (auto it = str.begin(); it != str.end(); ++it) {
-
+		for (auto it = str.begin(); it != str.end(); ++it) if (*it == ' ') str.erase(it); // deleting spaces
+		int counter = 0;
+		string tmpstring;
+		size_t j;
+		bool operatorFound = true;
+		for (auto it = str.begin(); it != str.end(); ++it) { // what if not to do this check
+			if (*it == '(') ++counter;
+			if (*it == ')') --counter;
+			if (counter < 0) throw invalid_argument("hahaha"); //
 		}
+		// unary minus part?
+		for (size_t i = 0; i < str.length(); ++i) { // parsing
+			tmpstring = "";
+			// if previous was an operator (but not the ')'): check for unary minus
+			if (operatorFound && str[i] == '-') { // unary minus part
+				if ((i > 0 && str[i - 1] != ')') || i == 0) { // if there is not ')' before of it is the begining of the string
+					notActuallyData.push_back(new operation{ "~", static_cast<int>(i) });
+					continue;
+				}
+			}
+			operatorFound = false; // if Operator found
+			// checking if it is number
+			// idea is to count e (E), than check on +, -. 
+			if ('0' <= str[i] && str[i] <= '9') { // if digit
+				bool eAppeared = false;
+				bool dotAppeared = false;
+				tmpstring = "";
+				for (j = i; j < str.length(); ++j) {
+					if (eAppeared == false && (str[j] == 'e' || str[j] == 'E')) { // if e
+						eAppeared = true;
+						tmpstring += str[j];
+						if (j + 1 < str.length() && (str[j + 1] == '+' || str[j + 1] == '-')) { // if there is a + or - after e
+							tmpstring += str[++j]; // add it to number
+						}
+						continue;
+					}
+					if (dotAppeared == false && str[j] == '.') { // if there is a dot
+						dotAppeared = true;
+						tmpstring += str[j]; // add it to number
+						continue;
+					}
+					if (str[j] > '9' || str[j] < '0') break;
+					tmpstring += str[j];
+				}
+				notActuallyData.push_back(new constant{ tmpstring, static_cast<int>(i) });
+			}
 
+			for (j = i; j < str.length(); ++j) { // checking 1 symbol, 1+2 symbol, 1+2+3 symbol etc...
+				tmpstring += str[j];
+				if (operation::isOperation(tmpstring)) { // if it is operation
+					notActuallyData.push_back(new operation{ tmpstring, static_cast<int>(i) }); // add to lexems
+					operatorFound = true;
+					i = j;
+					break;
+				}
+			}
+			if (operatorFound) continue;
+			tmpstring = "";
+			for (j = i + 1; j < str.length(); ++j) { // adding as variable;
+				tmpstring += str[j - 1];
+				if (operation::canBeAfterOperand({ str[j] })) { // if there is an operator than handle an operand after it
+					variable::vectorOfVariablesNames.push_back(tmpstring); // add to variables
+					notActuallyData.push_back(new variable{ tmpstring, static_cast<int>(i) }); // and to lexems
+					notActuallyData.push_back(new operation{ { str[j] }, static_cast<int>(j) });
+					i = j;
+					break;
+				}
+			}
+			tmpstring += str[j - 1]; // if it is the end of string
+			variable::vectorOfVariablesNames.push_back(tmpstring); // add to variables
+			notActuallyData.push_back(new variable{ tmpstring, static_cast<int>(i) }); // and to lexems
+		}
+		// delete doubles on vectorOfVariablesNames
+		myVector<string> tmpvec;
+		for (size_t i = 0; i < variable::vectorOfVariablesNames.size(); ++i) {
+			bool foundTheSameName = false;
+			for (size_t j = 0; j < tmpvec.size(); ++j) { // add to tmp if there is no variable with this name
+				if (tmpvec[j] == variable::vectorOfVariablesNames[i]) {
+					foundTheSameName = true;
+					break;
+				}
+			}
+			if (!foundTheSameName) tmpvec.push_back(variable::vectorOfVariablesNames[i]);
+		}
+		variable::vectorOfVariablesNames = tmpvec;
 	}
 	void askForVariablesValues() {
 		string str;
@@ -283,3 +375,10 @@ public:
 		}
 	}
 };
+
+myVector<string> operation::availableOperations;
+myVector<int> operation::priotities;
+myVector<int> operation::vOperandsCount;
+myVector<bool> operation::vCanBeAfterOperand;
+myVector<string> variable::vectorOfVariablesNames;
+myVector<double> variable::VectorOfVariablesValues;
