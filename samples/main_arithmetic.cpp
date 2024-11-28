@@ -33,9 +33,14 @@ int main()
 	cout << "enter the expression" << endl;
 	string str;
 	getline(cin, str);
-	calculator expr(str);
-	expr.askForVariablesValues();
-	cout << expr.calculate() << endl;
+	try {
+		calculator expr(str);
+		expr.askForVariablesValues();
+		cout << expr.calculate() << endl;
+	}
+	catch (exception& e) {
+		cout << e.what() << endl;
+	}
 
     return 0;
 }

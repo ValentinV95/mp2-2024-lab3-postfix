@@ -24,13 +24,13 @@ public:
 };
 
 class operation : public lexem {
-private:
 	int priority;
 	int operandsCount;
 	static myVector<string> availableOperations;
 	static myVector<int> priotities;
 	static myVector<int> vOperandsCount;
 	static myVector<bool> vCanBeAfterOperand;
+public:
 	static void fillOperations() {
 		availableOperations.push_back("+");
 		availableOperations.push_back("-");
@@ -85,9 +85,7 @@ private:
 		vCanBeAfterOperand.push_back(false);
 		vCanBeAfterOperand.push_back(true);
 	}
-public:
 	operation(const string& s, int p) : lexem(s, p) {
-		fillOperations();
 		for (size_t i = 0; i < availableOperations.size(); ++i) {
 			if (this->getSym() == availableOperations[i]) {
 				priority = priotities[i];
@@ -168,6 +166,7 @@ public:
 	constant(const string& s, int p) : operand(s, p) {
 		this->value = parser(s);
 	}
+	void fillValue() {} // parser should be here
 	virtual ~constant() {}
 };
 
@@ -251,6 +250,7 @@ private:
 	myVector<lexem*> notActuallyData; // new delete construction
 public:
 	calculator(string str) {
+		operation::fillOperations();
 		// parse to vector of lexems
 		// remember than it should be unique names of variables
 		// prohibited names: sin(, cos(, +, etc. Avaliable names: sin, cos, nis(, soc(), etc.
@@ -262,6 +262,7 @@ public:
 		string tmpstring;
 		size_t j;
 		bool operatorFound = true;
+		bool constFound = false;
 		for (auto it = str.begin(); it != str.end(); ++it) { // what if not to do this check
 			if (*it == '(') ++counter;
 			if (*it == ')') --counter;
@@ -278,9 +279,11 @@ public:
 				}
 			}
 			operatorFound = false; // if Operator found
+			constFound = false;
 			// checking if it is number
 			// idea is to count e (E), than check on +, -. 
 			if ('0' <= str[i] && str[i] <= '9') { // if digit
+				constFound = true;
 				bool eAppeared = false;
 				bool dotAppeared = false;
 				tmpstring = "";
@@ -298,12 +301,17 @@ public:
 						tmpstring += str[j]; // add it to number
 						continue;
 					}
-					if (str[j] > '9' || str[j] < '0') break;
+					if (str[j] > '9' || str[j] < '0') {
+						i = j - 1;
+						break;
+					}
 					tmpstring += str[j];
 				}
 				notActuallyData.push_back(new constant{ tmpstring, static_cast<int>(i) });
 			}
+			if (constFound) continue;
 
+			tmpstring = "";
 			for (j = i; j < str.length(); ++j) { // checking 1 symbol, 1+2 symbol, 1+2+3 symbol etc...
 				tmpstring += str[j];
 				if (operation::isOperation(tmpstring)) { // if it is operation
@@ -319,8 +327,8 @@ public:
 				tmpstring += str[j - 1];
 				if (operation::canBeAfterOperand({ str[j] })) { // if there is an operator than handle an operand after it
 					variable::vectorOfVariablesNames.push_back(tmpstring); // add to variables
-					notActuallyData.push_back(new variable{ tmpstring, static_cast<int>(i) }); // and to lexems
-					notActuallyData.push_back(new operation{ { str[j] }, static_cast<int>(j) });
+					notActuallyData.push_back(new variable{ tmpstring, static_cast<int>(i) }); // add to lexems
+					notActuallyData.push_back(new operation{ { str[j] }, static_cast<int>(j) }); // and next operation too
 					i = j;
 					break;
 				}
@@ -361,7 +369,8 @@ public:
 				--i;
 			}
 		}
-		for (size_t i = 0; i < notActuallyData.size(); ++i) {
+		for (size_t i = 0; i < notActuallyData.size(); ++i) { // only variables!!
+			if (notActuallyData[i]->isOperation()) continue;
 			dynamic_cast<variable*>(notActuallyData[i])->fillValue();
 		}
 	}
