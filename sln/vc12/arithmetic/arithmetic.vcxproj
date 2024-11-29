@@ -79,13 +79,14 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\include\parser.cpp" />
     <ClCompile Include="..\..\..\src\arithmetic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\arithmetic.h" />
+    <ClInclude Include="..\..\..\include\lexems.h" />
     <ClInclude Include="..\..\..\include\myvector.h" />
     <ClInclude Include="..\..\..\include\parser.h" />
+    <ClInclude Include="..\..\..\include\RPN.h" />
     <ClInclude Include="..\..\..\include\stack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

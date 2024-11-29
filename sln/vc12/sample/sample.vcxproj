@@ -98,6 +98,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\samples\main_arithmetic.cpp" />
+    <ClCompile Include="..\..\..\src\arithmetic.cpp" />
+    <ClCompile Include="..\..\..\src\lexems.cpp" />
+    <ClCompile Include="..\..\..\src\parser.cpp" />
+    <ClCompile Include="..\..\..\src\RPN.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\arithmetic\arithmetic.vcxproj">

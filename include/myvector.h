@@ -22,7 +22,7 @@ public:
         data = new T[vec.capacity]();
         capacity = vec.capacity;
         sizevar = vec.sizevar;
-        copy(vec.data, vec.data + sizevar, data);
+        std::copy(vec.data, vec.data + sizevar, data);
     }
     myVector(myVector&& vec) : k(2) {
         data = nullptr;
@@ -64,11 +64,11 @@ public:
     }
     void push_back(const T& v) {
         if (sizevar >= capacity) {
-            capacity *= k;
-            T* t = new T[capacity]();
+            T* t = new T[capacity * k]; // ()
             std::copy(data, data + capacity, t);
             delete[] data;
             data = t;
+            capacity *= k;
         }
         data[sizevar++] = v;
     }

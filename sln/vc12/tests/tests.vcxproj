@@ -112,9 +112,6 @@
     <ClCompile Include="..\..\..\test\test_stack.cpp" />
     <ClCompile Include="..\..\..\test\test_arithmetic.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\include\stack.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
