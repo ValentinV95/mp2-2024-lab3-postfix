@@ -64,7 +64,7 @@ public:
     }
     void push_back(const T& v) {
         if (sizevar >= capacity) {
-            T* t = new T[capacity * k]; // ()
+            T* t = new T[capacity * k]();
             std::copy(data, data + capacity, t);
             delete[] data;
             data = t;

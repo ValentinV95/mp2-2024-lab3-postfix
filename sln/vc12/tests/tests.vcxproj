@@ -108,7 +108,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\test\test_lexems.cpp" />
     <ClCompile Include="..\..\..\test\test_main.cpp" />
+    <ClCompile Include="..\..\..\test\test_myvector.cpp" />
+    <ClCompile Include="..\..\..\test\test_parser.cpp" />
+    <ClCompile Include="..\..\..\test\test_RPN.cpp" />
     <ClCompile Include="..\..\..\test\test_stack.cpp" />
     <ClCompile Include="..\..\..\test\test_arithmetic.cpp" />
   </ItemGroup>
