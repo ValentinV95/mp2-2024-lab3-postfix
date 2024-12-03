@@ -15,10 +15,6 @@ calculator::calculator(std::string str) {
 	bool operatorFound = true;
 
 	for (size_t i = 0; i < str.length(); ++i) { // parsing
-		if (str[i] == ',') { // !!!
-			operatorFound = true;
-			continue;
-		}
 		tmpstring = "";
 		// if previous was an operator (but not the ')'): check for unary minus
 		if (operatorFound && str[i] == '-') { // unary minus part
@@ -71,7 +67,7 @@ calculator::calculator(std::string str) {
 		tmpstring = "";
 		for (j = i + 1; j < str.length(); ++j) { // adding as variable;
 			tmpstring += str[j - 1]; // !!! a comma
-			if (operation::canBeAfterOperand({ str[j] }) || str[j] == ',') { // if there is an operator than handle an operand after it
+			if (operation::canBeAfterOperand({ str[j] })) { // if there is an operator than handle an operand after it
 				variable::vectorOfVariablesNames.push_back(tmpstring); // add to variables
 				notActuallyData.push_back(new variable{ tmpstring, static_cast<int>(i) }); // add to lexems
 				notActuallyData.push_back(new operation{ { str[j] }, static_cast<int>(j) }); // and next operation too

@@ -17,7 +17,7 @@ void operation::fillOperations() {
 	availableOperations.push_back("sin");
 	availableOperations.push_back("cos");
 	availableOperations.push_back("exp");
-	availableOperations.push_back("pow");
+	availableOperations.push_back("^");
 	availableOperations.push_back("log");
 	availableOperations.push_back("(");
 	availableOperations.push_back(")");
@@ -30,7 +30,7 @@ void operation::fillOperations() {
 	priotities.push_back(3);
 	priotities.push_back(3);
 	priotities.push_back(3);
-	priotities.push_back(3);
+	priotities.push_back(2);
 	priotities.push_back(3);
 	priotities.push_back(0);
 	priotities.push_back(0);
@@ -56,7 +56,7 @@ void operation::fillOperations() {
 	vCanBeAfterOperand.push_back(false);
 	vCanBeAfterOperand.push_back(false);
 	vCanBeAfterOperand.push_back(false);
-	vCanBeAfterOperand.push_back(false);
+	vCanBeAfterOperand.push_back(true);
 	vCanBeAfterOperand.push_back(false);
 	vCanBeAfterOperand.push_back(false);
 	vCanBeAfterOperand.push_back(true);
@@ -109,7 +109,7 @@ double operation::execute(const myVector<double>& operands) {
 		res = cos(operands[0]);
 	else if (this->getSym() == "exp")
 		res = exp(operands[0]);
-	else if (this->getSym() == "pow")
+	else if (this->getSym() == "^")
 		res = pow(operands[1], operands[0]);
 	else if (this->getSym() == "log")
 		res = log(operands[0]);

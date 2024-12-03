@@ -41,7 +41,7 @@ double RPN::calculate() {
 	operation* tmpOperator;
 	operand* tmpOperand;
 	for (size_t i = 0; i < postfix.size(); ++i) {
-		if (!postfix[i]->isOperation()) // is operand
+		if (!postfix[i]->isOperation())// is operand
 			st.push(dynamic_cast<operand*>(postfix[i])->getValue());
 		else { // is operation
 			tmpOperator = dynamic_cast<operation*>(postfix[i]);
@@ -55,6 +55,9 @@ double RPN::calculate() {
 	}
 	if (st.isEmpty()) throw std::invalid_argument("-1ENot enough operands");
 	double tmp = st.pop();
-	if (!st.isEmpty()) throw std::invalid_argument("-1EToo many operands");
+	if (!st.isEmpty()) {
+		tmp = st.pop();
+		throw std::invalid_argument("-1EToo many operands");
+	}
 	return tmp;
 }
