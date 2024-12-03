@@ -47,7 +47,7 @@ double RPN::calculate() {
 			tmpOperator = dynamic_cast<operation*>(postfix[i]);
 			operands.resize(0);
 			for (int _ = 0; _ < tmpOperator->getOperandsCount(); ++_) {
-				if (st.isEmpty()) throw std::invalid_argument(std::to_string(tmpOperator->getPos()) + "ENo operand for this operator");
+				if (st.isEmpty()) throw std::invalid_argument(std::to_string(tmpOperator->getSym().length()) + "L" + std::to_string(tmpOperator->getPos()) + "ENo operand for this operator");
 				operands.push_back(st.pop());
 			}
 			st.push(tmpOperator->execute(operands));

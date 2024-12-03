@@ -44,10 +44,11 @@ int main()
 		}
 	}
 	catch (exception& e) {
+		cout << e.what() << endl; ////!!!!!!!!!!
 		string errstr = e.what();
 		string numstr = "";
 		size_t i;
-		int len = 0;
+		int len = 1;
 		for (i = 0; i < errstr.size(); ++i) {
 			numstr += errstr[i];
 			if (errstr[i] == 'L') break;
@@ -68,8 +69,8 @@ int main()
 		if (it != -1) {
 			cout << str.substr(0, it) << " ";
 			if (it + len > str.length()) throw runtime_error("Bad exception");
-			cout << "\033[31m" << str.substr(it, len + 1) << "\033[0m";
-			if (it + len + 1 < str.length()) cout << " " << str.substr(it + len + 1, str.length()) << endl;
+			cout << "\033[31m" << str.substr(it, len) << "\033[0m";
+			if (it + len < str.length()) cout << " " << str.substr(it + len, str.length()) << endl;
 		}
 		cout << endl << errstr.substr(i + 1);
 	}

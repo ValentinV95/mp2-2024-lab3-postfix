@@ -57,6 +57,7 @@ calculator::calculator(std::string str) {
 		for (j = i; j < str.length(); ++j) { // checking 1 symbol, 1+2 symbol, 1+2+3 symbol etc...
 			tmpstring += str[j];
 			if (operation::isOperation(tmpstring)) { // if it is operation
+				if (operatorFound) throw std::invalid_argument(std::to_string(dynamic_cast<operation*>(notActuallyData[notActuallyData.size() - 1])->getSym().length()) + "L" + std::to_string(dynamic_cast<operation*>(notActuallyData[notActuallyData.size() - 1])->getPos()) + "ENo operand for this operator");
 				notActuallyData.push_back(new operation{ tmpstring, static_cast<int>(i) }); // add to lexems
 				operatorFound = true;
 				i = j;
