@@ -8,7 +8,8 @@ private:
 public:
     using myVector::size;
     myStack(size_t size = 0) : myVector(size) {}
-    myStack(const myStack& st) : myVector(&dynamic_cast<myVector*>(&st)) {} // https://habr.com/ru/articles/64369/
+//    myStack(const myStack& st) : myVector(&dynamic_cast<myVector*>(&st)) {}
+    myStack(const myStack& st) : myVector(st) {}
     myStack(myStack&& st) : myVector(st) {}
     myStack& operator=(const myStack& st) {
         this->myVector::operator=(st);
