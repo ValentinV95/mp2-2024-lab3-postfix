@@ -70,7 +70,7 @@ operation::operation(const std::string& s, int p) : lexem(s, p) {
 		}
 	}
 }
-bool operation::isOperation() {
+bool operation::isOperation() noexcept {
 	return true;
 }
 bool operation::isOperation(const std::string& s) {

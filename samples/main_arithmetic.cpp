@@ -8,19 +8,11 @@
 
 using namespace std;
 
-// parse to vector of lexems
-// remember than it should be unique names of variables
-// prohibited names: sin(, cos(, +, etc. Avaliable names: si(n, nis(, soc(), etc.
-// in my case, it is possible to write sin5, logx etc., It means, brackets priority brackets
-// please, enter numbers 
-// pow syntax is: a pow b = pow(a, b) NOOOO!!! do it better with , sym
-// finally, you mush enter pow as pow(a, b)
-
 int main()
 {
-	cout << "MAIN RULES: all names, including si(n, `!2 are allowed. Also, expression like +(a, b) is allowed\n";
-	cout << "--var not allowed! Instead, write -(-1). Also, please, write functions like pow((expr1), (expr2))\n";
-	cout << "You can write sinx, but sinexpr, instead of sin(expr) leads you to undefined behaviour\n" << endl;
+	cout << "MAIN RULES: all names of varibles which are not operators or numners are allowed.\n";
+	cout << "--var not allowed! Instead, write -(-1)\n";
+	cout << "You can write sinx, but not like sin expression. Write sin(expression) instead\n" << endl;
 	cout << "Enter the expression" << endl;
 	string str;
 	string tmpstr;
@@ -44,7 +36,7 @@ int main()
 		}
 	}
 	catch (exception& e) {
-		cout << e.what() << endl; ////!!!!!!!!!!
+//		cout << e.what() << endl;
 		string errstr = e.what();
 		string numstr = "";
 		size_t i;

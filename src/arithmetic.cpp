@@ -8,13 +8,13 @@
 calculator::calculator(std::string str) {
 	operation::fillOperations();
 
-	for (auto it = str.begin(); it != str.end(); ++it) if (*it == ' ') str.erase(it--); // deleting spaces
 	int counter = 0;
 	std::string tmpstring;
 	size_t j;
 	bool operatorFound = true;
 
 	for (size_t i = 0; i < str.length(); ++i) { // parsing
+		if (str[i] == ' ') continue;
 		tmpstring = "";
 		// if previous was an operator (but not the ')'): check for unary minus
 		if (operatorFound && str[i] == '-') { // unary minus part
@@ -57,7 +57,6 @@ calculator::calculator(std::string str) {
 		for (j = i; j < str.length(); ++j) { // checking 1 symbol, 1+2 symbol, 1+2+3 symbol etc...
 			tmpstring += str[j];
 			if (operation::isOperation(tmpstring)) { // if it is operation
-				if (operatorFound) throw std::invalid_argument(std::to_string(dynamic_cast<operation*>(notActuallyData[notActuallyData.size() - 1])->getSym().length()) + "L" + std::to_string(dynamic_cast<operation*>(notActuallyData[notActuallyData.size() - 1])->getPos()) + "ENo operand for this operator");
 				notActuallyData.push_back(new operation{ tmpstring, static_cast<int>(i) }); // add to lexems
 				operatorFound = true;
 				i = j;
@@ -98,6 +97,48 @@ calculator::calculator(std::string str) {
 	variable::vectorOfVariablesNames = tmpvec;
 	variable::VectorOfVariablesValues.resize(tmpvec.size());
 	isVariablesExist = variable::vectorOfVariablesNames.size() > 0;
+
+	check();
+}
+void calculator::check() {
+	for (size_t i = 0; i < notActuallyData.size(); ++i) {
+		if (notActuallyData[i]->isOperation()) { // operator branch
+			if (notActuallyData[i]->getSym() == ")") { // ) operator branch
+				if (i == 0) // ) as first symbol
+					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "ENo closing bracket for this bracket, code: 0");
+				if (notActuallyData[i - 1]->getSym() == "(") // () case
+					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "EMissing operand, code: 1");
+				if (notActuallyData[i - 1]->isOperation() && notActuallyData[i - 1]->getSym() != ")") // op)... instead of op var)...
+					throw std::invalid_argument(std::to_string(notActuallyData[i - 1]->getSym().length()) + "L" + std::to_string(notActuallyData[i - 1]->getPos()) + "EMissing operand, code: 2");
+			}
+			else if (notActuallyData[i]->getSym() == "(" && i > 0) { // ( operator branch
+				if (notActuallyData[i - 1]->getSym() == ")") // )( case
+					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "EMissing operator, code: 3");
+				if (!notActuallyData[i - 1]->isOperation()) // var(... instead of var+(...
+					throw std::invalid_argument(std::to_string(notActuallyData[i - 1]->getSym().length()) + "L" + std::to_string(notActuallyData[i - 1]->getPos()) + "EMissing operator, code: 4");
+			}
+			else if (dynamic_cast<operation*>(notActuallyData[i])->getOperandsCount() == 1 && i > 0) { // 1 operand branch
+				if (!notActuallyData[i - 1]->isOperation() || notActuallyData[i - 1]->getSym() == ")") // extra operand on the left side
+					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "EInvalid unary operator syntax, code: 5");
+				if (i + 1 >= notActuallyData.size()) // no operator on the right side
+					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "ENo operands for this operator, code: 6");
+			}
+			else if (dynamic_cast<operation*>(notActuallyData[i])->getOperandsCount() >= 2) { // 2 and more operands branch
+				if (i == 0) // no operand on the left side
+					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "ENo operands for this operator, code: 7");
+				if (notActuallyData[i - 1]->isOperation() && notActuallyData[i - 1]->getSym() != ")") // same 
+					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "ETwo or more operators in a row, code: 8");
+				if (notActuallyData[i - 1]->getSym() == "(") // same
+					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "ENo operands for this operator, code: 9");
+			}
+		}
+		else if (i > 0) { // operand branch
+			if (notActuallyData[i - 1]->getSym() == ")") // ) symbol
+				throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "EMissing operator, code: 10");
+			if (!notActuallyData[i - 1]->isOperation()) // another operand
+				throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "EMissing operator, code: 11");
+		}
+	}
 }
 bool calculator::araThereAnyVariables() noexcept {
 	return isVariablesExist;

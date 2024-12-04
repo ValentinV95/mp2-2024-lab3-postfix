@@ -1,7 +1,6 @@
 #include "RPN.h"
 #include "stack.h"
 #include <stdexcept>
-//#include <iostream> //
 
 void RPN::toRpn() {
 	myStack<operation*> st; // stack
@@ -34,8 +33,6 @@ void RPN::toRpn() {
 }
 RPN::RPN(const myVector<lexem*>& s) : infix(s), postfix() { toRpn(); }
 double RPN::calculate() {
-//	for (size_t i = 0; i < postfix.size(); ++i) std::cout << postfix[i]->getSym() << " "; //
-//	std::cout << std::endl; //
 	myVector<double> operands;
 	myStack<double> st;
 	operation* tmpOperator;

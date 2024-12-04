@@ -24,7 +24,7 @@ class operation : public lexem {
 public:
 	static void fillOperations();
 	operation(const std::string& s, int p);
-	bool isOperation() override final;
+	bool isOperation() noexcept override final;
 	bool static isOperation(const std::string& s);
 	bool static canBeAfterOperand(const std::string& s);
 	int getPriority() noexcept;

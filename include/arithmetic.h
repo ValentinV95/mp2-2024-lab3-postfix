@@ -6,6 +6,7 @@ class calculator {
 private:
 	bool isVariablesExist;
 	myVector<lexem*> notActuallyData;
+	void check();
 public:
 	calculator(std::string str);
 	bool araThereAnyVariables() noexcept;
