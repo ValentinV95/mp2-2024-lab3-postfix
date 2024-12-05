@@ -31,5 +31,25 @@
     <ClCompile Include="..\..\..\test\test_RPN.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\arithmetic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\lexems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\RPN.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\arithmetic.h" />
+    <ClInclude Include="..\..\..\include\lexems.h" />
+    <ClInclude Include="..\..\..\include\myvector.h" />
+    <ClInclude Include="..\..\..\include\parser.h" />
+    <ClInclude Include="..\..\..\include\RPN.h" />
+    <ClInclude Include="..\..\..\include\stack.h" />
   </ItemGroup>
 </Project>
