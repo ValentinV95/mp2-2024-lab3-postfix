@@ -1,4 +1,2 @@
-// тесты для стека
-
-#include "stack.h"
+#include "lexems.h"
 #include <gtest.h>
