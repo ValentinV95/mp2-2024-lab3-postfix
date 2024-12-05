@@ -9,8 +9,9 @@ private:
 	void check();
 public:
 	calculator(std::string str);
+	const myVector<lexem*>& getData() const noexcept;
 	bool araThereAnyVariables() noexcept;
-	void askForVariablesValues();
+	void askForVariablesValues(std::istream& in, std::ostream& out);
 	double calculate();
 	~calculator();
 };

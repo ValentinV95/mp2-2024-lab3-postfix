@@ -22,7 +22,7 @@ int main()
 		if (expr.araThereAnyVariables()) {
 			while (true) {
 				cout << "Now enter your variables" << endl;
-				expr.askForVariablesValues();
+				expr.askForVariablesValues(cin, cout);
 				cout << endl << "Result: " << expr.calculate() << endl;
 				cout << "Do you want to enter another values of variables (y/n)?" << endl;
 				getline(cin, tmpstr);
@@ -31,7 +31,7 @@ int main()
 			}
 		}
 		else {
-			expr.askForVariablesValues();
+			expr.askForVariablesValues(cin, cout);
 			cout << endl << "Result: " << expr.calculate() << endl;
 		}
 	}

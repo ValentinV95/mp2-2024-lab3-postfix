@@ -7,7 +7,9 @@
 
 calculator::calculator(std::string str) {
 	operation::fillOperations();
-
+	variable::vectorOfVariablesNames.resize(0);
+	variable::VectorOfVariablesValues.resize(0);
+	
 	int counter = 0;
 	std::string tmpstring;
 	size_t j;
@@ -100,6 +102,7 @@ calculator::calculator(std::string str) {
 
 	check();
 }
+const myVector<lexem*>& calculator::getData() const noexcept { return notActuallyData; }
 void calculator::check() {
 	for (size_t i = 0; i < notActuallyData.size(); ++i) {
 		if (notActuallyData[i]->isOperation()) { // operator branch
@@ -143,20 +146,20 @@ void calculator::check() {
 bool calculator::araThereAnyVariables() noexcept {
 	return isVariablesExist;
 }
-void calculator::askForVariablesValues() {
+void calculator::askForVariablesValues(std::istream& in, std::ostream& out) {
 	std::string str;
 	for (size_t i = 0; i < variable::vectorOfVariablesNames.size(); ++i) {
-		std::cout << "Enter the " << variable::vectorOfVariablesNames[i] << " variable\n";
-		std::getline(std::cin, str);
+		out << "Enter the " << variable::vectorOfVariablesNames[i] << " variable\n";
+		std::getline(in, str);
 		try {
 			variable::VectorOfVariablesValues[i] = parser(str);
 		}
 		catch (std::exception& e) { // parser exception
-			std::cout << "Bad number input\n";
+			out << "Bad number input\n";
 			int it = std::stoi(e.what());
-			std::cout << str.substr(0, it) << " ";
-			std::cout << "\033[31m" << str[it] << "\033[0m";
-			if (it + 1 < str.length()) std::cout << " " << str.substr(it + 1, str.length()) << std::endl;
+			out << str.substr(0, it) << " ";
+			out << "\033[31m" << str[it] << "\033[0m";
+			if (it + 1 < str.length()) out << " " << str.substr(it + 1, str.length()) << std::endl;
 			--i;
 		}
 	}
