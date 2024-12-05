@@ -17,7 +17,7 @@ void RPN::toRpn() {
 			st.pop(); // pull (, but not writing in stack
 		}
 		else if (infix[i]->isOperation()) { // if it is an opertion
-			while (!st.isEmpty() && (st.top()->getPriority() >= dynamic_cast<operation*>(infix[i])->getPriority())) {
+			while (!st.isEmpty() && (st.top()->getPriority() >= dynamic_cast<operation*>(infix[i])->getPriority())) { // >=
 				postfix.push_back(st.pop()); // pull out all operations, that have higher or equal priority
 			}
 			st.push(dynamic_cast<operation*>(infix[i])); // write an operand to stack
