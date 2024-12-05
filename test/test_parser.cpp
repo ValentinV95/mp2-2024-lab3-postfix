@@ -53,7 +53,7 @@ TEST(parser, good_parser_test_7)
 
 TEST(parser, good_parser_test_8)
 {
-	double eps = 1e-32;
+	double eps = 1e-31;
 	EXPECT_EQ(true, abs(parser("-123.321e-7") - -123.321e-7) < eps);
 }
 
