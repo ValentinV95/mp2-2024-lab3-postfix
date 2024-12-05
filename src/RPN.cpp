@@ -32,13 +32,14 @@ void RPN::toRpn() {
 	}
 }
 RPN::RPN(const myVector<lexem*>& s) : infix(s), postfix() { toRpn(); }
+const myVector<lexem*>& RPN::getPostfix() const noexcept { return postfix; };
 double RPN::calculate() {
 	myVector<double> operands;
 	myStack<double> st;
 	operation* tmpOperator;
 	operand* tmpOperand;
 	for (size_t i = 0; i < postfix.size(); ++i) {
-		if (!postfix[i]->isOperation())// is operand
+		if (!postfix[i]->isOperation()) // is operand
 			st.push(dynamic_cast<operand*>(postfix[i])->getValue());
 		else { // is operation
 			tmpOperator = dynamic_cast<operation*>(postfix[i]);

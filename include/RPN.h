@@ -7,6 +7,7 @@ private:
 	myVector<lexem*> postfix;
 	void toRpn();
 public:
+	const myVector<lexem*>& getPostfix() const noexcept;
 	RPN(const myVector<lexem*>& s);
 	double calculate();
 };
