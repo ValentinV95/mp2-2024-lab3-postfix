@@ -109,7 +109,9 @@ public:
 
 	//<---------info methods---------------->
 	size_t size() { return sz; }
+	size_t size() const{ return sz; }
 	size_t capacity() { return cp; }
+	size_t capacity() const { return cp; }
 	//<-------info methods end-------------->
 
 
@@ -129,6 +131,7 @@ public:
 		if (ind >= sz || ind < 0) throw std::out_of_range("index out of range\n");
 		return pMem[ind];
 	}
+	T& back() { return pMem[sz - 1]; }
 		//end access--<<
 		
 		//touch data/size-->>
@@ -177,4 +180,7 @@ public:
 	void clear() { resize(0); }
 		//touch data/size end<
 	//<data or size changing/access methods end->
+
+	//0)
+	friend std::ostream& operator<<(std::ostream& os, vector<T>& v) { for (auto& el : v) os << el << ' '; return os; }
 };

@@ -144,8 +144,9 @@ double re_ans(std::string& s) {
 
 
 double parser(std::string& s) {
-	if (!dfs(s, 0, 1)) {
-		throw std::exception("NE CHISLO");
+	std::string err = "";
+	if (!dfs(s, 0, 1,err)) {
+		throw std::exception("dsfgf");
 	}
 	const double res = re_ans(s);
 	return res;
