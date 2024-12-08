@@ -5,6 +5,7 @@
 #include <math.h>
 #include "Vector.h"
 #include "stack.h"
+#include "inputException.h"
 
 class lexem
 {
