@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_0)
+TEST(calculator, correctly_converted_and_calculated_0)
 {
 	calculator calc("1-2");
 	myVector<lexem*> v;
@@ -28,7 +28,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_0)
 	EXPECT_EQ(true, abs(calc.calculate() - -1.0) < eps);
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_1)
+TEST(calculator, correctly_converted_and_calculated_1)
 {
 	calculator calc("1+2");
 	myVector<lexem*> v;
@@ -52,7 +52,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_1)
 	EXPECT_EQ(true, abs(calc.calculate() - 3.0) < eps);
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_2)
+TEST(calculator, correctly_converted_but_not_calculated_2)
 {
 	calculator calc("---1");
 	myVector<lexem*> v;
@@ -76,7 +76,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_2)
 	ASSERT_ANY_THROW(calc.calculate());
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_3)
+TEST(calculator, correctly_converted_and_calculated_3)
 {
 	calculator calc("111");
 	myVector<lexem*> v;
@@ -98,7 +98,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_3)
 	EXPECT_EQ(true, abs(calc.calculate() - 111.0) < eps);
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_4)
+TEST(calculator, correctly_converted_and_calculated_4)
 {
 	calculator calc("2+-1");
 	myVector<lexem*> v;
@@ -123,7 +123,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_4)
 	EXPECT_EQ(true, abs(calc.calculate() - 1.0) < eps);
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_5)
+TEST(calculator, correctly_converted_and_calculated_5)
 {
 	calculator calc("4*(1+2)");
 	myVector<lexem*> v;
@@ -151,7 +151,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_5)
 	EXPECT_EQ(true, abs(calc.calculate() - 12.0) < eps);
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_6)
+TEST(calculator, correctly_converted_and_calculated_6)
 {
 	calculator calc("(1.42e-1+.4e+1)/(77e-2-sin(1))");
 	myVector<lexem*> v;
@@ -186,7 +186,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_6)
 	EXPECT_EQ(true, abs(calc.calculate() - -57.9536) < eps);
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_7)
+TEST(calculator, correctly_converted_and_calculated_7)
 {
 	calculator calc("(1.42E-1+.4E+1)/(77E-2-sin(1))");
 	myVector<lexem*> v;
@@ -221,7 +221,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_7)
 	EXPECT_EQ(true, abs(calc.calculate() - -57.9536) < eps);
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_8)
+TEST(calculator, correctly_converted_and_calculated_with_different_variables_8)
 {
 	calculator calc("(x+y)/(xy-sin(yx))");
 	myVector<lexem*> v;
@@ -251,12 +251,17 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_8)
 	double eps = 1e-04;
 	std::ostream out(nullptr);
 	std::istringstream sl("1.42e-1\n.4e+1\n77e-2\n1\n");
-	std::istream in(sl.rdbuf());
-	calc.askForVariablesValues(in, out);
+	std::istream in1(sl.rdbuf());
+	calc.askForVariablesValues(in1, out);
 	EXPECT_EQ(true, abs(calc.calculate() - -57.9536) < eps);
+
+	sl = std::istringstream("1.0\n2.0\n1.0\n0");
+	std::istream in2(sl.rdbuf());
+	calc.askForVariablesValues(in2, out);
+	EXPECT_EQ(true, abs(calc.calculate() - 3.0) < eps);
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_9)
+TEST(calculator, correctly_converted_and_calculated_9)
 {
 	calculator calc("1.5e-1^-.5");
 	myVector<lexem*> v;
@@ -281,7 +286,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_9)
 	EXPECT_EQ(true, abs(calc.calculate() - 2.58199) < eps);
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_10)
+TEST(calculator, correctly_converted_and_calculated_for_different_variable_10)
 {
 	calculator calc("var");
 	myVector<lexem*> v;
@@ -298,34 +303,17 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_10)
 	double eps = 1e-25;
 	std::ostream out(nullptr);
 	std::istringstream sl("-1.0\n");
-	std::istream in(sl.rdbuf());
-	calc.askForVariablesValues(in, out);
+	std::istream in1(sl.rdbuf());
+	calc.askForVariablesValues(in1, out);
 	EXPECT_EQ(true, abs(calc.calculate() - -1.0) < eps);
+
+	sl = std::istringstream("1.0\n");
+	std::istream in2(sl.rdbuf());
+	calc.askForVariablesValues(in2, out);
+	EXPECT_EQ(true, abs(calc.calculate() - 1.0) < eps);
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_11)
-{
-	calculator calc("var");
-	myVector<lexem*> v;
-	v.push_back(new variable{ "var", 0 });
-
-	for (int i = 0; i < v.size(); ++i) {
-		EXPECT_EQ(v[i]->getSym(), calc.getData()[i]->getSym());
-		EXPECT_EQ(v[i]->getPos(), calc.getData()[i]->getPos());
-	}
-	for (int i = 0; i < v.size(); ++i) {
-		delete[] v[i];
-	}
-
-	double eps = 1e-25;
-	std::ostream out(nullptr);
-	std::istringstream sl("-1.0\n-1.0\n");
-	std::istream in(sl.rdbuf());
-	calc.askForVariablesValues(in, out);
-	EXPECT_EQ(true, abs(calc.calculate() - -1.0) < eps);
-}
-
-TEST(calculator, correctly_converted_into_vector_of_lexems_12)
+TEST(calculator, correctly_converted_into_vector_of_lexems_and_throwed_exception_12)
 {
 	calculator calc("1+2)");
 	myVector<lexem*> v;
@@ -345,7 +333,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_12)
 	ASSERT_ANY_THROW(calc.calculate());
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_13)
+TEST(calculator, throwed_exception_13)
 {
 	ASSERT_ANY_THROW(calculator calc("(1.42e-1+..4e+1)/(77e-2-sin(1))"));
 	/*
@@ -376,7 +364,7 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_13)
 	*/
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_14)
+TEST(calculator, throwed_exception_14)
 {
 	ASSERT_ANY_THROW(calculator calc("1ee-1"));
 	/*
@@ -396,17 +384,17 @@ TEST(calculator, correctly_converted_into_vector_of_lexems_14)
 	*/
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_15)
+TEST(calculator, throwed_exception_15)
 {
 	ASSERT_ANY_THROW(calculator calc("(1+var)(1-var)"));
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_16)
+TEST(calculator, throwed_exception_16)
 {
 	ASSERT_ANY_THROW(calculator calc("(1+2)*(3+)"));
 }
 
-TEST(calculator, correctly_converted_into_vector_of_lexems_17)
+TEST(calculator, throwed_exception_17)
 {
 	ASSERT_ANY_THROW(calculator calc("(1+2)*(3log)"));
 }

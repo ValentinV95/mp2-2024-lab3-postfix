@@ -11,8 +11,9 @@ using namespace std;
 int main()
 {
 	cout << "MAIN RULES: all names of varibles which are not operators or numners are allowed.\n";
-	cout << "--var not allowed! Instead, write -(-1)\n";
-	cout << "You can write sinx, but not like sin expression. Write sin(expression) instead\n" << endl;
+	cout << "--var not allowed! Instead, write -(-1). Please, do not divide numbers with space (12 != 1 2)\n";
+	cout << "You can write sinx, but not like sin expression. Write sin(expression) instead\n";
+	cout << "Operations: sin, cos, exp, ^, log\n" << endl;
 	cout << "Enter the expression" << endl;
 	string str;
 	string tmpstr;

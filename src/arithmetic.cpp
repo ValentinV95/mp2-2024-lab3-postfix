@@ -20,7 +20,7 @@ calculator::calculator(std::string str) {
 		tmpstring = "";
 		// if previous was an operator (but not the ')'): check for unary minus
 		if (operatorFound && str[i] == '-') { // unary minus part
-			if ((i > 0 && str[i - 1] != ')') || i == 0) { // if there is not ')' before of it is the begining of the string
+			if ((i > 0 && notActuallyData[notActuallyData.size() - 1]->getSym() != ")") || i == 0) { // if there is not ')' before of it is the begining of the string
 				notActuallyData.push_back(new operation{ "~", static_cast<int>(i) });
 				continue;
 			}
@@ -28,6 +28,7 @@ calculator::calculator(std::string str) {
 		operatorFound = false; // if Operator found
 		// checking if it is number
 		// idea is to count e (E), than check on +, -. 
+		// NUMBER PARSING
 		if (('0' <= str[i] && str[i] <= '9') || str[i] == '.') { // if digit
 			bool eAppeared = false;
 			bool dotAppeared = false;
@@ -55,6 +56,7 @@ calculator::calculator(std::string str) {
 			continue;
 		}
 
+		// OPERATOR PARSING
 		tmpstring = "";
 		for (j = i; j < str.length(); ++j) { // checking 1 symbol, 1+2 symbol, 1+2+3 symbol etc...
 			tmpstring += str[j];
@@ -66,6 +68,8 @@ calculator::calculator(std::string str) {
 			}
 		}
 		if (operatorFound) continue;
+
+		// VARIABLE PARSING
 		tmpstring = "";
 		for (j = i + 1; j < str.length(); ++j) { // adding as variable;
 			tmpstring += str[j - 1]; // !!! a comma
@@ -100,6 +104,8 @@ calculator::calculator(std::string str) {
 	variable::VectorOfVariablesValues.resize(tmpvec.size());
 	isVariablesExist = variable::vectorOfVariablesNames.size() > 0;
 
+//	for (size_t i = 0; i < notActuallyData.size(); ++i) std::cout << notActuallyData[i]->getSym() << " ";
+//	std::cout << std::endl;
 	check();
 }
 const myVector<lexem*>& calculator::getData() const noexcept { return notActuallyData; }
