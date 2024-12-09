@@ -23,10 +23,10 @@ class operation : public lexem {
 	static myVector<bool> vCanBeAfterOperand;
 public:
 	static void fillOperations();
-	operation(const std::string& s, int p);
-	bool isOperation() noexcept override final;
 	bool static isOperation(const std::string& s);
 	bool static canBeAfterOperand(const std::string& s);
+	operation(const std::string& s, int p);
+	bool isOperation() noexcept override final;
 	int getPriority() noexcept;
 	int getOperandsCount() noexcept;
 	double execute(const myVector<double>& operands);

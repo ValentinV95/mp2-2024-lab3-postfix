@@ -93,26 +93,46 @@ int operation::getOperandsCount() noexcept {
 }
 double operation::execute(const myVector<double>& operands) {
 	double res;
-	if (this->getSym() == "+")
+	if (this->getSym() == "+") {
+		if (operands.size() < 2) throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo operand for this operator");
 		res = operands[1] + operands[0];
-	else if (this->getSym() == "-")
+	}
+	else if (this->getSym() == "-") {
+		if (operands.size() < 2) throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo operand for this operator");
 		res = operands[1] - operands[0];
-	else if (this->getSym() == "~")
+	}
+	else if (this->getSym() == "~") {
+		if (operands.size() < 1) throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo operand for this operator");
 		res = -operands[0];
-	else if (this->getSym() == "*")
+	}
+	else if (this->getSym() == "*") {
+		if (operands.size() < 2) throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo operand for this operator");
 		res = operands[1] * operands[0];
-	else if (this->getSym() == "/")
+	}
+	else if (this->getSym() == "/") {
+		if (operands.size() < 2) throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo operand for this operator");
 		res = operands[1] / operands[0];
-	else if (this->getSym() == "sin")
+	}
+	else if (this->getSym() == "sin") {
+		if (operands.size() < 1) throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo operand for this operator");
 		res = sin(operands[0]);
-	else if (this->getSym() == "cos")
+	}
+	else if (this->getSym() == "cos") {
+		if (operands.size() < 1) throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo operand for this operator");
 		res = cos(operands[0]);
-	else if (this->getSym() == "exp")
+	}
+	else if (this->getSym() == "exp") {
+		if (operands.size() < 1) throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo operand for this operator");
 		res = exp(operands[0]);
-	else if (this->getSym() == "^")
+	}
+	else if (this->getSym() == "^") {
+		if (operands.size() < 2) throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo operand for this operator");
 		res = pow(operands[1], operands[0]);
-	else if (this->getSym() == "log")
+	}
+	else if (this->getSym() == "log") {
+		if (operands.size() < 1) throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo operand for this operator");
 		res = log(operands[0]);
+	}
 	else
 		throw std::invalid_argument("-1EUnknown operator");
 	return res;
@@ -141,6 +161,7 @@ void variable::fillValue() {
 			return;
 		}
 	}
+	throw std::invalid_argument(std::to_string(this->getSym().length()) + "L" + std::to_string(this->getPos()) + "ENo value to fill");
 }
 variable::variable(const std::string& s, int p) : operand(s, p) {}
 variable::~variable() {}

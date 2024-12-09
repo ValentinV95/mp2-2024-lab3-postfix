@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-TEST(calculator, correctly_converted_and_calculated_0)
+TEST(calculator, correctly_converted_and_calculated_0) //r
 {
 	calculator calc("1-2");
 	myVector<lexem*> v;
@@ -28,7 +28,7 @@ TEST(calculator, correctly_converted_and_calculated_0)
 	EXPECT_EQ(true, abs(calc.calculate() - -1.0) < eps);
 }
 
-TEST(calculator, correctly_converted_and_calculated_1)
+TEST(calculator, correctly_converted_and_calculated_1) //r
 {
 	calculator calc("1+2");
 	myVector<lexem*> v;
@@ -52,7 +52,7 @@ TEST(calculator, correctly_converted_and_calculated_1)
 	EXPECT_EQ(true, abs(calc.calculate() - 3.0) < eps);
 }
 
-TEST(calculator, correctly_converted_but_not_calculated_2)
+TEST(calculator, correctly_converted_but_not_calculated_2) //r
 {
 	calculator calc("---1");
 	myVector<lexem*> v;
@@ -98,7 +98,7 @@ TEST(calculator, correctly_converted_and_calculated_3)
 	EXPECT_EQ(true, abs(calc.calculate() - 111.0) < eps);
 }
 
-TEST(calculator, correctly_converted_and_calculated_4)
+TEST(calculator, correctly_converted_and_calculated_4) //r
 {
 	calculator calc("2+-1");
 	myVector<lexem*> v;
@@ -123,7 +123,7 @@ TEST(calculator, correctly_converted_and_calculated_4)
 	EXPECT_EQ(true, abs(calc.calculate() - 1.0) < eps);
 }
 
-TEST(calculator, correctly_converted_and_calculated_5)
+TEST(calculator, correctly_converted_and_calculated_5) //r
 {
 	calculator calc("4*(1+2)");
 	myVector<lexem*> v;
@@ -151,7 +151,7 @@ TEST(calculator, correctly_converted_and_calculated_5)
 	EXPECT_EQ(true, abs(calc.calculate() - 12.0) < eps);
 }
 
-TEST(calculator, correctly_converted_and_calculated_6)
+TEST(calculator, correctly_converted_and_calculated_6) //r
 {
 	calculator calc("(1.42e-1+.4e+1)/(77e-2-sin(1))");
 	myVector<lexem*> v;
@@ -186,7 +186,7 @@ TEST(calculator, correctly_converted_and_calculated_6)
 	EXPECT_EQ(true, abs(calc.calculate() - -57.9536) < eps);
 }
 
-TEST(calculator, correctly_converted_and_calculated_7)
+TEST(calculator, correctly_converted_and_calculated_7) //r
 {
 	calculator calc("(1.42E-1+.4E+1)/(77E-2-sin(1))");
 	myVector<lexem*> v;
@@ -261,7 +261,7 @@ TEST(calculator, correctly_converted_and_calculated_with_different_variables_8)
 	EXPECT_EQ(true, abs(calc.calculate() - 3.0) < eps);
 }
 
-TEST(calculator, correctly_converted_and_calculated_9)
+TEST(calculator, correctly_converted_and_calculated_9) //r
 {
 	calculator calc("1.5e-1^-.5");
 	myVector<lexem*> v;

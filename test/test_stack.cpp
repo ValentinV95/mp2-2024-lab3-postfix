@@ -1,16 +1,29 @@
 #include "stack.h"
 #include <gtest.h>
 
+myStack<int> foo() {
+	myStack<int> st;
+	st.push(1);
+	st.push(2);
+	st.push(3);
+	return st;
+}
+
 TEST(myStack, can_create_stack_with_positive_length)
 {
 	ASSERT_NO_THROW(myStack<int> v(5));
 }
 
-TEST(myStack, can_create_stack_with_zero_length)
+TEST(myStack, can_create_stack_with_no_operands)
 {
 	ASSERT_NO_THROW(myStack<int> v());
+}
+
+TEST(myStack, can_create_stack_with_zero_length)
+{
 	ASSERT_NO_THROW(myStack<int> v(0));
 }
+
 
 TEST(myStack, can_create_copied_stack)
 {
@@ -22,6 +35,11 @@ TEST(myStack, can_create_copied_stack)
 	ASSERT_NO_THROW(myStack<int> v(st));
 }
 
+TEST(myStack, can_create_moved_stack)
+{
+	ASSERT_NO_THROW(myStack<int> v(foo()));
+}
+
 TEST(myStack, copied_stack_is_equal_to_source_one)
 {
 	myStack<int> st;
@@ -29,6 +47,19 @@ TEST(myStack, copied_stack_is_equal_to_source_one)
 	st.push(1);
 	st.push(2);
 	myStack<int> st2 = st;
+
+	while (!st2.isEmpty() || !st.isEmpty()) {
+		EXPECT_EQ(st2.pop(), st.pop());
+	}
+}
+
+TEST(myStack, moved_stack_is_equal_to_source_one)
+{
+	myStack<int> st;
+	st.push(1);
+	st.push(2);
+	st.push(3);
+	myStack<int> st2 = foo();
 
 	while (!st2.isEmpty() || !st.isEmpty()) {
 		EXPECT_EQ(st2.pop(), st.pop());
@@ -47,17 +78,17 @@ TEST(myStack, copied_stack_has_its_own_memory)
 	EXPECT_NE(st2.top(), st.top());
 }
 
-TEST(myStack, returns_empty_if_is_empty)
+TEST(myStack, can_assign_stack_to_itself)
 {
 	myStack<int> st;
+	st.push(0);
 	st.push(1);
-	EXPECT_EQ(false, st.isEmpty());
+	st.push(2);
 
-	st.pop();
-	EXPECT_EQ(true, st.isEmpty());
+	ASSERT_NO_THROW(st = st);
 }
 
-TEST(myStack, can_assign_stack_to_itself) 
+TEST(myStack, assign_stack_to_itself_is_correct)
 {
 	myStack<int> st;
 	st.push(0);
@@ -71,7 +102,19 @@ TEST(myStack, can_assign_stack_to_itself)
 	}
 }
 
+
 TEST(myStack, can_assign_stacks)
+{
+	myStack<int> st;
+	st.push(0);
+	st.push(1);
+	st.push(2);
+
+	myStack<int> st2;
+	ASSERT_NO_THROW(st2 = st);
+}
+
+TEST(myStack, assign_stacks_is_correct)
 {
 	myStack<int> st;
 	st.push(0);
@@ -85,7 +128,37 @@ TEST(myStack, can_assign_stacks)
 	}
 }
 
-TEST(myStack, assign_changes_emptinesss)
+TEST(myStack, can_assign_move_stacks)
+{
+	myStack<int> st;
+	st.push(1);
+	st.push(2);
+	st.push(3);
+
+	myStack<int> st2;
+	ASSERT_NO_THROW(st2 = foo());
+}
+
+TEST(myStack, assign_move_stacks_is_correct)
+{
+	myStack<int> st;
+	st.push(1);
+	st.push(2);
+	st.push(3);
+
+	myStack<int> st2;
+	st2 = foo();
+	while (!st2.isEmpty() || !st.isEmpty()) {
+		EXPECT_EQ(st2.pop(), st.pop());
+	}
+}
+
+TEST(myStack, zero_length_stack_is_empty) {
+	myStack<int> st;
+	EXPECT_EQ(true, st.isEmpty());
+}
+
+TEST(myStack, assign_changes_emptiness)
 {
 	myStack<int> st;
 	st.push(0);
@@ -93,29 +166,52 @@ TEST(myStack, assign_changes_emptinesss)
 	st.push(2);
 
 	myStack<int> st2;
-	EXPECT_EQ(true, st2.isEmpty());
 	st2 = st;
 	EXPECT_EQ(false, st2.isEmpty());
 }
 
-TEST(myStack, can_clear_stack)
+TEST(myStack, isEmpty_returns_true)
+{
+	myStack<int> st;
+	st.push(0);
+	st.pop();
+	EXPECT_EQ(true, st.isEmpty());
+}
+
+TEST(myStack, clear_is_correct)
+{
+	myStack<int> st;
+	st.push(0);
+	st.push(1);
+	st.push(2);
+	st.clear();
+	EXPECT_EQ(true, st.isEmpty());
+}
+
+
+TEST(myStack, isEmpty_returns_false_if_its_false)
 {
 	myStack<int> st;
 	st.push(0);
 	st.push(1);
 	st.push(2);
 	EXPECT_EQ(false, st.isEmpty());
-	st.clear();
-	EXPECT_EQ(true, st.isEmpty());
 }
 
-TEST(myStack, can_set_and_get_top) {
+TEST(myStack, can_get_top) {
 	myStack<int> st;
 	st.push(0);
 	st.push(1);
 	st.push(2);
 
 	EXPECT_EQ(2, st.top());
+}
+
+TEST(myStack, can_set_top) {
+	myStack<int> st;
+	st.push(0);
+	st.push(1);
+	st.push(2);
 	st.top() = 3;
 	EXPECT_EQ(3, st.top());
 }

@@ -10,10 +10,10 @@ using namespace std;
 
 int main()
 {
-	cout << "MAIN RULES: all names of varibles which are not operators or numners are allowed.\n";
-	cout << "--var not allowed! Instead, write -(-1). Please, do not divide numbers with space (12 != 1 2)\n";
+	cout << "MAIN RULES: all names of varibles which are not operators or numners are allowed. E.g., x1; var; y8x etc.\n";
+	cout << "--var not allowed! Instead, write -(-1). Please, do not divide numbers with space (e.g., 12 != 1 2)\n";
 	cout << "You can write sinx, but not like sin expression. Write sin(expression) instead\n";
-	cout << "Operations: sin, cos, exp, ^, log\n" << endl;
+	cout << "Operations: sin, cos, exp, ^, log. Allowed numbers: x.ye-z; x.ye+z; .y; xe+z; .ye+z; x.y; x; But x.; x.e+1; xe1; e+1 NOT ALLOWED! \n" << endl;
 	cout << "Enter the expression" << endl;
 	string str;
 	string tmpstr;
