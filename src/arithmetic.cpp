@@ -73,7 +73,13 @@ calculator::calculator(std::string str) {
 		tmpstring = "";
 		for (j = i + 1; j < str.length(); ++j) { // adding as variable;
 			tmpstring += str[j - 1]; // !!! a comma
-			if (operation::canBeAfterOperand({ str[j] })) { // if there is an operator than handle an operand after it
+			if (str[j] == ' ') {
+				variable::vectorOfVariablesNames.push_back(tmpstring); // add to variables
+				notActuallyData.push_back(new variable{ tmpstring, static_cast<int>(i) }); // add to lexems
+				i = j;
+				break;
+			}
+			else if (operation::canBeAfterOperand({ str[j] })) { // if there is an operator than handle an operand after it
 				variable::vectorOfVariablesNames.push_back(tmpstring); // add to variables
 				notActuallyData.push_back(new variable{ tmpstring, static_cast<int>(i) }); // add to lexems
 				notActuallyData.push_back(new operation{ { str[j] }, static_cast<int>(j) }); // and next operation too
