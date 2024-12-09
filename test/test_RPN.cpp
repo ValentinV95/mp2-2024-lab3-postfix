@@ -593,3 +593,102 @@ TEST(RPN, wrong_calculation_throws_an_exception_1)
 
 	for (int i = 0; i < v.size(); ++i) delete[] v[i];
 }
+
+TEST(RPN, can_create_RPN_with_variables)
+{
+	myVector<lexem*> v;
+	v.push_back(new operation{ "(", 0 });
+	v.push_back(new variable{ "x", 1 });
+	v.push_back(new operation{ "+", 2 });
+	v.push_back(new variable{ "y", 3 });
+	v.push_back(new operation{ ")", 4 });
+	v.push_back(new operation{ "/", 5 });
+	v.push_back(new operation{ "(", 6 });
+	v.push_back(new variable{ "xy", 7 });
+	v.push_back(new operation{ "-", 9 });
+	v.push_back(new operation{ "sin", 10 });
+	v.push_back(new operation{ "(", 13 });
+	v.push_back(new variable{ "yx", 14 });
+	v.push_back(new operation{ ")", 16 });
+	v.push_back(new operation{ ")", 17 });
+	ASSERT_NO_THROW(RPN rpn(v));
+
+	for (int i = 0; i < v.size(); ++i) delete[] v[i];
+}
+
+TEST(RPN, correct_convertation_from_infix_to_postfix_variables)
+{
+	myVector<lexem*> infix;
+	infix.push_back(new operation{ "(", 0 }); 
+	infix.push_back(new variable{ "x", 1 }); 
+	infix.push_back(new operation{ "+", 2 }); 
+	infix.push_back(new variable{ "y", 3 }); 
+	infix.push_back(new operation{ ")", 4 }); 
+	infix.push_back(new operation{ "/", 5 }); 
+	infix.push_back(new operation{ "(", 6 });
+	infix.push_back(new variable{ "xy", 7 });
+	infix.push_back(new operation{ "-", 9 });
+	infix.push_back(new operation{ "sin", 10 });
+	infix.push_back(new operation{ "(", 13 });
+	infix.push_back(new variable{ "yx", 14 });
+	infix.push_back(new operation{ ")", 16 });
+	infix.push_back(new operation{ ")", 17 });
+	RPN rpn(infix);
+
+	myVector<lexem*> postfix;
+	postfix.push_back(infix[1]);
+	postfix.push_back(infix[3]);
+	postfix.push_back(infix[2]);
+	postfix.push_back(infix[7]);
+	postfix.push_back(infix[11]);
+	postfix.push_back(infix[9]);
+	postfix.push_back(infix[8]);
+	postfix.push_back(infix[5]);
+
+	for (int i = 0; i < rpn.getPostfix().size(); ++i) {
+		EXPECT_EQ(postfix[i], rpn.getPostfix()[i]);
+		EXPECT_EQ(postfix[i], rpn.getPostfix()[i]);
+	}
+
+	for (int i = 0; i < infix.size(); ++i) delete[] infix[i];
+}
+
+TEST(RPN, correct_calculations_with_variables)
+{
+	myVector<lexem*> v;
+	v.push_back(new operation{ "(", 0 });
+	v.push_back(new variable{ "x", 1 });
+	v.push_back(new operation{ "+", 2 });
+	v.push_back(new variable{ "y", 3 });
+	v.push_back(new operation{ ")", 4 });
+	v.push_back(new operation{ "/", 5 });
+	v.push_back(new operation{ "(", 6 });
+	v.push_back(new variable{ "xy", 7 });
+	v.push_back(new operation{ "-", 9 });
+	v.push_back(new operation{ "sin", 10 });
+	v.push_back(new operation{ "(", 13 });
+	v.push_back(new variable{ "yx", 14 });
+	v.push_back(new operation{ ")", 16 });
+	v.push_back(new operation{ ")", 17 });
+	RPN rpn(v);
+
+	variable::vectorOfVariablesNames.resize(0);
+	variable::vectorOfVariablesNames.push_back("xy");
+	variable::vectorOfVariablesNames.push_back("x");
+	variable::vectorOfVariablesNames.push_back("y");
+	variable::vectorOfVariablesNames.push_back("yx");
+	variable::VectorOfVariablesValues.resize(0);
+	variable::VectorOfVariablesValues.push_back(0.77);
+	variable::VectorOfVariablesValues.push_back(0.142);
+	variable::VectorOfVariablesValues.push_back(4.0);
+	variable::VectorOfVariablesValues.push_back(1.0);
+
+
+	for (size_t i = 0; i < v.size(); ++i) {
+		if (v[i]->isOperation()) continue;
+		dynamic_cast<operand*>(v[i])->fillValue();
+	}
+
+	EXPECT_EQ(true, abs(rpn.calculate() - -57.95358789490711615144) < eps);
+	for (int i = 0; i < v.size(); ++i) delete[] v[i];
+}

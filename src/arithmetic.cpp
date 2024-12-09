@@ -20,7 +20,7 @@ calculator::calculator(std::string str) {
 		tmpstring = "";
 		// if previous was an operator (but not the ')'): check for unary minus
 		if (operatorFound && str[i] == '-') { // unary minus part
-			if ((i > 0 && notActuallyData[notActuallyData.size() - 1]->getSym() != ")") || i == 0) { // if there is not ')' before of it is the begining of the string
+			if ((notActuallyData.size() > 0 && notActuallyData[notActuallyData.size() - 1]->getSym() != ")") || notActuallyData.size() == 0) { // if there is not ')' before of it is the begining of the string
 				notActuallyData.push_back(new operation{ "~", static_cast<int>(i) });
 				continue;
 			}
@@ -77,6 +77,7 @@ calculator::calculator(std::string str) {
 				variable::vectorOfVariablesNames.push_back(tmpstring); // add to variables
 				notActuallyData.push_back(new variable{ tmpstring, static_cast<int>(i) }); // add to lexems
 				notActuallyData.push_back(new operation{ { str[j] }, static_cast<int>(j) }); // and next operation too
+				operatorFound = true;
 				i = j;
 				break;
 			}
@@ -135,7 +136,7 @@ void calculator::check() {
 			else if (dynamic_cast<operation*>(notActuallyData[i])->getOperandsCount() >= 2) { // 2 and more operands branch
 				if (i == 0) // no operand on the left side
 					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "ENo operands for this operator, code: 7");
-				if (notActuallyData[i - 1]->isOperation() && notActuallyData[i - 1]->getSym() != ")") // same 
+				if (notActuallyData[i - 1]->isOperation() && notActuallyData[i - 1]->getSym() != ")" && notActuallyData[i - 1]->getSym() != "(") // same 
 					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "ETwo or more operators in a row, code: 8");
 				if (notActuallyData[i - 1]->getSym() == "(") // same
 					throw std::invalid_argument(std::to_string(notActuallyData[i]->getSym().length()) + "L" + std::to_string(notActuallyData[i]->getPos()) + "ENo operands for this operator, code: 9");
