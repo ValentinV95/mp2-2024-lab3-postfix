@@ -7,10 +7,10 @@ private:
     using myVector::sizevar;
 public:
     using myVector::size;
-    myStack(size_t size = 0) : myVector(size) {}
+    myStack() : myVector() {}
 //    myStack(const myStack& st) : myVector(&dynamic_cast<myVector*>(&st)) {}
-    myStack(const myStack& st) : myVector(st) {}
-    myStack(myStack&& st) : myVector(st) { }
+    myStack(const myStack& st) : myVector(st) {} //?
+    myStack(myStack&& st) : myVector(st) {} //?
     myStack& operator=(const myStack& st) {
         this->myVector::operator=(st);
         return *this;
@@ -24,6 +24,9 @@ public:
         this->myVector::push_back(v);
     }
     const T& pop() {
+//        const T& t = this->myVector::operator[](this->myVector::sizevar - 1);
+//        --this->myVector::sizevar;
+//        return t;
         return this->myVector::operator[](--this->myVector::sizevar);
     }
     T& top() {

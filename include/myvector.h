@@ -57,9 +57,11 @@ public:
         return sizevar;
     }
     const T& operator[](size_t i) const {
+//        if (i >= sizevar) throw std::out_of_range("OUT OF RANGE"); //
         return data[i];
     } 
     T& operator[](size_t i) {
+//        if (i >= sizevar) throw std::out_of_range("OUT OF RANGE"); //
         return data[i];
     }
     void push_back(const T& v) {

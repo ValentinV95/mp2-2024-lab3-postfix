@@ -35,7 +35,7 @@ int main()
 			expr.askForVariablesValues(cin, cout);
 			cout << endl << "Result: " << expr.calculate() << endl;
 		}
-	}
+}
 	catch (exception& e) {
 //		cout << e.what() << endl;
 		string errstr = e.what();

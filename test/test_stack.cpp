@@ -9,19 +9,9 @@ myStack<int> foo() {
 	return st;
 }
 
-TEST(myStack, can_create_stack_with_positive_length)
-{
-	ASSERT_NO_THROW(myStack<int> v(5));
-}
-
 TEST(myStack, can_create_stack_with_no_operands)
 {
 	ASSERT_NO_THROW(myStack<int> v());
-}
-
-TEST(myStack, can_create_stack_with_zero_length)
-{
-	ASSERT_NO_THROW(myStack<int> v(0));
 }
 
 

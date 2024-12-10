@@ -1,6 +1,7 @@
 #include "RPN.h"
 #include "stack.h"
 #include <stdexcept>
+//#include <iostream>
 
 void RPN::toRpn() {
 	myStack<operation*> st; // stack
@@ -34,6 +35,8 @@ void RPN::toRpn() {
 RPN::RPN(const myVector<lexem*>& s) : infix(s), postfix() { toRpn(); }
 const myVector<lexem*>& RPN::getPostfix() const noexcept { return postfix; };
 double RPN::calculate() {
+//	for (int i = 0; i < postfix.size(); ++i) std::cout << postfix[i]->getSym() << " ";
+//	std::cout << std::endl;
 	myVector<double> operands;
 	myStack<double> st;
 	operation* tmpOperator;
