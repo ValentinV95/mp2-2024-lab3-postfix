@@ -1,4 +1,5 @@
 #include <iostream>
+#include <exception>
 #include "arithmetic.h"
 #include "inputException.h"
 #include "Vector.h"
@@ -90,7 +91,7 @@ int main()
 		{
 			inputVar(lx);
 			postfixLx = toPostfix(lx);
-			printLx(postfixLx);
+			//printLx(postfixLx);
 			std::cout << calcArithmetic(postfixLx);
 			deleteLx(postfixLx);
 		}
