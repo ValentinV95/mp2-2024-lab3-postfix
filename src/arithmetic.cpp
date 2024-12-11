@@ -438,7 +438,7 @@ void inputVar(Vector<lexem*>& lx)
 	return;
 }
 
-void deleteLx(Vector<lexem*>& lx)
+void deleteLx(Vector<lexem*>& lx) noexcept
 {
 	for (int i = 0; i < lx.length(); i++)
 	{

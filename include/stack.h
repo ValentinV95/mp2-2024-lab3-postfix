@@ -17,6 +17,7 @@ class Stack : protected Vector<T>
 {
 public:
     Stack() { }
+    Stack(const Stack& s) = delete;
     ~Stack() { }
     using Vector<T>::length;
     using Vector<T>::operator=;

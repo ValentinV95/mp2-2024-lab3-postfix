@@ -3,6 +3,34 @@
 #include "inputException.h"
 #include "Vector.h"
 
+void printLx(Vector<lexem*> lx)
+{
+	for (int i = 0; i < lx.length(); i++)
+	{
+		if (lx[i]->what() == 0)
+		{
+			std::cout << (dynamic_cast<operand*>(lx[i]))->getValue() << " " << lx[i]->getInitPos() << std::endl;
+		}
+		if (lx[i]->what() == 1)
+		{
+			std::cout << (dynamic_cast<operation*>(lx[i]))->getOperation() << " " << lx[i]->getInitPos() << std::endl;
+		}
+	}
+	std::cout << std::endl;
+}
+
+bool checkVarible(Vector<lexem*> lx) noexcept
+{
+	for (int i = 0; i < lx.length(); i++)
+	{
+		if (lx[i]->what() == -1)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 int main()
 {
 	std::cout << "rules: " << std::endl;
@@ -22,9 +50,50 @@ int main()
 	try
 	{
 		lx = parsingLexem(expression);
-		inputVar(lx);
-		postfixLx = toPostfix(lx);
-		std::cout << calcArithmetic(postfixLx);
+		if (checkVarible(lx))
+		{
+			bool calc = true;
+			do
+			{
+				Vector<lexem*> tlx;
+				for (int i = 0; i < lx.length(); i++)
+				{
+					if (lx[i]->what() == 0)
+					{
+						tlx.push_back(new operand((dynamic_cast<operand*>(lx[i]))->getValue(), lx[i]->getInitPos()));
+					}
+					if (lx[i]->what() == 1)
+					{
+						tlx.push_back(new operation((dynamic_cast<operation*>(lx[i]))->getOperation(), lx[i]->getInitPos()));
+					}
+					if (lx[i]->what() == -1)
+					{
+						tlx.push_back(new varible((dynamic_cast<varible*>(lx[i]))->getName(), lx[i]->getInitPos()));
+					}
+				}
+				inputVar(tlx);
+				postfixLx = toPostfix(tlx);
+				std::cout << calcArithmetic(postfixLx) << std::endl;
+				std::cout << "Should new variable values be introduced: Yes(1) No(0) " << std::endl;
+				int ans;
+				std::cin >> ans;
+				if (ans == 0) calc = false;
+				else if (ans != 1)
+				{
+					throw std::exception("incorrect answer");
+				}
+				deleteLx(tlx);
+				deleteLx(postfixLx);
+			} while (calc);
+		}
+		else
+		{
+			inputVar(lx);
+			postfixLx = toPostfix(lx);
+			printLx(postfixLx);
+			std::cout << calcArithmetic(postfixLx);
+			deleteLx(postfixLx);
+		}
 	}
 	catch (const inputException& ex)
 	{
@@ -41,6 +110,6 @@ int main()
 		std::cout << "incorrect input" << std::endl;
 	}
 	deleteLx(lx);
-	deleteLx(postfixLx);
+	
 	return 0;
 }

@@ -68,4 +68,4 @@ Vector<std::string> getVarNames(Vector<lexem*>& lx);
 
 void inputVar(Vector<lexem*>& lx);
 
-void deleteLx(Vector<lexem*>& lx);
+void deleteLx(Vector<lexem*>& lx) noexcept;

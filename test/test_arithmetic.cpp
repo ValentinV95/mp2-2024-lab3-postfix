@@ -6,6 +6,119 @@
 
 double eps = 1e-14;
 
+TEST(arithmetic, correct_count_lexem)
+{
+	std::string expression = "1.e+1";
+	Vector<lexem*> lx = parsingLexem(expression);
+	EXPECT_EQ(1, lx.length());
+	deleteLx(lx);
+}
+
+TEST(arithmetic, correct_count_lexem2)
+{
+	std::string expression = "sin(sqrt(4 * 1e3)) / cos(6 * (6 - sqrt(sin(2))))";
+	Vector<lexem*> lx = parsingLexem(expression);
+	EXPECT_EQ(26, lx.length());
+	deleteLx(lx);
+}
+
+TEST(arithmetic, correct_parsing_lexem)
+{
+	std::string expression = "x + 10 * (sin(1)+cos(1) + sqrt( 1) / log2(1e+5)) - 4";
+	Vector<lexem*> lx = parsingLexem(expression), trueLx;
+	trueLx.push_back(new varible("x", 0));
+	trueLx.push_back(new operation('+', 2));
+	trueLx.push_back(new operand(10, 4));
+	trueLx.push_back(new operation('*', 7));
+	trueLx.push_back(new operation('(', 9));
+	trueLx.push_back(new operation('s', 10));
+	trueLx.push_back(new operation('(', 13));
+	trueLx.push_back(new operand(1, 14));
+	trueLx.push_back(new operation(')', 15));
+	trueLx.push_back(new operation('+', 16));
+	trueLx.push_back(new operation('c', 17));
+	trueLx.push_back(new operation('(', 20));
+	trueLx.push_back(new operand(1, 21));
+	trueLx.push_back(new operation(')', 22));
+	trueLx.push_back(new operation('+', 24));
+	trueLx.push_back(new operation('q', 26));
+	trueLx.push_back(new operation('(', 30));
+	trueLx.push_back(new operand(1, 32));
+	trueLx.push_back(new operation(')', 33));
+	trueLx.push_back(new operation('/', 35));
+	trueLx.push_back(new operation('d', 37));
+	trueLx.push_back(new operation('(', 41));
+	trueLx.push_back(new operand(1e+5, 42));
+	trueLx.push_back(new operation(')', 46));
+	trueLx.push_back(new operation(')', 47));
+	trueLx.push_back(new operation('-', 49));
+	trueLx.push_back(new operand(4, 51));
+	for (int i = 0; i < lx.length(); i++)
+	{
+		EXPECT_EQ(lx[i]->what(), trueLx[i]->what());
+		if (lx[i]->what() == 0)
+		{
+			EXPECT_EQ(true, abs((dynamic_cast<operand*>(lx[i]))->getValue() - (dynamic_cast<operand*>(trueLx[i]))->getValue()) < eps);
+			EXPECT_EQ(lx[i]->getInitPos(), trueLx[i]->getInitPos());
+		}
+		if (lx[i]->what() == 1)
+		{
+			EXPECT_EQ((dynamic_cast<operation*>(lx[i]))->getOperation(), (dynamic_cast<operation*>(trueLx[i]))->getOperation());
+			EXPECT_EQ(lx[i]->getInitPos(), trueLx[i]->getInitPos());
+		}
+		if (lx[i]->what() == -1)
+		{
+			EXPECT_EQ((dynamic_cast<varible*>(lx[i]))->getName(), (dynamic_cast<varible*>(trueLx[i]))->getName());
+			EXPECT_EQ(lx[i]->getInitPos(), trueLx[i]->getInitPos());
+		}
+	}
+	deleteLx(lx);
+	deleteLx(trueLx);
+}
+
+TEST(arithmetic, correct_postfix_form)
+{
+	std::string expression = "10 + 10 * (sin(1)+cos(1) + sqrt( 1) / log2(1e+5)) - 4";
+	Vector<lexem*> lx = parsingLexem(expression), truePostfix, postfixLx;
+	postfixLx = toPostfix(lx);
+	
+	truePostfix.push_back(new operand(10, 0));
+	truePostfix.push_back(new operand(10, 5));
+	truePostfix.push_back(new operand(1, 15));
+	truePostfix.push_back(new operation('s', 11));
+	truePostfix.push_back(new operand(1, 22));
+	truePostfix.push_back(new operation('c', 18));
+	truePostfix.push_back(new operation('+', 17));
+	truePostfix.push_back(new operand(1, 33));
+	truePostfix.push_back(new operation('q', 27));
+	truePostfix.push_back(new operand(1e+5, 43));
+	truePostfix.push_back(new operation('d', 38));
+	truePostfix.push_back(new operation('/', 36));
+	truePostfix.push_back(new operation('+', 25));
+	truePostfix.push_back(new operation('*', 8));
+	truePostfix.push_back(new operation('+', 3));
+	truePostfix.push_back(new operand(4, 52));
+	truePostfix.push_back(new operation('-', 50));
+
+	for (int i = 0; i < postfixLx.length(); i++)
+	{
+		EXPECT_EQ(postfixLx[i]->what(), truePostfix[i]->what());
+		if (postfixLx[i]->what() == 0)
+		{
+			EXPECT_EQ(true, abs((dynamic_cast<operand*>(postfixLx[i]))->getValue() - (dynamic_cast<operand*>(truePostfix[i]))->getValue()) < eps);
+			EXPECT_EQ(postfixLx[i]->getInitPos(), truePostfix[i]->getInitPos());
+		}
+		if (postfixLx[i]->what() == 1)
+		{
+			EXPECT_EQ((dynamic_cast<operation*>(postfixLx[i]))->getOperation(), (dynamic_cast<operation*>(truePostfix[i]))->getOperation());
+			EXPECT_EQ(postfixLx[i]->getInitPos(), truePostfix[i]->getInitPos());
+		}
+	}
+	deleteLx(lx);
+	deleteLx(truePostfix);
+	deleteLx(postfixLx);
+}
+
 TEST(arithmetic, can_calculate_const1)
 {
 	std::string expression = "1.e+1";
@@ -14,9 +127,9 @@ TEST(arithmetic, can_calculate_const1)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1.e+1 < eps);
-	ASSERT_NO_THROW(deleteLx(lx));
-	ASSERT_NO_THROW(deleteLx(postfixLx));
+	EXPECT_EQ(true, abs(res - 1.e+1) < eps);
+	deleteLx(lx);
+	deleteLx(postfixLx);
 }
 
 TEST(arithmetic, can_calculate_const2)
@@ -27,7 +140,7 @@ TEST(arithmetic, can_calculate_const2)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1.e-1 < eps);
+	EXPECT_EQ(true, abs(res - 1.e-1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -40,7 +153,7 @@ TEST(arithmetic, can_calculate_const3)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1.e+1 < eps);
+	EXPECT_EQ(true, abs(res - 1.e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -53,7 +166,7 @@ TEST(arithmetic, can_calculate_const4)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1.e-1 < eps);
+	EXPECT_EQ(true, abs(res - 1.E-1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -66,7 +179,7 @@ TEST(arithmetic, can_calculate_const5)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1.e+1 < eps);
+	EXPECT_EQ(true, abs(res - 1e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -79,7 +192,7 @@ TEST(arithmetic, can_calculate_const6)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1.e-1 < eps);
+	EXPECT_EQ(true, abs(res - 1e-1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -92,7 +205,7 @@ TEST(arithmetic, can_calculate_const7)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1.e+1 < eps);
+	EXPECT_EQ(true, abs(res - 1.e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -105,7 +218,7 @@ TEST(arithmetic, can_calculate_const8)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1.e-1 < eps);
+	EXPECT_EQ(true, abs(res - 1.e-1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -118,7 +231,7 @@ TEST(arithmetic, can_calculate_const9)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1E1 < eps);
+	EXPECT_EQ(true, abs(res - 1E1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -131,7 +244,7 @@ TEST(arithmetic, can_calculate_const10)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1e1 < eps);
+	EXPECT_EQ(true, abs(res - 1e1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -144,7 +257,7 @@ TEST(arithmetic, can_calculate_const11)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - .1 < eps);
+	EXPECT_EQ(true, abs(res - .1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -157,7 +270,7 @@ TEST(arithmetic, can_calculate_const12)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - -.1 < eps);
+	EXPECT_EQ(true, abs(res - -.1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -170,7 +283,7 @@ TEST(arithmetic, can_calculate_const13)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - -5.e+1 < eps);
+	EXPECT_EQ(true, abs(res - -5.e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -183,7 +296,7 @@ TEST(arithmetic, can_calculate_const14)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 5.e+1 < eps);
+	EXPECT_EQ(true, abs(res - 5.e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -315,7 +428,7 @@ TEST(arithmetic, can_calculate_easer_arithmetic1)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 2 < eps);
+	EXPECT_EQ(true, abs(res - 2) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -328,7 +441,7 @@ TEST(arithmetic, can_calculate_easer_arithmetic2)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 0.5 < eps);
+	EXPECT_EQ(true, abs(res - 0.5) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -341,7 +454,7 @@ TEST(arithmetic, can_calculate_easer_arithmetic3)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - -1 < eps);
+	EXPECT_EQ(true, abs(res - -1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -354,7 +467,7 @@ TEST(arithmetic, can_calculate_easer_arithmetic4)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - -3 < eps);
+	EXPECT_EQ(true, abs(res - -3) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -367,7 +480,7 @@ TEST(arithmetic, can_calculate_easer_arithmetic5)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 1 < eps);
+	EXPECT_EQ(true, abs(res - 1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -380,7 +493,7 @@ TEST(arithmetic, can_calculate_easer_arithmetic6)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - sin(1) < eps);
+	EXPECT_EQ(true, abs(res - sin(1)) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -393,7 +506,7 @@ TEST(arithmetic, can_calculate_easer_arithmetic7)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - sin(1) < eps);
+	EXPECT_EQ(true, abs(res - cos(1)) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -406,7 +519,7 @@ TEST(arithmetic, can_calculate_easer_arithmetic8)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - sqrt(5) < eps);
+	EXPECT_EQ(true, abs(res - sqrt(5)) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -419,7 +532,7 @@ TEST(arithmetic, can_calculate_easer_arithmetic9)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - log2(5) < eps);
+	EXPECT_EQ(true, abs(res - log2(5)) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -432,7 +545,7 @@ TEST(arithmetic, can_calculate_easer_arithmetic10)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - log(5) < eps);
+	EXPECT_EQ(true, abs(res - log(5)) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -655,7 +768,7 @@ TEST(arithmetic, can_calculate_difficult_arithmetic1)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - -2.353 < eps);
+	EXPECT_EQ(true, abs(res - -2.3530047) < eps2);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -668,7 +781,7 @@ TEST(arithmetic, can_calculate_difficult_arithmetic2)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - 0.95714 < eps2);
+	EXPECT_EQ(true, abs(res - 0.95714) < eps2);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -681,7 +794,7 @@ TEST(arithmetic, can_calculate_difficult_arithmetic3)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - -18.89772 < eps2);
+	EXPECT_EQ(true, abs(res - -19.28745) < eps2);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -694,7 +807,7 @@ TEST(arithmetic, can_calculate_difficult_arithmetic4)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - -9.10456 < eps2);
+	EXPECT_EQ(true, abs(res - -9.10456) < eps2);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -707,7 +820,7 @@ TEST(arithmetic, can_calculate_difficult_arithmetic5)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - -500.1 < eps);
+	EXPECT_EQ(true, abs(res - -500.1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
@@ -738,7 +851,7 @@ TEST(arithmetic, can_calculate_difficult_arithmetic_on_varible)
 	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
 	double res;
 	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
-	EXPECT_EQ(true, res - -18.89772 < eps2);
+	EXPECT_EQ(true, abs(res - -19.28745) < eps2);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
