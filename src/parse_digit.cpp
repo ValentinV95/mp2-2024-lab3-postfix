@@ -36,8 +36,8 @@ bool dfs(std::string& s, int pos, int r,std::string& error) {	//Это тот самый ав
 		}
 	case 3:
 		if (s.size() == pos) { return true; }
-		if (s[pos] == '.' || s[pos] == 'e' || isDigit(s[pos]-'0')) {
-			return dfs(s, pos + 1, (s[pos] == '.') ? 4 : (s[pos] == 'e' ? 6 : 3),error);
+		if (s[pos] == '.' || (s[pos] == 'e' || s[pos] == 'E') || isDigit(s[pos]-'0')) {
+			return dfs(s, pos + 1, (s[pos] == '.') ? 4 : ((s[pos] == 'e'|| s[pos] == 'E') ? 6 : 3), error);
 		}
 		else {
 			return false;
@@ -51,8 +51,8 @@ bool dfs(std::string& s, int pos, int r,std::string& error) {	//Это тот самый ав
 		}
 	case 5:
 		if (s.size() == pos) return true;
-		if (s[pos] == 'e' || isDigit(s[pos]-'0')) {
-			return dfs(s, pos + 1, (s[pos] == 'e') ? 6 : 5,error);
+		if ((s[pos] == 'e' || s[pos] == 'E') || isDigit(s[pos]-'0')) {
+			return dfs(s, pos + 1, ((s[pos] == 'e' || s[pos] == 'E')) ? 6 : 5,error);
 		}
 		else {
 			return false;

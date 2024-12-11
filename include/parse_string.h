@@ -1,10 +1,24 @@
 #include <string>
-#include <vector.h>
-#define en_l(a) (a>=97 && a<=122)
-#define en_u(a) (a>=65 && a<=90)
-#define _dig(a) (a>=48 && a<=57)
+#include "vector.h"
+#include "parse_digits.h"
+#include "lexem.h"
+#define en_l(a) (a>=97 && a<=122)	//english lower
+#define en_u(a) (a>=65 && a<=90)	//english upper
+#define _dig(a) (a>=48 && a<=57)	//digits
+#define _opers(a) (a>=42 && a<=47 && a!=46 && a!=44)
+#define _opers_with_b(a) (_opers(a) || a==40 || a==41)
 #define _right_symbols(a) (a!=44 && a>=40 && (!(a>=58 && a<=64)) && (!(a>=91 && a<=94)) && a!=96 && a<=122)
-#define func_sym 78
+#define func_sym 78	//i dont use it now
+
+void USER_SET_VAR(const lexem* l_) {
+	std::cout << "Pls, type you variable \"";
+	l_->print();
+	std::cout << "\":  ";
+	
+	std::string s; getline(std::cin, s);
+	l_->setValue_(parser(s));
+	return;
+}
 
 bool split_sym(const char& t) {
 
@@ -34,14 +48,14 @@ void error(int st, int ind) {
 	{
 	default:
 		std::cout << "incorrect input!\n";
-		exit(2768);
+		exit(1986);
 		break;
 	case -1:
 		std::cout << "There is no opening parenthesis for ')' in position " << ind << std::endl;
 		exit(-1);
 		break;
 	case 1:
-		std::cout << "There is no closing parenthesis for ')' in position " << ind << std::endl;
+		std::cout << "There is no closing parenthesis for '(' in position " << ind << std::endl;
 		exit(1);
 		break;
 	case 2:
@@ -59,6 +73,22 @@ void error(int st, int ind) {
 	case 3:
 		std::cout << "incorrect point in expression in position " << ind << std::endl;
 		exit(3);
+		break;
+	case 4:
+		std::cout << "You cant do the operation in position " << ind << " after operation" << std::endl;
+		exit(4);
+		break;
+	case -4:
+		std::cout << "You must write digits in digit after point in position " << ind <<std::endl;
+		exit(-4);
+		break;
+	case 5:
+		std::cout << "You cant write second point in digit in position " << ind << std::endl;
+		exit(5);
+		break;
+	case -5:
+		std::cout << "You cant use points in variable's name in position " << ind << std::endl;
+		exit(-5);
 		break;
 	}
 
@@ -103,6 +133,12 @@ int prepars(std::string& s, vector<int>& spaces, int& ind) {
 			ind = i-1;
 			while (s.at(ind) == ' ') ind--;
 			return 2;
+		}
+		if (new_s.size() > 1) {
+			if (_opers(new_s.back()) && _opers(new_s.at(new_s.size()-2)) && new_s.back()!='-') {
+				ind = i;
+				return 4;
+			}
 		}
 	}
 	if (new_s.back() != ')' && (!_dig(new_s.back())) && (!en_l(new_s.back())) && (!en_u(new_s.back())) && new_s.back()!='_') {
@@ -156,20 +192,32 @@ void Main_Parser(std::string original) {
 		else if (original.at(i) == '.' || _dig(original.at(i))) {
 			std::string digit = "";
 			int point_cnt = 0;
+			size_t l_aft_point = 0;
+			int ind_point = i;
 			while (true) {
 				if (i == original.size())break;
+				
 				if (point_cnt == 0 && original.at(i) == '.') {
 					point_cnt++;
+					ind_point = i;
 					digit += original.at(i);
 					i++;
 				}
 				else if (_dig(original.at(i))) {
+					if (point_cnt) l_aft_point++;
 					digit += original.at(i);
 					i++;
 				}
 				else {
+					if (original.at(i) == '.' && point_cnt) {
+						error(5, i);
+					}
 					break;
 				}
+				
+			}
+			if (point_cnt && !l_aft_point) {
+				error(-4, i-1);
 			}
 			raw_parse.push_back(digit);
 			if (i == original.size())continue;
@@ -178,12 +226,21 @@ void Main_Parser(std::string original) {
 				continue;
 			}
 			else {
-				raw_parse.back() += original.at(i);
-				raw_parse.back() += original.at(i+1);
+				std::string pre_s = "";
+				int pre_i = i;
+
+				pre_s += original.at(i);
+				pre_s += original.at(i+1);
 				i += 2;
 				while (i < original.size() && _dig(original.at(i))) {
-					raw_parse.back() += original.at(i);
+					pre_s += original.at(i);
 					i++;
+				}
+				if (i < original.size() && original.at(i) == '.') {
+					i = pre_i;
+				}
+				else {
+					raw_parse.back() += pre_s;
 				}
 				i--;
 			}
@@ -194,11 +251,74 @@ void Main_Parser(std::string original) {
 				r += original.at(i);
 				i++;
 			}
+			if (i < original.size() && original.at(i) == '.') {
+				error(-5, i);
+			}
 			raw_parse.push_back(r);
+
 			i--;
 		}
 	}
 	st = check_raw(raw_parse, ind_err);
 	error(st, ind_err);
+
+	vector<lexem*> LEXEM;
+	vector<int> var_ind;
+	vector<std::string> vars;
+	for (int i = 0; i < raw_parse.size(); i++) {
+
+		if (raw_parse.at(i) != "*" && i < raw_parse.size() - 1 && raw_parse.at(i + 1) == "(") {
+			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0,true));//this symbol
+			LEXEM.push_back(new operation("*", i, 0, 0,false));//*
+			LEXEM.push_back(new operation(raw_parse[i+1], i, 0, 0,true));//(
+			i++;
+			continue;
+		}
+		if (raw_parse.at(i) == "+") {
+			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0,false));
+		}else if (raw_parse.at(i) == "-") {
+			if (i > 0 && LEXEM.back()->isOperation() && !LEXEM.back()->isUtility() && LEXEM.back()) {
+				LEXEM.push_back(new operation(raw_parse[i], i, 0, true, false));
+			}
+			else {
+				LEXEM.push_back(new operation(raw_parse[i], i, 0, false, false));
+			}
+			
+		}
+		else if (raw_parse.at(i) == "*") {
+			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0, false));
+		}
+		else if (raw_parse.at(i) == "/") {
+			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0, false));
+		}
+		else if (raw_parse.at(i).at(0) == '.' || _dig(raw_parse.at(i).at(0))) {
+			LEXEM.push_back(new constant(raw_parse[i], i, parser(raw_parse[i])));
+		}
+		else {
+			LEXEM.push_back(new variable(raw_parse[i], i, 0.0, false, "hah"));
+			if (!LEXEM.back()->isFunction()) {
+				int was = -1;
+				for (size_t pt = 0; pt < vars.size(); pt++) {
+					if (vars[pt] == raw_parse[i]) {
+						was = pt;
+						break;
+					}
+				}
+				if (was == -1) {
+					USER_SET_VAR(LEXEM.back());
+					vars.push_back(raw_parse[i]);
+					var_ind.push_back(LEXEM.size()-1);
+				}
+				else {
+					LEXEM.back()->setValue_(LEXEM[var_ind[was]]->getValue());
+				}
+			}
+		}
+
+	}
+	for (auto& el : LEXEM) {
+		el->print();
+	}
+	std::cout << std::endl;
 	std::cout << raw_parse << std::endl;
 }
