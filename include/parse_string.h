@@ -5,6 +5,7 @@
 #define en_l(a) (a>=97 && a<=122)	//english lower
 #define en_u(a) (a>=65 && a<=90)	//english upper
 #define _dig(a) (a>=48 && a<=57)	//digits
+#define func(a) (a=="cos" || a=="sin" || a=="tan" || a=="cot")
 #define _opers(a) (a>=42 && a<=47 && a!=46 && a!=44)
 #define _opers_with_b(a) (_opers(a) || a==40 || a==41)
 #define _right_symbols(a) (a!=44 && a>=40 && (!(a>=58 && a<=64)) && (!(a>=91 && a<=94)) && a!=96 && a<=122)
@@ -90,6 +91,10 @@ void error(int st, int ind) {
 		std::cout << "You cant use points in variable's name in position " << ind << std::endl;
 		exit(-5);
 		break;
+	case 6:
+		std::cout << "You cant write digit after digit in position " << ind << std::endl;
+		exit(6);
+		break;
 	}
 
 }
@@ -102,6 +107,16 @@ int prepars(std::string& s, vector<int>& spaces, int& ind) {
 		
 		if (s.at(i) == ' ') {
 			spaces.push_back(i);
+			if (s.at(s.size() - i - 1) == ')') {
+				cnt_c++;
+			}
+			else if (s.at(s.size() - i - 1) == '(') {
+				cnt_c--;
+			}
+			if (cnt_c < 0) {
+				ind = s.size() - 1 - i;
+				return 1;
+			}
 			continue;
 		}
 		if (!_right_symbols(s.at(i))) {
@@ -161,7 +176,7 @@ int check_raw(const vector<std::string>& vs,int& ind) {
 	return 0;
 }
 
-void Main_Parser(std::string original) {
+vector<lexem*> Main_Parser(std::string original) {
 	int ind_err = 0;
 	std::string s = original;
 	vector<std::string> raw_parse;
@@ -267,14 +282,17 @@ void Main_Parser(std::string original) {
 	vector<std::string> vars;
 	for (int i = 0; i < raw_parse.size(); i++) {
 
-		if (raw_parse.at(i) != "*" && i < raw_parse.size() - 1 && raw_parse.at(i + 1) == "(") {
+		if (raw_parse.at(i) != "*" && i < raw_parse.size() - 1 && raw_parse.at(i + 1) == "(" && !func(raw_parse.at(i))) {
 			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0,true));//this symbol
 			LEXEM.push_back(new operation("*", i, 0, 0,false));//*
 			LEXEM.push_back(new operation(raw_parse[i+1], i, 0, 0,true));//(
 			i++;
 			continue;
 		}
-		if (raw_parse.at(i) == "+") {
+		if (raw_parse.at(i) == "(" || raw_parse.at(i) == ")") {
+			LEXEM.push_back(new operation(raw_parse[i], i, 0, false, true));
+		}
+		else if (raw_parse.at(i) == "+") {
 			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0,false));
 		}else if (raw_parse.at(i) == "-") {
 			if (i > 0 && LEXEM.back()->isOperation() && !LEXEM.back()->isUtility() && LEXEM.back()) {
@@ -292,10 +310,20 @@ void Main_Parser(std::string original) {
 			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0, false));
 		}
 		else if (raw_parse.at(i).at(0) == '.' || _dig(raw_parse.at(i).at(0))) {
+			if (i > 0 && !LEXEM.back()->isOperation() && LEXEM.back()->isConstanta()) {
+				error(6, i);
+			}
 			LEXEM.push_back(new constant(raw_parse[i], i, parser(raw_parse[i])));
+			
 		}
 		else {
-			LEXEM.push_back(new variable(raw_parse[i], i, 0.0, false, "hah"));
+			bool isF = false;
+			std::string sign = "hah";
+			if (raw_parse.at(i) == "sin" || raw_parse.at(i) == "cos" || raw_parse.at(i) == "tan" || raw_parse.at(i) == "cot") {
+				isF = true;
+				sign = raw_parse[i];
+			}
+			LEXEM.push_back(new variable(raw_parse[i], i, 0.0, isF, sign));
 			if (!LEXEM.back()->isFunction()) {
 				int was = -1;
 				for (size_t pt = 0; pt < vars.size(); pt++) {
@@ -317,8 +345,9 @@ void Main_Parser(std::string original) {
 
 	}
 	for (auto& el : LEXEM) {
-		el->print();
+		el->print(true);
 	}
 	std::cout << std::endl;
 	std::cout << raw_parse << std::endl;
+	return LEXEM;
 }

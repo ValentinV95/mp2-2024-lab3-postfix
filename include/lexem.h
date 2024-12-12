@@ -13,7 +13,8 @@ public:
 	virtual bool isFunction() { return NULL; }
 	virtual void setValue_(const double& _v)const {};
 	virtual double getValue()const { return 0.0; }
-	void print()const { std::cout << value; }
+	virtual bool isConstanta() { return NULL; }
+	void print(bool isTesting = false)const { if (isTesting)std::cout << value << " "; else { std::cout << value; } }
 };
 
 class operand : public lexem {
@@ -37,6 +38,7 @@ class constant : public operand{
 public:
 	constant(const std::string& _s, int _p, double _v) : operand::operand(_s, _p, _v) { isConst = true; };
 	double getValue() { return value_d; }
+	bool isConstanta() { return true; }
 	void setValue_(const double& _v) { value_d = _v; };
 };
 class variable : public operand {
@@ -48,4 +50,5 @@ public:
 	bool isFunction() { return isFunc; }
 	void setValue_(const double& _v) { value_d = _v; };
 	double getValue() { return value_d; }
+	bool isConstanta() { return false; }
 };

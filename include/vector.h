@@ -64,7 +64,7 @@ public:
 		pMem = new T[cp];
 		std::copy(v.pMem, v.pMem + cp, pMem);
 	}
-	vector(vector<T>&& v) : pMem(nullptr), sz(0),pc(0) {
+	vector(vector<T>&& v) : pMem(nullptr), sz(0),cp(0) {
 		pMem = v.pMem;
 		cp = v.cp;
 		sz = v.sz;
