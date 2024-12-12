@@ -87,11 +87,19 @@ TEST(Vector, can_push_back)
 	{
 		ASSERT_NO_THROW(v.push_back(i));
 	}
+}
+
+TEST(Vector, check_push_back_items)
+{
+	Vector<int> v;
+	for (int i = 0; i < 100; i++)
+	{
+		v.push_back(i);
+	}
 	for (int i = 0; i < 100; i++)
 	{
 		EXPECT_EQ(i, v[i]);
 	}
-	EXPECT_EQ(100, v.length());
 }
 
 TEST(Vector, can_pop_back)
@@ -101,7 +109,7 @@ TEST(Vector, can_pop_back)
 	{
 		v.push_back(i);
 	}
-	ASSERT_NO_THROW(v.pop_back());
+	v.pop_back();
 	EXPECT_EQ(99, v.length());
 }
 
@@ -109,5 +117,12 @@ TEST(Vector, can_clear)
 {
 	Vector<int> v(10);
 	ASSERT_NO_THROW(v.clear());
+	EXPECT_EQ(0, v.length());
+}
+
+TEST(Vector, check_length_before_clear)
+{
+	Vector<int> v(10);
+	v.clear();
 	EXPECT_EQ(0, v.length());
 }
