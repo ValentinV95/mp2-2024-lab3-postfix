@@ -1,6 +1,7 @@
 // реализация пользовательского приложения
 #include "parse_digits.h"
 #include "parse_string.h"
+#include "arithmetic.h"
 #include <iostream>
 #include <iomanip>
 
@@ -15,7 +16,13 @@ int main()
 		if (s == "exit") {
 			break;
 		}
-		Main_Parser(s);
+		TArithmeticExpression e(s);
+		e.print_infix();
+		e.ToPostfix();
+		e.print_rpn();
+		std::cout << e.simple_calc();
+		std::cout << "\n";
+		
 	}
 	
 }

@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include "vector.h"
 #include "parse_digits.h"
@@ -282,32 +283,32 @@ vector<lexem*> Main_Parser(std::string original) {
 	vector<std::string> vars;
 	for (int i = 0; i < raw_parse.size(); i++) {
 
-		if (raw_parse.at(i) != "*" && i < raw_parse.size() - 1 && raw_parse.at(i + 1) == "(" && !func(raw_parse.at(i))) {
-			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0,true));//this symbol
-			LEXEM.push_back(new operation("*", i, 0, 0,false));//*
-			LEXEM.push_back(new operation(raw_parse[i+1], i, 0, 0,true));//(
-			i++;
-			continue;
+		if (raw_parse.at(i) != "*" && i < raw_parse.size() - 1 && raw_parse.at(i + 1) == "(" && raw_parse[i]==")") {
+		
+				LEXEM.push_back(new operation(raw_parse[i], i, 0, false, true));//this sth
+				LEXEM.push_back(new operation("*", i, 2, false, false));//*
+				LEXEM.push_back(new operation(raw_parse[i + 1], i, 0, false, true));//(
+				i++;
+				continue;
 		}
 		if (raw_parse.at(i) == "(" || raw_parse.at(i) == ")") {
 			LEXEM.push_back(new operation(raw_parse[i], i, 0, false, true));
 		}
 		else if (raw_parse.at(i) == "+") {
-			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0,false));
+			LEXEM.push_back(new operation(raw_parse[i], i, 1, false,false));
 		}else if (raw_parse.at(i) == "-") {
 			if (i > 0 && LEXEM.back()->isOperation() && !LEXEM.back()->isUtility() && LEXEM.back()) {
-				LEXEM.push_back(new operation(raw_parse[i], i, 0, true, false));
+				LEXEM.push_back(new operation(raw_parse[i], i, 1, true, false));
 			}
 			else {
-				LEXEM.push_back(new operation(raw_parse[i], i, 0, false, false));
+				LEXEM.push_back(new operation(raw_parse[i], i, 1, false, false));
 			}
-			
 		}
 		else if (raw_parse.at(i) == "*") {
-			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0, false));
+			LEXEM.push_back(new operation(raw_parse[i], i, 2, 0, false));
 		}
 		else if (raw_parse.at(i) == "/") {
-			LEXEM.push_back(new operation(raw_parse[i], i, 0, 0, false));
+			LEXEM.push_back(new operation(raw_parse[i], i, 2, 0, false));
 		}
 		else if (raw_parse.at(i).at(0) == '.' || _dig(raw_parse.at(i).at(0))) {
 			if (i > 0 && !LEXEM.back()->isOperation() && LEXEM.back()->isConstanta()) {
@@ -318,12 +319,13 @@ vector<lexem*> Main_Parser(std::string original) {
 		}
 		else {
 			bool isF = false;
+			int ans_mn = 1.0;
 			std::string sign = "hah";
 			if (raw_parse.at(i) == "sin" || raw_parse.at(i) == "cos" || raw_parse.at(i) == "tan" || raw_parse.at(i) == "cot") {
 				isF = true;
 				sign = raw_parse[i];
 			}
-			LEXEM.push_back(new variable(raw_parse[i], i, 0.0, isF, sign));
+			LEXEM.push_back(new variable(raw_parse[i], i, 0.0, isF, sign,ans_mn));
 			if (!LEXEM.back()->isFunction()) {
 				int was = -1;
 				for (size_t pt = 0; pt < vars.size(); pt++) {
@@ -344,10 +346,5 @@ vector<lexem*> Main_Parser(std::string original) {
 		}
 
 	}
-	for (auto& el : LEXEM) {
-		el->print(true);
-	}
-	std::cout << std::endl;
-	std::cout << raw_parse << std::endl;
 	return LEXEM;
 }
