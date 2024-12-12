@@ -26,7 +26,7 @@ double operand::getValue() const noexcept
 	return value;
 }
 
-varible::varible(const std::string& name, int initPos) : operand(0.0, 0), nameVar(name), setValue(0) { }
+varible::varible(const std::string& name, int initPos) : operand(0.0, initPos), nameVar(name), setValue(0) { }
 
 int varible::what() const noexcept
 {
@@ -357,8 +357,8 @@ Vector<lexem*> parsingLexem(const std::string& expression)
 				varName = varName + std::to_string(expression[i] - '0');
 				i++;
 			}
-			i--;
 			lx.push_back(new varible(varName, i - varName.size()));
+			i--;
 		}
 		else if (expression[i] == '.' || (expression[i] >= '0' && expression[i] <= '9'))
 		{

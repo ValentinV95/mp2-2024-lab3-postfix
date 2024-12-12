@@ -73,7 +73,7 @@ TEST(Stack, can_clear)
 	ASSERT_NO_THROW(v.clear());
 }
 
-TEST(Stack, check_length_before_clear)
+TEST(Stack, check_length_after_clear)
 {
 	Stack<int> v;
 	for (int i = 0; i < 100; i++)

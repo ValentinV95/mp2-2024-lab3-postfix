@@ -120,7 +120,7 @@ TEST(Vector, can_clear)
 	EXPECT_EQ(0, v.length());
 }
 
-TEST(Vector, check_length_before_clear)
+TEST(Vector, check_length_after_clear)
 {
 	Vector<int> v(10);
 	v.clear();
