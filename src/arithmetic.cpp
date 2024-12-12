@@ -173,6 +173,7 @@ void calculator::askForVariablesValues(std::istream& in, std::ostream& out) {
 			out << str.substr(0, it) << " ";
 			out << "\033[31m" << str[it] << "\033[0m";
 			if (it + 1 < str.length()) out << " " << str.substr(it + 1, str.length()) << std::endl;
+			else out << std::endl;
 			--i;
 		}
 	}

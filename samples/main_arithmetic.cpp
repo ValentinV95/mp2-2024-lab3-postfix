@@ -28,7 +28,11 @@ int main()
 				cout << "Do you want to enter another values of variables (y/n)?" << endl;
 				getline(cin, tmpstr);
 				if (tmpstr == "y") continue;
-				break;
+				else if (tmpstr == "n") break;
+				else {
+					cout << "Unknown input\n";
+					return 0;
+				}
 			}
 		}
 		else {
