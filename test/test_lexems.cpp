@@ -65,7 +65,7 @@ TEST(operation, can_unary_minus_be_after_operand) {
 }
 
 TEST(operation, can_left_bracket_be_after_operand) {
-	EXPECT_EQ(false, operation::canBeAfterOperand("("));
+	EXPECT_EQ(true, operation::canBeAfterOperand("(")); // false
 }
 
 TEST(operation, can_right_bracket_be_after_operand) {

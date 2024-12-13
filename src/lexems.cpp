@@ -58,7 +58,7 @@ void operation::fillOperations() {
 	vCanBeAfterOperand.push_back(false);
 	vCanBeAfterOperand.push_back(true);
 	vCanBeAfterOperand.push_back(false);
-	vCanBeAfterOperand.push_back(false);
+	vCanBeAfterOperand.push_back(true); // false
 	vCanBeAfterOperand.push_back(true);
 }
 operation::operation(const std::string& s, int p) : lexem(s, p) {
