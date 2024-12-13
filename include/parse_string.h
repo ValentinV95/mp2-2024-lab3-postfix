@@ -1,6 +1,4 @@
 #pragma once
-#include <string>
-#include "vector.h"
 #include "parse_digits.h"
 #include "lexem.h"
 #define en_l(a) (a>=97 && a<=122)	//english lower
@@ -12,7 +10,7 @@
 #define _right_symbols(a) (a!=44 && a>=40 && (!(a>=58 && a<=64)) && (!(a>=91 && a<=94)) && a!=96 && a<=122)
 #define func_sym 78	//i dont use it now
 
-void USER_SET_VAR(const lexem* l_) {
+void USER_SET_VAR( lexem* l_) {
 	std::cout << "Pls, type you variable \"";
 	l_->print();
 	std::cout << "\":  ";
@@ -96,6 +94,10 @@ void error(int st, int ind) {
 		std::cout << "You cant write digit after digit in position " << ind << std::endl;
 		exit(6);
 		break;
+	case -6:
+		std::cout << "You cant start expression with non-unar operation in position " << ind << std::endl;
+		exit(-6);
+		break;
 	}
 
 }
@@ -145,6 +147,10 @@ int prepars(std::string& s, vector<int>& spaces, int& ind) {
 		}
 
 		new_s.push_back(s.at(i));
+		if (new_s.size() == 1 && new_s != "-" &&  _opers(new_s.back()) ) {
+			ind = i;
+			return -6;
+		}
 		if (new_s.size() > 1 && new_s.back() == ')' && new_s.at(new_s.size() - 2) == '(') {
 			ind = i-1;
 			while (s.at(ind) == ' ') ind--;
@@ -281,6 +287,7 @@ vector<lexem*> Main_Parser(std::string original) {
 	vector<lexem*> LEXEM;
 	vector<int> var_ind;
 	vector<std::string> vars;
+	size_t was_op = 0;
 	for (int i = 0; i < raw_parse.size(); i++) {
 
 		if (raw_parse.at(i) != "*" && i < raw_parse.size() - 1 && raw_parse.at(i + 1) == "(" && raw_parse[i]==")") {
@@ -289,33 +296,47 @@ vector<lexem*> Main_Parser(std::string original) {
 				LEXEM.push_back(new operation("*", i, 2, false, false));//*
 				LEXEM.push_back(new operation(raw_parse[i + 1], i, 0, false, true));//(
 				i++;
+				was_op++;
 				continue;
 		}
 		if (raw_parse.at(i) == "(" || raw_parse.at(i) == ")") {
 			LEXEM.push_back(new operation(raw_parse[i], i, 0, false, true));
 		}
 		else if (raw_parse.at(i) == "+") {
+			was_op++;
 			LEXEM.push_back(new operation(raw_parse[i], i, 1, false,false));
 		}else if (raw_parse.at(i) == "-") {
-			if (i > 0 && LEXEM.back()->isOperation() && !LEXEM.back()->isUtility() && LEXEM.back()) {
-				LEXEM.push_back(new operation(raw_parse[i], i, 1, true, false));
+			if (i > 0 && LEXEM.back()->isOperation() && !(LEXEM.back()->Get_Lexem_ID() == -7) || was_op == 0) {
+				//LEXEM.push_back(new operation(raw_parse[i], i, 1, true, false));
+				auto tmp = 0;
+				if(LEXEM.size())LEXEM.back()->Get_Lexem_ID();
+				LEXEM.push_back(new operation("(", i, 0, false, true));
+				LEXEM.push_back(new constant("-1", i, -1.0));
+				LEXEM.push_back(new operation(")", i, 0, false, true));
+				if (tmp == -6) {
+					LEXEM.push_back(new operation("/", i, 2, false, false));
+				}else{ LEXEM.push_back(new operation("*", i, 2, false, false)); }
 			}
 			else {
+				
 				LEXEM.push_back(new operation(raw_parse[i], i, 1, false, false));
 			}
+			was_op++;
 		}
 		else if (raw_parse.at(i) == "*") {
 			LEXEM.push_back(new operation(raw_parse[i], i, 2, 0, false));
+			was_op++;
 		}
 		else if (raw_parse.at(i) == "/") {
 			LEXEM.push_back(new operation(raw_parse[i], i, 2, 0, false));
+			was_op++;
 		}
 		else if (raw_parse.at(i).at(0) == '.' || _dig(raw_parse.at(i).at(0))) {
 			if (i > 0 && !LEXEM.back()->isOperation() && LEXEM.back()->isConstanta()) {
 				error(6, i);
 			}
 			LEXEM.push_back(new constant(raw_parse[i], i, parser(raw_parse[i])));
-			
+			was_op++;
 		}
 		else {
 			bool isF = false;
@@ -343,6 +364,7 @@ vector<lexem*> Main_Parser(std::string original) {
 					LEXEM.back()->setValue_(LEXEM[var_ind[was]]->getValue());
 				}
 			}
+			was_op++;
 		}
 
 	}

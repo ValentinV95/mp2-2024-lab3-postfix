@@ -1,5 +1,5 @@
 #pragma once
-#include <string>
+#include "vector.h"
 
 double bin_pow(double, int);
 bool dfs(std::string&, int, int,std::string&);

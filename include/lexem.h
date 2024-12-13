@@ -3,7 +3,7 @@
 
 //ID
 // 0 - base class
-// 1 - contant
+// 1 - constant
 // -1 - operand class
 // 2 - variable
 // 3,-3,4,-4 - sin,cos,tan,cot
@@ -23,11 +23,12 @@ public:
 	virtual bool isUnar() { return NULL; };
 	virtual bool isFunction() { return NULL; }
 	virtual void setValue_(const double& _v) {};
-	virtual void setValue_(const double& _v)const {};
 	virtual double getValue()const { return 0.0; }
 	virtual bool isConstanta() { return NULL; }
 	int Get_Lexem_ID() { return ID; }
+	size_t GetPos() { return position; }
 	void print(bool isTesting = false)const { if (isTesting)std::cout << value << " "; else { std::cout << value; } }
+	std::string Get_VAL_NAME() { return value; }
 };
 
 class operand : public lexem {
@@ -44,7 +45,10 @@ private:
 	char priority;
 	bool unar;
 public:
-	operation(const std::string& _s, int _p, char _pr, bool _unar = 0, bool _u = 0) : lexem::lexem(_s, _p), unar(_unar), uti(_u) { isOp = true; priority = _pr; 
+	operation(const std::string& _s, int _p, char _pr, bool _unar = 0, bool _u = 0,int id=0) : lexem::lexem(_s, _p), unar(_unar), uti(_u) { isOp = true; priority = _pr; 
+	if (id != 0) {
+		ID = id;
+	}
 	if (value == "-") {
 		if (unar) {
 			ID = -2;
@@ -71,7 +75,7 @@ public:
 	
 	};
 	bool isUtility() override{ return uti; }
-	bool isUnar() override{ std::cout << "iAM\n"; return unar; }
+	bool isUnar() override{  return unar; }
 	int getPriotiry() { return priority; }
 };
 class constant : public operand{
@@ -108,7 +112,7 @@ public:
 	
 	};
 	bool isFunction()override { return isFunc; }
-	void setValue_(const double& _v) { value_d = _v; };
+	void setValue_(const double& _v) override{ value_d = _v; };
 	double getValue()const override{ return value_d; }
 	bool isConstanta() override{ return false; }
 };

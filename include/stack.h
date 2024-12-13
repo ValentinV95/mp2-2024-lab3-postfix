@@ -8,7 +8,7 @@
 // - очистка стека
 // при вставке в полный стек должна перевыделяться память
 #pragma once
-#include <vector.h>
+#include "vector.h"
 
 template<typename T>	//всё по лекции Сусоева
 class TDynamicStack {

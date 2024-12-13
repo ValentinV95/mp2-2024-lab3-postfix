@@ -1,1 +1,6 @@
-// реализация функций и классов для вычисления арифметических выражений
+#include "arithmetic.h"
+
+TArithmeticExpression::TArithmeticExpression(const std::string& s) {
+	expression = s;
+	infix_form = Main_Parser(s);
+}

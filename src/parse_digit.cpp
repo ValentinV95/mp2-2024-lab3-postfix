@@ -1,4 +1,3 @@
-#include "vector.h"
 #include "parse_digits.h"
 
 #define isDigit(t) (0<=(t) && (t)<=9)
