@@ -357,6 +357,11 @@ Vector<lexem*> parsingLexem(const std::string& expression)
 				varName = varName + std::to_string(expression[i] - '0');
 				i++;
 			}
+			if (expression[i] == '.' || expression[i] == 'e' || expression[i] == 'E')
+			{
+				deleteLx(lx);
+				throw inputException("invalid character", 6, i);
+			}
 			lx.push_back(new varible(varName, i - varName.size()));
 			i--;
 		}
