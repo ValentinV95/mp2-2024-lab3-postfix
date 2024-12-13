@@ -3,6 +3,7 @@
 #include "arithmetic.h"
 #include "Vector.h"
 #include <string>
+#include "inputException.h"
 
 double eps = 1e-14;
 
@@ -76,7 +77,7 @@ TEST(arithmetic, correct_parsing_lexem)
 	deleteLx(trueLx);
 }
 
-TEST(arithmetic, correct_postfix_form)
+TEST(arithmetic, correct_transform_to_postfix_form)
 {
 	std::string expression = "10 + 10 * (sin(1)+cos(1) + sqrt( 1) / log2(1e+5)) - 4";
 	Vector<lexem*> lx = parsingLexem(expression), truePostfix, postfixLx;
@@ -123,10 +124,10 @@ TEST(arithmetic, can_calculate_const1)
 {
 	std::string expression = "1.e+1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1.e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -136,10 +137,10 @@ TEST(arithmetic, can_calculate_const2)
 {
 	std::string expression = "1.e-1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1.e-1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -149,10 +150,10 @@ TEST(arithmetic, can_calculate_const3)
 {
 	std::string expression = "1.E+1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1.e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -162,10 +163,10 @@ TEST(arithmetic, can_calculate_const4)
 {
 	std::string expression = "1.E-1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1.E-1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -175,10 +176,10 @@ TEST(arithmetic, can_calculate_const5)
 {
 	std::string expression = "1e+1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -188,10 +189,10 @@ TEST(arithmetic, can_calculate_const6)
 {
 	std::string expression = "1e-1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1e-1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -201,10 +202,10 @@ TEST(arithmetic, can_calculate_const7)
 {
 	std::string expression = "1E+1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1.e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -214,10 +215,10 @@ TEST(arithmetic, can_calculate_const8)
 {
 	std::string expression = "1E-1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1.e-1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -227,10 +228,10 @@ TEST(arithmetic, can_calculate_const9)
 {
 	std::string expression = "1E1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1E1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -240,10 +241,10 @@ TEST(arithmetic, can_calculate_const10)
 {
 	std::string expression = "1e1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1e1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -253,10 +254,10 @@ TEST(arithmetic, can_calculate_const11)
 {
 	std::string expression = ".1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - .1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -266,10 +267,10 @@ TEST(arithmetic, can_calculate_const12)
 {
 	std::string expression = "-.1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - -.1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -279,10 +280,10 @@ TEST(arithmetic, can_calculate_const13)
 {
 	std::string expression = "-5.e+1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - -5.e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -292,142 +293,261 @@ TEST(arithmetic, can_calculate_const14)
 {
 	std::string expression = "5.e+1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 5.e+1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
 
-TEST(arithmetic, cant_calculate_const1)
+TEST(arithmetic, check_exception_for_const1)
 {
 	std::string expression = "-.e+1";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const2)
+TEST(arithmetic, check_exception_for_const2)
 {
 	std::string expression = "-3.e-";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const3)
+TEST(arithmetic, check_exception_for_const3)
 {
 	std::string expression = "-3.e+";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const4)
+TEST(arithmetic, check_exception_for_const4)
 {
 	std::string expression = "..2";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const5)
+TEST(arithmetic, check_exception_for_const5)
 {
 	std::string expression = ".e4";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const6)
+TEST(arithmetic, check_exception_for_const6)
 {
 	std::string expression = "-.e4";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const7)
+TEST(arithmetic, check_exception_for_const7)
 {
 	std::string expression = "-3.e++4";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const8)
+TEST(arithmetic, check_exception_for_const8)
 {
 	std::string expression = "-3.e--4";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const9)
+TEST(arithmetic, check_exception_for_const9)
 {
 	std::string expression = "-3.e-+4";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const10)
+TEST(arithmetic, check_exception_for_const10)
 {
 	std::string expression = "-3.e-1.3";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const11)
+TEST(arithmetic, check_exception_for_const11)
 {
 	std::string expression = "-3.e1.3";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const12)
+TEST(arithmetic, check_exception_for_const12)
 {
 	std::string expression = "-3e.1.3";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const13)
+TEST(arithmetic, check_exception_for_const13)
 {
 	std::string expression = "-3e.1e.3";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const14)
+TEST(arithmetic, check_exception_for_const14)
 {
 	std::string expression = "-3ee-1";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const15)
+TEST(arithmetic, check_exception_for_const15)
 {
 	std::string expression = "-3ee+1";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const16)
+TEST(arithmetic, check_exception_for_const16)
 {
 	std::string expression = "-3e.e+1";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_const17)
+TEST(arithmetic, check_exception_for_const17)
 {
 	std::string expression = "-3.ee+1";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(4, ex.getCodeError());
+	}
 }
 
 TEST(arithmetic, can_calculate_easer_arithmetic1)
 {
 	std::string expression = "1*2";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 2) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -437,10 +557,10 @@ TEST(arithmetic, can_calculate_easer_arithmetic2)
 {
 	std::string expression = "1/2";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 0.5) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -450,10 +570,10 @@ TEST(arithmetic, can_calculate_easer_arithmetic3)
 {
 	std::string expression = "1-2";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - -1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -463,10 +583,10 @@ TEST(arithmetic, can_calculate_easer_arithmetic4)
 {
 	std::string expression = "-1-2";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - -3) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -476,10 +596,10 @@ TEST(arithmetic, can_calculate_easer_arithmetic5)
 {
 	std::string expression = "-(-1)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -489,10 +609,10 @@ TEST(arithmetic, can_calculate_easer_arithmetic6)
 {
 	std::string expression = "sin(1)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - sin(1)) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -502,10 +622,10 @@ TEST(arithmetic, can_calculate_easer_arithmetic7)
 {
 	std::string expression = "cos(1)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - cos(1)) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -515,10 +635,10 @@ TEST(arithmetic, can_calculate_easer_arithmetic8)
 {
 	std::string expression = "sqrt(5)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - sqrt(5)) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -528,10 +648,10 @@ TEST(arithmetic, can_calculate_easer_arithmetic9)
 {
 	std::string expression = "log2(5)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - log2(5)) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -541,220 +661,363 @@ TEST(arithmetic, can_calculate_easer_arithmetic10)
 {
 	std::string expression = "ln(5)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - log(5)) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic1)
+TEST(arithmetic, check_exeption_for_arithmetics1)
 {
 	std::string expression = "ln(5";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch(inputException ex)
+	{
+		EXPECT_EQ(5, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic2)
+TEST(arithmetic, check_exeption_for_arithmetics2)
 {
 	std::string expression = "ln5";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(10, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic3)
+TEST(arithmetic, check_exeption_for_arithmetics3)
+{
+	std::string expression = "5ln(5)";
+	Vector<lexem*> lx, postfixLx;
+	lx = parsingLexem(expression);
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(8, ex.getCodeError());
+	}
+	deleteLx(lx);
+}
+
+TEST(arithmetic, check_exeption_for_arithmetics4)
 {
 	std::string expression = "5ln";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(10, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic4)
-{
-	std::string expression = "5ln";
-	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
-	deleteLx(lx);
-}
-
-TEST(arithmetic, cant_calculate_easer_arithmetic5)
-{
-	std::string expression = "5ln5";
-	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
-	deleteLx(lx);
-}
-
-TEST(arithmetic, cant_calculate_easer_arithmetic6)
+TEST(arithmetic, check_exeption_for_arithmetics5)
 {
 	std::string expression = "(1-2)(3+2)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(2, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic7)
+TEST(arithmetic, check_exeption_for_arithmetics6)
+{
+	std::string expression = "--1";
+	Vector<lexem*> lx, postfixLx;
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(9, ex.getCodeError());
+	}
+	deleteLx(lx);
+}
+
+TEST(arithmetic, check_exeption_for_arithmetics7)
 {
 	std::string expression = "(1-2)*(3+2";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(5, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic8)
+TEST(arithmetic, check_exeption_for_arithmetics8)
 {
 	std::string expression = "(1-2)*3+2)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(3, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic9)
+TEST(arithmetic, check_exeption_for_arithmetics9)
 {
 	std::string expression = "ertygd";
 	Vector<lexem*> lx;
-	ASSERT_ANY_THROW(lx = parsingLexem(expression));
+	try
+	{
+		lx = parsingLexem(expression);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(6, ex.getCodeError());
+	}
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic10)
+TEST(arithmetic, check_exeption_for_arithmetics10)
 {
-	std::string expression = "sin()4";
+	std::string expression = "sin(4)4";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(2, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic11)
+TEST(arithmetic, check_exeption_for_arithmetics11)
 {
 	std::string expression = "+";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_ANY_THROW(res = calcArithmetic(postfixLx));
+	try
+	{
+		res = calcArithmetic(postfixLx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(1, ex.getCodeError());
+	}
 	deleteLx(lx);
 	deleteLx(postfixLx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic12)
+TEST(arithmetic, check_exeption_for_arithmetics12)
 {
 	std::string expression = "()+4";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(7, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic13)
+TEST(arithmetic, check_exeption_for_arithmetics13)
 {
 	std::string expression = "4*+4";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(1, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic14)
+TEST(arithmetic, check_exeption_for_arithmetics14)
 {
 	std::string expression = "4*/4";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(1, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic15)
+TEST(arithmetic, check_exeption_for_arithmetics15)
 {
 	std::string expression = "(4*)4";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(1, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic16)
+TEST(arithmetic, check_exeption_for_arithmetics16)
 {
 	std::string expression = "(4*)-4";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+		catch (inputException ex)
+	{
+		EXPECT_EQ(1, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic17)
+TEST(arithmetic, check_exeption_for_arithmetics17)
 {
 	std::string expression = "()()(())(1+2)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(7, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic18)
+TEST(arithmetic, check_exeption_for_arithmetics18)
 {
 	std::string expression = "3(3+6)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(2, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic19)
+TEST(arithmetic, check_exeption_for_arithmetics19)
 {
 	std::string expression = "(3+6)ln(7)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(8, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic20)
+TEST(arithmetic, check_exeption_for_arithmetics20)
 {
 	std::string expression = "ln(7+)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(1, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic21)
+TEST(arithmetic, check_exeption_for_arithmetics21)
 {
 	std::string expression = "ln(+)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(1, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic22)
+TEST(arithmetic, check_exeption_for_arithmetics22)
 {
 	std::string expression = "ln(+4)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(1, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
-TEST(arithmetic, cant_calculate_easer_arithmetic23)
+TEST(arithmetic, check_exeption_for_arithmetics23)
 {
 	std::string expression = "ln(4)/(-)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_ANY_THROW(postfixLx = toPostfix(lx));
+	try
+	{
+		postfixLx = toPostfix(lx);
+	}
+	catch (inputException ex)
+	{
+		EXPECT_EQ(1, ex.getCodeError());
+	}
 	deleteLx(lx);
 }
 
@@ -764,10 +1027,10 @@ TEST(arithmetic, can_calculate_difficult_arithmetic1)
 {
 	std::string expression = "ln(-ln(sin(2)))";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - -2.3530047) < eps2);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -777,10 +1040,10 @@ TEST(arithmetic, can_calculate_difficult_arithmetic2)
 {
 	std::string expression = "sin(sqrt(4 * 1e3)) / cos(6 * (6 - sqrt(sin(2))))";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - 0.95714) < eps2);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -790,10 +1053,10 @@ TEST(arithmetic, can_calculate_difficult_arithmetic3)
 {
 	std::string expression = "(4*log2(1024) - 6) * sin(1/1e-1) - ln(4) + cos(4) * cos(9)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - -19.28745) < eps2);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -803,10 +1066,10 @@ TEST(arithmetic, can_calculate_difficult_arithmetic4)
 {
 	std::string expression = "-(-(-(-(-6))))*sqrt(-ln(1e-1))";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - -9.10456) < eps2);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -816,10 +1079,10 @@ TEST(arithmetic, can_calculate_difficult_arithmetic5)
 {
 	std::string expression = "-.5*1E+3-.1";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	lx = parsingLexem(expression);
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - -500.1) < eps);
 	deleteLx(lx);
 	deleteLx(postfixLx);
@@ -829,7 +1092,7 @@ TEST(arithmetic, can_calculate_difficult_arithmetic_on_varible)
 {
 	std::string expression = "(4*log2(x*x) - 6) * sin(x13/1e-1) - ln(x21) + cos(x21) * cos(9)";
 	Vector<lexem*> lx, postfixLx;
-	ASSERT_NO_THROW(lx = parsingLexem(expression));
+	lx = parsingLexem(expression);
 	Vector<std::string> varNames(3);
 	varNames[0] = "x";
 	varNames[1] = "x13";
@@ -848,9 +1111,9 @@ TEST(arithmetic, can_calculate_difficult_arithmetic_on_varible)
 			}
 		}
 	}
-	ASSERT_NO_THROW(postfixLx = toPostfix(lx));
+	postfixLx = toPostfix(lx);
 	double res;
-	ASSERT_NO_THROW(res = calcArithmetic(postfixLx));
+	res = calcArithmetic(postfixLx);
 	EXPECT_EQ(true, abs(res - -19.28745) < eps2);
 	deleteLx(lx);
 	deleteLx(postfixLx);

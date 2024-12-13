@@ -380,7 +380,7 @@ Vector<lexem*> parsingLexem(const std::string& expression)
 			catch (inputException ex)
 			{
 				deleteLx(lx);
-				throw inputException("a constant was entered incorrectly", 4, ex.getPosLexemException() + i);
+				throw inputException(ex.what(), ex.getCodeError(), ex.getPosLexemException() + i);
 			}
 			i += lenLex - 1;
 		}

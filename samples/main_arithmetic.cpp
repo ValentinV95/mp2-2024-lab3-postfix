@@ -4,22 +4,6 @@
 #include "inputException.h"
 #include "Vector.h"
 
-void printLx(Vector<lexem*> lx)
-{
-	for (int i = 0; i < lx.length(); i++)
-	{
-		if (lx[i]->what() == 0)
-		{
-			std::cout << (dynamic_cast<operand*>(lx[i]))->getValue() << " " << lx[i]->getInitPos() << std::endl;
-		}
-		if (lx[i]->what() == 1)
-		{
-			std::cout << (dynamic_cast<operation*>(lx[i]))->getOperation() << " " << lx[i]->getInitPos() << std::endl;
-		}
-	}
-	std::cout << std::endl;
-}
-
 bool checkVarible(Vector<lexem*> lx) noexcept
 {
 	for (int i = 0; i < lx.length(); i++)
@@ -91,7 +75,6 @@ int main()
 		{
 			inputVar(lx);
 			postfixLx = toPostfix(lx);
-			//printLx(postfixLx);
 			std::cout << calcArithmetic(postfixLx);
 			deleteLx(postfixLx);
 		}
@@ -111,6 +94,5 @@ int main()
 		std::cout << "incorrect input" << std::endl;
 	}
 	deleteLx(lx);
-	
 	return 0;
 }

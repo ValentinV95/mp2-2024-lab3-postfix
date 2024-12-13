@@ -13,4 +13,5 @@ public:
 	inputException(const char* msg, int codeError, int posLxException);
 	const char* what() const noexcept override;
 	int getPosLexemException() const noexcept;
+	int getCodeError() const noexcept;
 };
