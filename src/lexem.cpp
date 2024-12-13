@@ -1,5 +1,15 @@
 #include "lexem.h"
 
+//ID
+// 0 - base class
+// 1 - constant
+// -1 - operand class
+// 2 - variable
+// 3,-3,4,-4 - sin,cos,tan,cot
+// -2 - unar -
+// 5,-5,6,-6 - -,+,*,/
+// 7,-7 - (,)
+
 lexem::lexem(const std::string& v_, size_t pos) : value(v_), position(pos), isOp(false), ID(0) {};
 bool lexem::isOperation() { return isOp; }
 int lexem::Get_Lexem_ID() { return ID; }

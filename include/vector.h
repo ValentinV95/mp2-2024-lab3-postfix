@@ -1,6 +1,7 @@
 #pragma once
 #include <initializer_list>
 #include <iostream>
+#define _mem_err_check(a) {if(a==nullptr){throw std::exception("Bad alloc!");}}
 
 template<typename T>
 class Iterator_ : public std::iterator<std::input_iterator_tag, T>
@@ -34,8 +35,9 @@ public:
 	//<-------------constructors------------>
 	vector(std::initializer_list<T> list_) {
 		sz = list_.size();
-		cp = sz;
+		cp = sz+1;
 		pMem = new T[cp];
+		_mem_err_check(pMem);
 		size_t p = 0;
 		for (auto& el : list_) {
 			pMem[p++] = el;
@@ -45,26 +47,29 @@ public:
 		cp = 4;
 		sz = 0;
 		pMem = new T[cp]();
+		_mem_err_check(pMem);
 	}
 	vector(size_t _sz) {
-		if (_sz < 0) throw std::out_of_range("cant set size lower 0");
-		cp = _sz;
-		sz = cp;
+		sz = _sz;
+		cp = sz+1;
 		pMem = new T[cp]();
+		_mem_err_check(pMem);
 	}
 	vector(size_t _sz, const T& val_) {
 		sz = _sz;
-		cp = sz;
+		cp = sz+1;
 		pMem = new T[cp];
+		_mem_err_check(pMem);
 		std::fill(pMem, pMem + cp, val_);
 	}
 	vector(const vector<T>& v) {
 		sz = v.sz;
 		cp = v.cp;
 		pMem = new T[cp];
+		_mem_err_check(pMem);
 		std::copy(v.pMem, v.pMem + cp, pMem);
 	}
-	vector(vector<T>&& v) : pMem(nullptr), sz(0),cp(0) {
+	vector(vector<T>&& v) : pMem(nullptr), sz(0),cp(1) {
 		pMem = v.pMem;
 		cp = v.cp;
 		sz = v.sz;
@@ -85,6 +90,7 @@ public:
 			sz = v.sz;
 			cp = v.cp;
 			T* p = new T[cp];
+			_mem_err_check(p);
 			delete[] pMem;
 			pMem = p;
 		}
@@ -131,13 +137,14 @@ public:
 		if (ind >= sz || ind < 0) throw std::out_of_range("index out of range\n");
 		return pMem[ind];
 	}
-	T& back() { return pMem[sz - 1]; }
+	T& back() { if (!sz)throw std::out_of_range("cant back() from empty vector!"); return pMem[sz - 1]; }
 		//end access--<<
 		
 		//touch data/size-->>
 	void push_back(const T& val) {
 		if (sz >= cp) {
 			T* tmpMem = new T[cp * 2]();
+			_mem_err_check(tmpMem);
 			std::copy(pMem, pMem + cp, tmpMem);
 			delete[] pMem;
 			pMem = tmpMem;
@@ -150,7 +157,6 @@ public:
 		sz--;
 	}
 	void resize(size_t sz_) {
-		if (sz_ < 0) throw std::out_of_range("Cannot set size lower than 0");
 
 		if (sz_ <= cp) {
 			if (sz_ < sz) {
@@ -163,6 +169,7 @@ public:
 		else {
 			size_t new_cp = sz_;
 			T* tmpMem = new T[new_cp];
+			_mem_err_check(tmpMem);
 			try {
 				std::move(pMem, pMem + sz, tmpMem);
 				for (size_t i = sz; i < sz_; i++) new (tmpMem + i) T();
@@ -182,5 +189,6 @@ public:
 	//<data or size changing/access methods end->
 
 	//0)
-	friend std::ostream& operator<<(std::ostream& os, vector<T>& v) { for (auto& el : v) os << el << ' '; return os; }
+	friend std::ostream& operator<<(std::ostream& os, vector<T>& v) { for (auto& el : v) os << el << ' '; return os; }//должен быть оператор << у T
+	friend std::istream& operator>>(std::istream& is, vector<T>& v) { for (auto& el : v) is >> el; return is; }//вектор должен быть размера вводимых данных
 };

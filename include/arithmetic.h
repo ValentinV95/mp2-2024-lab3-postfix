@@ -3,7 +3,6 @@
 #include "stack.h"
 #include <cmath>
 #define _is_func(a) (a==-3 || a==3 || a==-4 || a==4)
-// объ€вление функций и классов дл€ вычислени€ арифметических выражений
 
 class TArithmeticExpression {
 	
@@ -42,18 +41,9 @@ public:
 // 7,-7 - (,)
 		TDynamicStack<operation*> st;
 		for (auto& el : infix_form) {
-			/*for (auto& el : postfix_form) {
-				el->print(true);
-			}
-			std::cout << '\n';
-			for (int i = 0; i < st.size(); i++) {
-				st.mem.at(i)->print(true);
-			}
-			std::cout << "\n";*/
 			if (el->isOperation()) {
 				operation* op = dynamic_cast<operation*>(el);
 				const int r = op->Get_Lexem_ID();
-				//if (r == -2)continue;
 				if (r == -7) {
 					while (!st.isEmpty()&&st.Top()->Get_Lexem_ID()!=7) {
 						postfix_form.push_back(st.Top());

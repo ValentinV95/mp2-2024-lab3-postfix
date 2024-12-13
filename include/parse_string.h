@@ -10,11 +10,11 @@
 #define _right_symbols(a) (a!=44 && a>=40 && (!(a>=58 && a<=64)) && (!(a>=91 && a<=94)) && a!=96 && a<=122)
 #define func_sym 78	//i dont use it now
 
-void USER_SET_VAR( lexem* l_) {
+void USER_SET_VAR(lexem* l_) {
 	std::cout << "Pls, type you variable \"";
 	l_->print();
 	std::cout << "\":  ";
-	
+
 	std::string s; getline(std::cin, s);
 	l_->setValue_(parser(s));
 	return;
@@ -309,7 +309,7 @@ vector<lexem*> Main_Parser(std::string original) {
 			if (i > 0 && LEXEM.back()->isOperation() && !(LEXEM.back()->Get_Lexem_ID() == -7) || was_op == 0) {
 				//LEXEM.push_back(new operation(raw_parse[i], i, 1, true, false));
 				auto tmp = 0;
-				if(LEXEM.size())LEXEM.back()->Get_Lexem_ID();
+				if(LEXEM.size())tmp=LEXEM.back()->Get_Lexem_ID();
 				LEXEM.push_back(new operation("(", i, 0, false, true));
 				LEXEM.push_back(new constant("-1", i, -1.0));
 				LEXEM.push_back(new operation(")", i, 0, false, true));
