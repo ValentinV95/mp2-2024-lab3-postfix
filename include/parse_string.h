@@ -340,13 +340,10 @@ vector<lexem*> Main_Parser(std::string original) {
 		}
 		else {
 			bool isF = false;
-			int ans_mn = 1.0;
-			std::string sign = "hah";
 			if (raw_parse.at(i) == "sin" || raw_parse.at(i) == "cos" || raw_parse.at(i) == "tan" || raw_parse.at(i) == "cot") {
 				isF = true;
-				sign = raw_parse[i];
 			}
-			LEXEM.push_back(new variable(raw_parse[i], i, 0.0, isF, sign,ans_mn));
+			LEXEM.push_back(new variable(raw_parse[i], i, 0.0, isF));
 			if (!LEXEM.back()->isFunction()) {
 				int was = -1;
 				for (size_t pt = 0; pt < vars.size(); pt++) {

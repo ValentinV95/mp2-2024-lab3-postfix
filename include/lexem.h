@@ -1,15 +1,6 @@
 #pragma once
 #include <string>
-
-//ID
-// 0 - base class
-// 1 - constant
-// -1 - operand class
-// 2 - variable
-// 3,-3,4,-4 - sin,cos,tan,cot
-// -2 - unar -
-// 5,-5,6,-6 - -,+,*,/
-// 7,-7 - (,)
+#include <iostream>
 class lexem {
 protected:
 	size_t position;
@@ -17,18 +8,18 @@ protected:
 	bool isOp;
 	int ID;
 public:
-	lexem(const std::string& v_, size_t pos) : value(v_), position(pos),isOp(false),ID(0) {};
-	bool isOperation() { return isOp; }
-	virtual bool isUtility() { return NULL; };
-	virtual bool isUnar() { return NULL; };
-	virtual bool isFunction() { return NULL; }
-	virtual void setValue_(const double& _v) {};
-	virtual double getValue()const { return 0.0; }
-	virtual bool isConstanta() { return NULL; }
-	int Get_Lexem_ID() { return ID; }
-	size_t GetPos() { return position; }
-	void print(bool isTesting = false)const { if (isTesting)std::cout << value << " "; else { std::cout << value; } }
-	std::string Get_VAL_NAME() { return value; }
+	lexem(const std::string& v_, size_t pos);
+	bool isOperation();
+	virtual bool isUtility();
+	virtual bool isUnar();
+	virtual bool isFunction();
+	virtual void setValue_(const double& _v);
+	virtual double getValue()const;
+	virtual bool isConstanta();
+	int Get_Lexem_ID();
+	size_t GetPos();
+	void print(bool isTesting = false) const;
+	std::string Get_VAL_NAME();
 };
 
 class operand : public lexem {
@@ -36,8 +27,8 @@ protected:
 	double value_d;
 	bool isConst;
 public:
-	operand(const std::string& _s, int _p, double _v) : lexem::lexem(_s, _p), value_d(_v) { isConst = false; ID = -1; };
-	virtual double getValue()const override{ return value_d; }
+	operand(const std::string& _s, int _p, double _v);
+	double getValue()const override;
 };
 class operation : public lexem {
 private:
@@ -45,74 +36,26 @@ private:
 	char priority;
 	bool unar;
 public:
-	operation(const std::string& _s, int _p, char _pr, bool _unar = 0, bool _u = 0,int id=0) : lexem::lexem(_s, _p), unar(_unar), uti(_u) { isOp = true; priority = _pr; 
-	if (id != 0) {
-		ID = id;
-	}
-	if (value == "-") {
-		if (unar) {
-			ID = -2;
-		}
-		else {
-			ID = 5;
-		}
-	}
-	else if (value == "+") {
-		ID = -5;
-	}
-	else if (value == "*") {
-		ID = 6;
-	}
-	else if (value == "/") {
-		ID = -6;
-	}
-	else if (value == "(") {
-		ID = 7;
-	}
-	else if (value == ")") {
-		ID = -7;
-	}
-	
-	};
-	bool isUtility() override{ return uti; }
-	bool isUnar() override{  return unar; }
-	int getPriotiry() { return priority; }
+	operation(const std::string& _s, int _p, char _pr, bool _unar = 0, bool _u = 0, int id = 0);
+	bool isUtility() override;
+	bool isUnar() override;
+	int getPriotiry();
 };
 class constant : public operand{
 public:
-	constant(const std::string& _s, int _p, double _v) : operand::operand(_s, _p, _v) { isConst = true; ID = 1; };
-	double getValue()const override{ return value_d; }
-	bool isConstanta()override { return true; }
-	void setValue_(const double& _v) override{ value_d = _v; };
+	constant(const std::string& _s, int _p, double _v);
+	double getValue()const override;
+	bool isConstanta()override;
+	void setValue_(const double& _v) override;
 };
 class variable : public operand {
 private:
 	bool isFunc;
-	double negative;
 	std::string field;
 public:
-	variable(const std::string& _s, int _p, double _v = 0.0,bool _isFunc=false,const std::string& field_ = "hah",double neg=1.0) : operand::operand(_s, _p, _v), isFunc(_isFunc),field(field_),negative(neg) {
-		if (isFunc) {
-			if (field == "sin") {
-				ID = 3;
-			}
-			else if (field == "cos") {
-				ID = -3;
-			}
-			else if (field == "tan") {
-				ID = 4;
-			}
-			else if (field == "cot") {
-				ID = -4;
-			}
-		}
-		else {
-			ID = 2;
-		}
-	
-	};
-	bool isFunction()override { return isFunc; }
-	void setValue_(const double& _v) override{ value_d = _v; };
-	double getValue()const override{ return value_d; }
-	bool isConstanta() override{ return false; }
+	variable(const std::string& _s, int _p, double _v = 0.0, bool _isFunc = false, const std::string& field_ = "hah");
+	bool isFunction()override;
+	void setValue_(const double& _v) override;
+	double getValue()const override;
+	bool isConstanta() override;
 };

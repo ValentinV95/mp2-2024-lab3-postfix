@@ -12,7 +12,10 @@ class TArithmeticExpression {
 	std::string expression;
 public:
 
-	TArithmeticExpression(const std::string&);
+	TArithmeticExpression(const std::string& s) {
+		expression = s;
+		infix_form = Main_Parser(s);
+	};
 	void print_rpn() {
 		for (auto& el : postfix_form) {
 			el->print(true);
