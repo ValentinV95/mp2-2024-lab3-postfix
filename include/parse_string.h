@@ -10,13 +10,6 @@
 #define _opers(a) (a>=42 && a<=47 && a!=46 && a!=44)
 #define _opers_with_b(a) (_opers(a) || a==40 || a==41)
 #define _right_symbols(a) (a!=44 && a>=40 && (!(a>=58 && a<=64)) && (!(a>=91 && a<=94)) && a!=96 && a<=122)
-#define func_sym 78	//i dont use it now
-
-
-void USER_SET_VAR_(lexem* l_);
-void w_error(int st, int ind);
-
-int prepars(std::string& s, vector<int>& spaces, int& ind);
-int check_raw(const vector<std::string>& vs, int& ind);
 
 vector<lexem*> Main_Parser(std::string original);
+//Остальные функции целенаправленно сокрыты

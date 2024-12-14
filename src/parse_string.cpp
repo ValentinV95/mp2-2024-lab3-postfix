@@ -38,9 +38,9 @@ void w_error(int st, int ind) {
 	case -5:
 		throw j_error("You cant use points in variable's name in position " + my_to_String(ind) + "\n");
 		break;
-	case 6:
+	/*case 6:
 		throw j_error("You cant write digit after digit in position " + my_to_String(ind) + "\n");
-		break;
+		break;*/
 	case -6:
 		throw j_error("You cant start expression with non-unar operation in position " + my_to_String(ind) + "\n");
 		break;
@@ -271,7 +271,7 @@ vector<lexem*> Main_Parser(std::string original) {
 	size_t was_op = 0;
 	for (int i = 0; i < raw_parse.size(); i++) {
 
-		if (raw_parse.at(i) != "*" && i < raw_parse.size() - 1 && raw_parse.at(i + 1) == "(" && raw_parse[i] == ")") {
+		if (raw_parse.at(i) != "*" && i < raw_parse.size() - 1 && raw_parse.at(i + 1) == "(" && (raw_parse[i] == ")")) {
 
 			LEXEM.push_back(new operation(raw_parse[i], i, 0, false, true));//this sth
 			LEXEM.push_back(new operation("*", i, 2, false, false));//*
@@ -281,6 +281,9 @@ vector<lexem*> Main_Parser(std::string original) {
 			continue;
 		}
 		if (raw_parse.at(i) == "(" || raw_parse.at(i) == ")") {
+			if (LEXEM.size() > 0 && raw_parse.at(i) == "(" && LEXEM.back()->Get_Lexem_ID() == 1) {
+				LEXEM.push_back(new operation("*", i, 2, false, false));//*
+			}
 			LEXEM.push_back(new operation(raw_parse[i], i, 0, false, true));
 		}
 		else if (raw_parse.at(i) == "+") {
@@ -315,19 +318,32 @@ vector<lexem*> Main_Parser(std::string original) {
 			was_op++;
 		}
 		else if (raw_parse.at(i).at(0) == '.' || _dig(raw_parse.at(i).at(0))) {
-			if (i > 0 && !LEXEM.back()->isOperation() && LEXEM.back()->isConstanta()) {
-				w_error(6, i);
+			//if (i > 0 && !LEXEM.back()->isOperation() && LEXEM.back()->isConstanta()) {
+			//	//w_error(6, i);
+			//}
+			if (LEXEM.size() > 0 && (LEXEM.back()->Get_Lexem_ID() == -7 || LEXEM.back()->Get_Lexem_ID() == 1 || LEXEM.back()->Get_Lexem_ID() == 2)) {
+				LEXEM.push_back(new operation("*", i, 2, false, false));//*
 			}
 			LEXEM.push_back(new constant(raw_parse[i], i, parser(raw_parse[i])));
 			was_op++;
 		}
 		else {
 			bool isF = false;
-			if (LEXEM.size() > 0 && (LEXEM.back()->Get_Lexem_ID() == 1 || LEXEM.back()->Get_Lexem_ID() == 2)) {
+			if (LEXEM.size() > 0 && (LEXEM.back()->Get_Lexem_ID() == 1 || LEXEM.back()->Get_Lexem_ID() == 2 || LEXEM.back()->Get_Lexem_ID() == -7)) {
 				LEXEM.push_back(new operation("*", i, 2, false, false));
 			}
 			if (raw_parse.at(i) == "sin" || raw_parse.at(i) == "cos" || raw_parse.at(i) == "tan" || raw_parse.at(i) == "cot") {
-				isF = true;
+				if (raw_parse.size()-1>i && raw_parse.at(i + 1) != "(") {
+					//throw j_error("after function "+raw_parse[i]+" must be brackets (can be after few spaces)!");
+					isF = false;
+				}
+				else if (raw_parse.size() - 1 == i) {
+					isF = false;
+					//throw j_error("empty function ...");
+				}
+				else {
+					isF = true;
+				}
 			}
 			LEXEM.push_back(new variable(raw_parse[i], i, 0.0, isF));
 			if (!LEXEM.back()->isFunction()) {
