@@ -11,10 +11,12 @@
 // 7,-7 - (,)
 
 TArithmeticExpression::TArithmeticExpression(const std::string& s) {
+	if (s.empty())throw j_error("empty string cant be expression!");
 	expression = s;
 	infix_form = Main_Parser(s);
 };
 void TArithmeticExpression::print_rpn() {
+	if (postfix_form.size() == 0) throw j_error("Before print rpn you must call ToPostfix()!");
 	for (auto& el : postfix_form) {
 		el->print(true);
 	}
@@ -69,7 +71,7 @@ void TArithmeticExpression::ToPostfix() {
 	}
 }
 double TArithmeticExpression::simple_calc() {
-
+	if (postfix_form.size() == 0) throw j_error("Before calculation you must call ToPostfix()!");
 	TDynamicStack<operand*> st;
 	size_t ind = 0;
 	while (ind < postfix_form.size() && !postfix_form.at(ind)->isOperation())

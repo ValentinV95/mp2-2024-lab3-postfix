@@ -52,6 +52,9 @@ TEST(parse_string, err_bracket_no_open) {
 TEST(parse_string, err_bracket_no_close) {
 	ASSERT_ANY_THROW(Main_Parser("(2(3)-45"));
 }
+TEST(parse_string, err_bracket_rev) {
+	ASSERT_ANY_THROW(Main_Parser(")32("));
+}
 TEST(parse_string, err_bracket_empty) {
 	ASSERT_ANY_THROW(Main_Parser("(3+2)()"));
 }
