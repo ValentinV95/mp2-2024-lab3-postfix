@@ -9,7 +9,6 @@ int main()
 	try {
 		std::cout << "type \'exit\' for exit\ntype expression for calculation:\n";
 		while (true) {
-
 			std::string s;
 
 			getline(std::cin, s);
