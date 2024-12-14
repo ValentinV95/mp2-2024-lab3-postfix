@@ -4,7 +4,7 @@
 
 int main()
 {
-	
+	std::cout << "type \'exit\' for exit\ntype expression for calculation:\n";
 	while (true) {
 
 		std::string s;
@@ -17,9 +17,9 @@ int main()
 		e.print_infix();
 		std::cout << "\n";
 		e.ToPostfix();
-		e.print_rpn();
-		std::cout << "\n";
-		std::cout << e.simple_calc();
+		//e.print_rpn();
+		//std::cout << "\n";
+		std::cout <<std::setprecision(15)<< e.simple_calc();
 		std::cout << "\n";
 		
 	}

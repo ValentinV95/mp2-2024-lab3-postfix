@@ -1,6 +1,8 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include "parse_digits.h"
 #include "lexem.h"
+#include <cmath>
 #define en_l(a) (a>=97 && a<=122)	//english lower
 #define en_u(a) (a>=65 && a<=90)	//english upper
 #define _dig(a) (a>=48 && a<=57)	//digits
@@ -10,7 +12,37 @@
 #define _right_symbols(a) (a!=44 && a>=40 && (!(a>=58 && a<=64)) && (!(a>=91 && a<=94)) && a!=96 && a<=122)
 #define func_sym 78	//i dont use it now
 
+
+
 void USER_SET_VAR(lexem* l_) {
+	if (l_->Get_VAL_NAME() == "e") {
+		std::string q = "w";
+		while (q != "y" && q != "n") {
+			std::cout << "the variable name looks like a mathematical constant e = 2,7182818284... Use it?\ny/n\n";
+			getline(std::cin, q);
+			if (q != "y" && q != "n") {
+				std::cout << "unknow answer!\n";
+			}
+		}
+		if (q == "y") {
+			l_->setValue_(M_E);
+			return;
+		}
+	}
+	else if (l_->Get_VAL_NAME() == "pi") {
+		std::string q = "w";
+		while (q != "y" && q != "n") {
+			std::cout << "the variable name looks like a mathematical constant pi = 3,1415926535... Use it?\ny/n\n";
+			getline(std::cin,q);
+			if (q != "y" && q != "n") {
+				std::cout << "unknow answer!\n";
+			}
+		}
+		if (q == "y") {
+			l_->setValue_(M_PI);
+			return;
+		}
+	}
 	std::cout << "Pls, type you variable \"";
 	l_->print();
 	std::cout << "\":  ";
@@ -340,6 +372,9 @@ vector<lexem*> Main_Parser(std::string original) {
 		}
 		else {
 			bool isF = false;
+			if (LEXEM.size() > 0 && LEXEM.back()->Get_Lexem_ID() == 1) {
+				LEXEM.push_back(new operation("*", i, 2, false, false));
+			}
 			if (raw_parse.at(i) == "sin" || raw_parse.at(i) == "cos" || raw_parse.at(i) == "tan" || raw_parse.at(i) == "cot") {
 				isF = true;
 			}

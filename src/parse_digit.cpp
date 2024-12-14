@@ -99,7 +99,7 @@ double re_ans(std::string& s) {
 		}
 	}
 	bool min_e = 0;
-	if (s[pos] == 'e') {
+	if (s[pos] == 'e'|| s[pos] == 'E') {
 		pos++;
 		if (s[pos++] == '-') min_e = 1;
 
