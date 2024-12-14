@@ -52,84 +52,57 @@ void USER_SET_VAR(lexem* l_) {
 	return;
 }
 
-bool split_sym(const char& t) {
-
-	vector<char> sp = { '+','-','/',' ','*' };
-	for (auto& el : sp) {
-		if (el == t) {
-			return true;
-		}
-	}
-	return false;
-}
-
-std::string substr(int l, int r,const std::string& d)
-{
-	std::string s = "";
-	for (int i = l; i < r; i++) {
-		s += d[i];
-	}
-	return s;
-}
-
-
 void error(int st, int ind) {
 	if (!st) return;
-	
-	switch (st)
-	{
-	default:
-		std::cout << "incorrect input!\n";
-		exit(1986);
-		break;
-	case -1:
-		std::cout << "There is no opening parenthesis for ')' in position " << ind << std::endl;
-		exit(-1);
-		break;
-	case 1:
-		std::cout << "There is no closing parenthesis for '(' in position " << ind << std::endl;
-		exit(1);
-		break;
-	case 2:
-		std::cout << "The brackets do not contain anything from position " << ind << std::endl;
-		exit(2);
-		break;
-	case -2:
-		std::cout << "incorrect symbol at the end (position " << ind << ")\n";
-		exit(-2);
-		break;
-	case -3:
-		std::cout << "incorrect symbol in position " << ind << std::endl;
-		exit(-3);
-		break;
-	case 3:
-		std::cout << "incorrect point in expression in position " << ind << std::endl;
-		exit(3);
-		break;
-	case 4:
-		std::cout << "You cant do the operation in position " << ind << " after operation" << std::endl;
-		exit(4);
-		break;
-	case -4:
-		std::cout << "You must write digits in digit after point in position " << ind <<std::endl;
-		exit(-4);
-		break;
-	case 5:
-		std::cout << "You cant write second point in digit in position " << ind << std::endl;
-		exit(5);
-		break;
-	case -5:
-		std::cout << "You cant use points in variable's name in position " << ind << std::endl;
-		exit(-5);
-		break;
-	case 6:
-		std::cout << "You cant write digit after digit in position " << ind << std::endl;
-		exit(6);
-		break;
-	case -6:
-		std::cout << "You cant start expression with non-unar operation in position " << ind << std::endl;
-		exit(-6);
-		break;
+	std::string s;
+	try {
+		switch (st)
+		{
+		default:
+			throw j_error("incorrect input!\n");
+			break;
+		case -1:
+			throw j_error("There is no opening parenthesis for ')' in position "+my_to_String(ind)+"\n");
+			break;
+		case 1:
+			s = "There is no closing parenthesis for '(' in position " + my_to_String(ind) + "\n";
+			throw j_error(s);
+			break;
+		case 2:
+			throw j_error("The brackets do not contain anything from position " + my_to_String(ind) + "\n");
+			break;
+		case -2:
+			throw j_error("incorrect symbol at the end (position " + my_to_String(ind) + ")\n");
+			break;
+		case -3:
+			throw j_error("incorrect symbol in position " + my_to_String(ind) + "\n");
+			break;
+		case 3:
+			throw j_error("incorrect point in expression in position " + my_to_String(ind) + "\n");
+			break;
+		case 4:
+			throw j_error("You cant do the operation in position " + my_to_String(ind) + " after operation\n");
+			break;
+		case -4:
+			throw j_error("You must write digits in digit after point in position " + my_to_String(ind) + "\n");
+			break;
+		case 5:
+			throw j_error("You cant write second point in digit in position " + my_to_String(ind) + "\n");
+			break;
+		case -5:
+			throw j_error("You cant use points in variable's name in position " + my_to_String(ind) + "\n");
+			break;
+		case 6:
+			throw j_error("You cant write digit after digit in position " + my_to_String(ind) + "\n");
+			break;
+		case -6:
+			throw j_error("You cant start expression with non-unar operation in position " + my_to_String(ind) + "\n");
+			break;
+		}
+	}
+	catch (std::exception& e) {
+		std::cout << e.what() << '\n';
+		exit(st);
 	}
 
 }
@@ -372,7 +345,7 @@ vector<lexem*> Main_Parser(std::string original) {
 		}
 		else {
 			bool isF = false;
-			if (LEXEM.size() > 0 && LEXEM.back()->Get_Lexem_ID() == 1) {
+			if (LEXEM.size() > 0 && (LEXEM.back()->Get_Lexem_ID() == 1 || LEXEM.back()->Get_Lexem_ID() == 2)) {
 				LEXEM.push_back(new operation("*", i, 2, false, false));
 			}
 			if (raw_parse.at(i) == "sin" || raw_parse.at(i) == "cos" || raw_parse.at(i) == "tan" || raw_parse.at(i) == "cot") {

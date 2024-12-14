@@ -14,70 +14,151 @@ double bin_pow(double a, int b) {
 	return res;
 }
 
-bool dfs(std::string& s, int pos, int r,std::string& error) {	//Это тот самый автомат
-	switch (r)
-	{
-	default:
-		return false;
-	case 1:
-		if (s[pos] == '.' || s[pos] == '-' || isDigit(s[pos]-'0')) {
-			return dfs(s, pos + 1, (s[pos] == '.') ? 4 : (s[pos] == '-' ? 2 : 3),error);
-		}
-		else {
+std::string my_reverse(std::string& s) {
+	std::string ans = "";
+	for (int i = s.size() - 1; i > -1; i--) {
+		ans += s[i];
+	}
+	return ans;
+}
+
+std::string my_to_String(int a) {
+	std::string s = "";
+	if (a == 0) {
+		s = "0";
+	}
+	while (a != 0) {
+		s += (a % 10) + 48;
+		a /= 10;
+	}
+	s = my_reverse(s);
+	return s;
+}
+
+bool dfs(std::string& s, int pos, int r) {	//Это тот самый автомат
+	try {
+		std::string tmp = "";
+		switch (r)
+		{
+		default:
 			return false;
+		case 1:
+			if (s.size() == pos) { 
+				throw j_error("cant interpret empty string to digit!");
+				return false; 
+			}
+			if (s[pos] == '.' || s[pos] == '-' || isDigit(s[pos] - '0')) {
+				return dfs(s, pos + 1, (s[pos] == '.') ? 4 : (s[pos] == '-' ? 2 : 3));
+			}
+			else {
+				tmp = "numbers cannot start with \'";
+				tmp += s[pos];
+				tmp += "\'";
+				throw j_error(tmp);
+				return false;
+			}
+		case 2:
+			if (s.size() == pos) {
+				throw j_error("the unfinished writing of the number!");
+				return false;
+			}
+			if (s[pos] == '.' || isDigit(s[pos] - '0')) {
+				return dfs(s, pos + 1, (s[pos] == '.') ? 4 : 3);
+			}
+			else {
+				tmp = "not allowed symbol \'";
+				tmp += s.at(pos);
+				tmp += "\' in digit on this position ";
+				tmp += my_to_String(pos);
+				throw j_error(tmp);
+				return false;
+			}
+		case 3:
+			if (s.size() == pos) { return true; }
+			if (s[pos] == '.' || (s[pos] == 'e' || s[pos] == 'E') || isDigit(s[pos] - '0')) {
+				return dfs(s, pos + 1, (s[pos] == '.') ? 4 : ((s[pos] == 'e' || s[pos] == 'E') ? 6 : 3));
+			}
+			else {
+				tmp = "not allowed symbol \'";
+				tmp += s.at(pos);
+				tmp += "\' in digit on this position ";
+				tmp += my_to_String(pos);
+				throw j_error(tmp);
+				return false;
+			}
+		case 4:
+			if (s.size() == pos) {
+				throw j_error("the unfinished writing of the number!");
+				return false;
+			}
+			if (isDigit(s[pos] - '0')) {
+				return dfs(s, pos + 1, 5);
+			}
+			else {
+				tmp = "must be digit";
+				tmp += " on position ";
+				tmp += my_to_String(pos);
+				throw j_error(tmp);
+				return false;
+			}
+		case 5:
+			if (s.size() == pos) return true;
+			if ((s[pos] == 'e' || s[pos] == 'E') || isDigit(s[pos] - '0')) {
+				return dfs(s, pos + 1, ((s[pos] == 'e' || s[pos] == 'E')) ? 6 : 5);
+			}
+			else {
+				tmp = "not allowed symbol \'";
+				tmp += s.at(pos);
+				tmp += "\' in digit on this position ";
+				tmp += my_to_String(pos);
+				throw j_error(tmp);
+				return false;
+			}
+		case 6:
+			if (s.size() == pos) {
+				throw j_error("the unfinished writing of the number!");
+				return false;
+			}
+			if (s[pos] == '-' || s[pos] == '+') {
+				return dfs(s, pos + 1, 7);
+			}
+			else {
+				tmp = "must be + or -";
+				tmp += " in digit on position ";
+				tmp += my_to_String(pos);
+				throw j_error(tmp);
+				return false;
+			}
+		case 7:
+			if (s.size() == pos) {
+				throw j_error("the unfinished writing of the number!");
+				return false;
+			}
+			if (isDigit(s[pos] - '0')) {
+				return dfs(s, pos + 1, 8);
+			}
+			else {
+				tmp = "must be digit on position ";
+				tmp += my_to_String(pos);
+				throw j_error(tmp);
+				return false;
+			}
+		case 8:
+			if (s.size() == pos) return true;
+			if (isDigit(s[pos] - '0')) {
+				return dfs(s, pos + 1, 8);
+			}
+			else {
+				tmp = "must be digit on position ";
+				tmp += my_to_String(pos);
+				throw j_error(tmp);
+				return false;
+			}
 		}
-	case 2:
-		if (s[pos] == '.' || isDigit(s[pos]-'0')) {
-			return dfs(s, pos + 1, (s[pos] == '.') ? 4 : 3,error);
-		}
-		else {
-			return false;
-		}
-	case 3:
-		if (s.size() == pos) { return true; }
-		if (s[pos] == '.' || (s[pos] == 'e' || s[pos] == 'E') || isDigit(s[pos]-'0')) {
-			return dfs(s, pos + 1, (s[pos] == '.') ? 4 : ((s[pos] == 'e'|| s[pos] == 'E') ? 6 : 3), error);
-		}
-		else {
-			return false;
-		}
-	case 4:
-		if (isDigit(s[pos]-'0')) {
-			return dfs(s, pos + 1, 5,error);
-		}
-		else {
-			return false;
-		}
-	case 5:
-		if (s.size() == pos) return true;
-		if ((s[pos] == 'e' || s[pos] == 'E') || isDigit(s[pos]-'0')) {
-			return dfs(s, pos + 1, ((s[pos] == 'e' || s[pos] == 'E')) ? 6 : 5,error);
-		}
-		else {
-			return false;
-		}
-	case 6:
-		if (s[pos] == '-' || s[pos] == '+') {
-			return dfs(s, pos + 1, 7,error);
-		}
-		else {
-			return false;
-		}
-	case 7:
-		if (isDigit(s[pos]-'0')) {
-			return dfs(s, pos + 1, 8,error);
-		}
-		else {
-			return false;
-		}
-	case 8:
-		if (s.size() == pos) return true;
-		if (isDigit(s[pos]-'0')) {
-			return dfs(s, pos + 1, 8,error);
-		}
-		else {
-			return false;
-		}
+	}
+	catch (std::exception& e) {
+		std::cout << e.what() << std::endl;
+		exit(1986);
 	}
 }
 
@@ -144,7 +225,7 @@ double re_ans(std::string& s) {
 
 double parser(std::string& s) {
 	std::string err = "";
-	if (!dfs(s, 0, 1,err)) {
+	if (!dfs(s, 0, 1)) {
 		throw std::exception("dsfgf");
 	}
 	const double res = re_ans(s);
