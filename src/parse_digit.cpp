@@ -24,6 +24,11 @@ std::string my_reverse(std::string& s) {
 
 std::string my_to_String(int a) {
 	std::string s = "";
+	bool minus = 0;
+	if (a < 0) {
+		minus = 1;
+		a =- a;
+	}
 	if (a == 0) {
 		s = "0";
 	}
@@ -31,12 +36,14 @@ std::string my_to_String(int a) {
 		s += (a % 10) + 48;
 		a /= 10;
 	}
+	if (minus) {
+		s += '-';
+	}
 	s = my_reverse(s);
 	return s;
 }
 
 bool dfs(std::string& s, int pos, int r) {	//Это тот самый автомат
-	try {
 		std::string tmp = "";
 		switch (r)
 		{
@@ -155,11 +162,6 @@ bool dfs(std::string& s, int pos, int r) {	//Это тот самый автомат
 				return false;
 			}
 		}
-	}
-	catch (std::exception& e) {
-		std::cout << e.what() << std::endl;
-		exit(1986);
-	}
 }
 
 double re_ans(std::string& s) {
@@ -226,8 +228,9 @@ double re_ans(std::string& s) {
 double parser(std::string& s) {
 	std::string err = "";
 	if (!dfs(s, 0, 1)) {
-		throw std::exception("dsfgf");
+		throw j_error("invalid digit writting");
 	}
-	const double res = re_ans(s);
+	double res=0.0;
+	res = re_ans(s);
 	return res;
 }

@@ -55,7 +55,6 @@ void USER_SET_VAR(lexem* l_) {
 void error(int st, int ind) {
 	if (!st) return;
 	std::string s;
-	try {
 		switch (st)
 		{
 		default:
@@ -99,12 +98,6 @@ void error(int st, int ind) {
 			throw j_error("You cant start expression with non-unar operation in position " + my_to_String(ind) + "\n");
 			break;
 		}
-	}
-	catch (std::exception& e) {
-		std::cout << e.what() << '\n';
-		exit(st);
-	}
-
 }
 
 int prepars(std::string& s, vector<int>& spaces, int& ind) {
