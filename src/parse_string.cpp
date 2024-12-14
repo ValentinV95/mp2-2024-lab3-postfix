@@ -44,6 +44,15 @@ void w_error(int st, int ind) {
 	case -6:
 		throw j_error("You cant start expression with non-unar operation in position " + my_to_String(ind) + "\n");
 		break;
+	case 7:
+		throw j_error("Last operation hasn't right operand( ");
+		break;
+	case -7:
+		throw j_error("Operation hasn't right operand in position " + my_to_String(ind) + "\n");
+		break;
+	case 8:
+		throw j_error("Operation hasn't left operand in position " + my_to_String(ind) + "\n");
+		break;
 	}
 }
 void USER_SET_VAR_(lexem* l_) {
@@ -112,6 +121,11 @@ int prepars(std::string& s, vector<int>& spaces, int& ind) {
 		}
 		else if (s.at(i) == ')') {
 			cnt_o--;
+			if (new_s.size() > 0 && _opers(new_s.back())) {
+				ind = i-1;
+				while (!_opers(s[ind])) ind--;
+				return -7;
+			}
 		}
 		if (cnt_o < 0) {
 			ind = i;
@@ -126,6 +140,10 @@ int prepars(std::string& s, vector<int>& spaces, int& ind) {
 		if (cnt_c < 0) {
 			ind = s.size() - 1 - i;
 			return 1;
+		}
+		if (new_s.size() > 0 && _opers(s[i]) && new_s.back() == '(' && s[i]!='-') {
+			ind = i;
+			return 8;
 		}
 
 		new_s.push_back(s.at(i));
@@ -268,6 +286,7 @@ vector<lexem*> Main_Parser(std::string original) {
 	vector<lexem*> LEXEM;
 	vector<int> var_ind;
 	vector<std::string> vars;
+	bool right_queue = false;
 	size_t was_op = 0;
 	for (int i = 0; i < raw_parse.size(); i++) {
 
@@ -288,6 +307,7 @@ vector<lexem*> Main_Parser(std::string original) {
 		}
 		else if (raw_parse.at(i) == "+") {
 			was_op++;
+			right_queue = true;
 			LEXEM.push_back(new operation(raw_parse[i], i, 1, false, false));
 		}
 		else if (raw_parse.at(i) == "-") {
@@ -307,13 +327,16 @@ vector<lexem*> Main_Parser(std::string original) {
 
 				LEXEM.push_back(new operation(raw_parse[i], i, 1, false, false));
 			}
+			right_queue = true;
 			was_op++;
 		}
 		else if (raw_parse.at(i) == "*") {
 			LEXEM.push_back(new operation(raw_parse[i], i, 2, 0, false));
 			was_op++;
+			right_queue = true;
 		}
 		else if (raw_parse.at(i) == "/") {
+			right_queue = true;
 			LEXEM.push_back(new operation(raw_parse[i], i, 2, 0, false));
 			was_op++;
 		}
@@ -321,6 +344,7 @@ vector<lexem*> Main_Parser(std::string original) {
 			//if (i > 0 && !LEXEM.back()->isOperation() && LEXEM.back()->isConstanta()) {
 			//	//w_error(6, i);
 			//}
+			right_queue = false;
 			if (LEXEM.size() > 0 && (LEXEM.back()->Get_Lexem_ID() == -7 || LEXEM.back()->Get_Lexem_ID() == 1 || LEXEM.back()->Get_Lexem_ID() == 2)) {
 				LEXEM.push_back(new operation("*", i, 2, false, false));//*
 			}
@@ -329,6 +353,7 @@ vector<lexem*> Main_Parser(std::string original) {
 		}
 		else {
 			bool isF = false;
+			right_queue = false;
 			if (LEXEM.size() > 0 && (LEXEM.back()->Get_Lexem_ID() == 1 || LEXEM.back()->Get_Lexem_ID() == 2 || LEXEM.back()->Get_Lexem_ID() == -7)) {
 				LEXEM.push_back(new operation("*", i, 2, false, false));
 			}
@@ -366,6 +391,9 @@ vector<lexem*> Main_Parser(std::string original) {
 			was_op++;
 		}
 
+	}
+	if (right_queue) {
+		w_error(7, 0);
 	}
 	return LEXEM;
 }
