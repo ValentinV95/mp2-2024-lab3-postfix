@@ -300,7 +300,7 @@ vector<lexem*> Main_Parser(std::string original) {
 			continue;
 		}
 		if (raw_parse.at(i) == "(" || raw_parse.at(i) == ")") {
-			if (LEXEM.size() > 0 && raw_parse.at(i) == "(" && LEXEM.back()->Get_Lexem_ID() == 1) {
+			if (LEXEM.size() > 0 && raw_parse.at(i) == "(" && (LEXEM.back()->Get_Lexem_ID() == 1|| LEXEM.back()->Get_Lexem_ID() == 2)) {
 				LEXEM.push_back(new operation("*", i, 2, false, false));//*
 			}
 			LEXEM.push_back(new operation(raw_parse[i], i, 0, false, true));
