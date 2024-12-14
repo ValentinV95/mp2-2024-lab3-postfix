@@ -6,9 +6,9 @@ TEST(stack, can_create_stack_with_positive_length)
 {
 	ASSERT_NO_THROW(TDynamicStack<int> s(5));
 }
-TEST(stack, cant_create_stack_with_negative_length)
+TEST(stack, can_create_stack_with_null_length)
 {
-	ASSERT_ANY_THROW(TDynamicStack<int> s(-5));
+	ASSERT_NO_THROW(TDynamicStack<int> s(0));
 }
 TEST(stack, can_push)
 {

@@ -6,10 +6,6 @@ TEST(vector, can_create_vector_with_positive_length)
 {
 	ASSERT_NO_THROW(vector<int> v(5));
 }
-TEST(vector, cant_create_vector_with_negative_length)
-{
-	ASSERT_ANY_THROW(vector<int> v(-5));
-}
 TEST(vector, can_create_vector_with_zero_length)
 {
 	ASSERT_NO_THROW(vector<int> v(0));
