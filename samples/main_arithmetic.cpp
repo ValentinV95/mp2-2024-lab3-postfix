@@ -6,18 +6,22 @@
 
 int main()
 {
+	std::cout << "User's manual in directory mp2-2024-lab3-postfix. Please read it before use.\n";
+	
 	try {
-		std::cout << "type \'exit\' for exit\ntype expression for calculation:\n";
+		
 		while (true) {
+			std::cout << "----------------------------------------------------------\n";
+			std::cout << "type \'!exit\' for exit\ntype expression for calculation:\n";
 			std::string s;
 
 			getline(std::cin, s);
-			if (s == "exit") {
+			if (s == "!exit") {
 				break;
 			}
 			TArithmeticExpression e(s);
-			e.print_infix();
-			std::cout << "\n";
+			//e.print_infix();
+			//std::cout << "\n";
 			e.ToPostfix();
 			//e.print_rpn();
 			//std::cout << "\n";
