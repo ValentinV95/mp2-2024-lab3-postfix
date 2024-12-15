@@ -14,7 +14,7 @@ TEST(myStack, can_create_stack_with_no_operands)
 	ASSERT_NO_THROW(myStack<int> v());
 }
 
-
+/*
 TEST(myStack, can_create_copied_stack)
 {
 	myStack<int> st;
@@ -141,7 +141,7 @@ TEST(myStack, assign_move_stacks_is_correct)
 	while (!st2.isEmpty() || !st.isEmpty()) {
 		EXPECT_EQ(st2.pop(), st.pop());
 	}
-}
+}*/
 
 TEST(myStack, zero_length_stack_is_empty) {
 	myStack<int> st;

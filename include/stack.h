@@ -7,8 +7,8 @@ private:
     using myVector::sizevar;
 public:
     using myVector::size;
-    myStack() : myVector() {}
-//    myStack(const myStack& st) : myVector(&dynamic_cast<myVector*>(&st)) {}
+    myStack() : myVector() {} /*
+    myStack(const myStack& st) : myVector(&dynamic_cast<myVector*>(&st)) {}
     myStack(const myStack& st) : myVector(st) {} //?
     myStack(myStack&& st) : myVector(st) {} //?
     myStack& operator=(const myStack& st) {
@@ -18,7 +18,7 @@ public:
     myStack& operator=(myStack&& st) {
         this->myVector::operator=(st);
         return *this;
-    }
+    }*/
     bool isEmpty() const { return sizevar == 0; }
     void push(const T& v) {
         this->myVector::push_back(v);
