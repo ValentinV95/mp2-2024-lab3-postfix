@@ -5,7 +5,7 @@
 // 1 - constant
 // -1 - operand class
 // 2 - variable
-// 3,-3,4,-4 - sin,cos,tan,cot
+// 3,-3,4,-4,8 - sin,cos,tan,cot,exp
 // -2 - unar -
 // 5,-5,6,-6 - -,+,*,/
 // 7,-7 - (,)
@@ -79,6 +79,9 @@ variable::variable(const std::string& _s, size_t _p, double _v, bool _isFunc) : 
 		}
 		else if (_s == "cot") {
 			ID = -4;
+		}
+		else if (_s == "exp") {
+			ID = 8;
 		}
 	}
 	else {

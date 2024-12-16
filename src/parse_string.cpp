@@ -357,7 +357,7 @@ vector<lexem*> Main_Parser(std::string original) {
 			if (LEXEM.size() > 0 && (LEXEM.back()->Get_Lexem_ID() == 1 || LEXEM.back()->Get_Lexem_ID() == 2 || LEXEM.back()->Get_Lexem_ID() == -7)) {
 				LEXEM.push_back(new operation("*", i, 2, false, false));
 			}
-			if (raw_parse.at(i) == "sin" || raw_parse.at(i) == "cos" || raw_parse.at(i) == "tan" || raw_parse.at(i) == "cot") {
+			if (raw_parse.at(i) == "sin" || raw_parse.at(i) == "cos" || raw_parse.at(i) == "tan" || raw_parse.at(i) == "cot" || raw_parse.at(i) == "exp") {
 				if (raw_parse.size()-1>i && raw_parse.at(i + 1) != "(") {
 					//throw j_error("after function "+raw_parse[i]+" must be brackets (can be after few spaces)!");
 					isF = false;

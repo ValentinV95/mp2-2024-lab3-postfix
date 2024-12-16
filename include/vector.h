@@ -16,7 +16,6 @@ public:
 	bool operator==(const Iterator_& it2) const { return ptr == it2.ptr; };
 	typename Iterator_::reference operator*() const { return *ptr; };
 	Iterator_& operator++() { ptr++; return *this; };
-
 };
 
 template<typename T>

@@ -20,11 +20,11 @@ int main()
 				break;
 			}
 			TArithmeticExpression e(s);
-			//e.print_infix();
-			//std::cout << "\n";
+			/*e.print_infix();
+			std::cout << "\n";*/
 			e.ToPostfix();
-			//e.print_rpn();
-			//std::cout << "\n";
+			/*e.print_rpn();
+			std::cout << "\n";*/
 			std::cout << std::setprecision(15) << e.simple_calc();
 			std::cout << "\n";
 

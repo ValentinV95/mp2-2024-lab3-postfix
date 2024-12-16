@@ -114,6 +114,12 @@ double TArithmeticExpression::simple_calc() {
 					st.Pop();
 					st.Push(new operand("", 0, x * y));
 					break;
+				case 8:
+					x = st.Top()->getValue();
+					st.Pop();
+					x = exp(x);
+					st.Push(new operand("", 0, x));
+					break;
 				case -6:
 					x = st.Top()->getValue();
 					st.Pop();

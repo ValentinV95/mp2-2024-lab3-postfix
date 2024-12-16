@@ -1,7 +1,7 @@
 #pragma once
 #include "parse_string.h"
 #include "stack.h"
-#define _is_func(a) (a==-3 || a==3 || a==-4 || a==4)
+#define _is_func(a) (a==-3 || a==3 || a==-4 || a==4 || a==8)
 
 class TArithmeticExpression {
 	
