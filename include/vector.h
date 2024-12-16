@@ -36,7 +36,7 @@ public:
 	vector(std::initializer_list<T> list_) {
 		sz = list_.size();
 		cp = sz+1;
-		pMem = new T[cp];
+		pMem = new T[cp]();
 		_mem_err_check(pMem);
 		size_t p = 0;
 		for (auto& el : list_) {
@@ -60,14 +60,14 @@ public:
 		cp = sz+1;
 		pMem = new T[cp];
 		_mem_err_check(pMem);
-		std::fill(pMem, pMem + cp, val_);
+		std::fill(pMem, pMem + sz, val_);
 	}
 	vector(const vector<T>& v) {
 		sz = v.sz;
 		cp = v.cp;
 		pMem = new T[cp];
 		_mem_err_check(pMem);
-		std::copy(v.pMem, v.pMem + cp, pMem);
+		std::copy(v.pMem, v.pMem + sz, pMem);
 	}
 	vector(vector<T>&& v) : pMem(nullptr), sz(0),cp(1) {
 		pMem = v.pMem;
@@ -101,14 +101,12 @@ public:
 		if (this != &v)
 		{
 			delete[] pMem;
-			pMem = nullptr;
-			cp = sz = 0;
+			pMem = v.pMem;
+			cp = v.cp;
+			sz = v.sz;
+			v.pMem = nullptr;
+			v.cp = v.sz = 0;
 		}
-		pMem = v.pMem;
-		cp = v.cp;
-		sz = v.sz;
-		v.pMem = nullptr;
-		v.cp = v.sz = 0;
 		return *this;
 	}
 	//<-------assign.. operators end-------->
@@ -158,30 +156,22 @@ public:
 	}
 	void resize(size_t sz_) {
 
-		if (sz_ <= cp) {
-			if (sz_ < sz) {
-				for (size_t i = sz; i > sz_; i--) {
-					pMem[i - 1].~T();
-				}
-			}
+		if (sz_ > cp) {
+			T* tmpMem = new T[sz_]();
+			_mem_err_check(tmpMem);
+			cp = sz_;
+			std::copy(pMem,pMem+sz,tmpMem);
+			delete[] pMem;
+			pMem = tmpMem;
 			sz = sz_;
 		}
 		else {
-			size_t new_cp = sz_;
-			T* tmpMem = new T[new_cp];
-			_mem_err_check(tmpMem);
-			try {
-				std::move(pMem, pMem + sz, tmpMem);
-				for (size_t i = sz; i < sz_; i++) new (tmpMem + i) T();
-				delete[] pMem;
-				pMem = tmpMem;
-				cp = new_cp;
-				sz = sz_;
+			if (sz_ < sz) {
+				for (size_t i = sz_; i< sz; i++) {
+					pMem[i].~T();
+				}
 			}
-			catch (...) {
-				delete[] tmpMem;
-				throw;
-			}
+			sz = sz_;
 		}
 	}
 	void clear() { resize(0); }

@@ -165,3 +165,95 @@ TEST(vector, can_clear)
 	ASSERT_NO_THROW(v1.clear());
 	ASSERT_EQ(v1.size(), 0);
 }
+TEST(vector, can_move_constructor)
+{
+	vector<int> v1 = { 1,2,3,4,5 };
+	ASSERT_NO_THROW(vector<int> v2(std::move(v1)));
+}
+TEST(vector, true_size_v2_move_constructor)
+{
+	vector<int> v1 = { 1,2,3,4,5 };
+	vector<int> v2(std::move(v1));
+	ASSERT_EQ(v2.size(), 5);
+}
+TEST(vector, true_cp_v2_move_constructor)
+{
+	vector<int> v1 = { 1,2,3,4,5 };
+	size_t cp = v1.capacity();
+	vector<int> v2(std::move(v1));
+	ASSERT_EQ(v2.capacity(), cp);
+}
+TEST(vector, true_data_v2_move_constructor)
+{
+	vector<int> v1 = { 1,2,3,4,5 };
+	vector<int> v2(std::move(v1));
+	bool f = 1;
+	for (int i = 1; i <= 5; i++) {
+		if (v2[i - 1] != i) f = 0;
+	}
+	ASSERT_EQ(f, 1);
+}
+TEST(vector, true_size_v1_move_constructor)
+{
+	vector<int> v1 = { 1,2,3,4,5 };
+	vector<int> v2(std::move(v1));
+	ASSERT_EQ(v1.size(), 0);
+}
+TEST(vector, true_cp_v1_move_constructor)
+{
+	vector<int> v1 = { 1,2,3,4,5 };
+	vector<int> v2(std::move(v1));
+	ASSERT_EQ(v1.capacity(), 0);
+}
+TEST(vector, resize_correct_data)
+{
+	vector<int> v1 = { 1,2,3,4,5 };
+	v1.resize(3);
+	ASSERT_EQ(v1[2],3);
+}
+TEST(vector, can_move_assign)
+{
+	vector<int> v2 = { 1,2,3,4,5 };
+	vector<int> v1 = {9,8,7};
+	ASSERT_NO_THROW(v1 = std::move(v2));
+}
+TEST(vector, move_assign_v1_right_size_)
+{
+	vector<int> v2 = { 1,2,3,4,5 };
+	vector<int> v1 = { 9,8,7 };
+	v1 = std::move(v2);
+	ASSERT_EQ(v1.size(), 5);
+}
+TEST(vector, move_assign_v2_right_size_)
+{
+	vector<int> v2 = { 1,2,3,4,5 };
+	vector<int> v1 = { 9,8,7 };
+	v1 = std::move(v2);
+	ASSERT_EQ(v2.size(), 0);
+}
+TEST(vector, move_assign_v2_right_cp_)
+{
+	vector<int> v2 = { 1,2,3,4,5 };
+	vector<int> v1 = { 9,8,7 };
+	v1 = std::move(v2);
+	ASSERT_EQ(v2.capacity(), 0);
+}
+TEST(vector, move_assign_v1_right_cp_)
+{
+	vector<int> v2 = { 1,2,3,4,5 };
+	size_t cp = v2.capacity();
+	vector<int> v1 = { 9,8,7 };
+	v1 = std::move(v2);
+	ASSERT_EQ(v1.capacity(), cp);
+}
+TEST(vector, right_mem_move_assign)
+{
+	vector<int> v2 = { 1,2,3,4,5 };
+	vector<int> v1 = { 9,8,7 };
+	v1 = std::move(v2);
+	ASSERT_EQ(v1[0],1);
+	ASSERT_EQ(v1[1], 2);
+	ASSERT_EQ(v1[2], 3);
+	ASSERT_EQ(v1[3], 4);
+	ASSERT_EQ(v1[4], 5);
+}
