@@ -124,3 +124,4 @@ TEST(PostfixConverterTests, InvalidParenthesesTest) {
     // Пропущена правая скобка
 
 }
+

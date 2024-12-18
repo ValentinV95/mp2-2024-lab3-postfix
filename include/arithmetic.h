@@ -16,6 +16,12 @@ enum LexemType {
 
 //Класс lexem
 
+struct Variable {
+	std::string name;
+	double value;
+};
+
+
 class Lexem {
 public:
 	LexemType type;
@@ -27,8 +33,10 @@ public:
 	bool isFunction() const;
 	bool isParenthesis() const;
 	bool isNumber() const;
+	bool isUnary() const;
+	bool isVariable() const;  // Новый метод для проверки переменной
 
-	//перегрузка операторов ввода и вывода
+	// перегрузка операторов ввода и вывода
 	friend std::ostream& operator<<(std::ostream& os, const Lexem& lexem);
 	friend std::istream& operator>>(std::istream& is, Lexem& lexem);
 };
@@ -46,7 +54,8 @@ public:
 	PostfixConverter(const TDynamicVector<Lexem>& tokens);
 	void toPostfix();
 	void printPostfix(std::ostream& os = std::cout) const;
-	double evaluate() const;
+	double simpleStringToDouble(const std::string& str);
+	double evaluate();
 };
 
 #endif

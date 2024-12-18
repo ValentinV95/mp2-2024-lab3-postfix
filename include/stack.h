@@ -10,8 +10,8 @@
 // при вставке в полный стек должна перевыделяться память
 
 
-#ifndef Stack_H
-#define Stack_H
+#ifndef TStack_H
+#define TStack_H
 
 #include "TDynamicVector.h"  // Подключаем вектор
 

@@ -1,47 +1,63 @@
+
 #include "arithmetic.h"
-#include <stdexcept>
-#include <cmath>
+#include <cmath>      // Для математических функций, например, для sin(), cos(), sqrt()
+#include <stdexcept>  // Для исключений, например, для std::invalid_argument
 
-// Конструктор Lexem
-Lexem::Lexem(LexemType t, const std::string& v, int p)
-    : type(t), value(v), priority(p) {}
+// Функция для проверки, является ли символ цифрой
+bool isDigit(char ch) {
+    return ch >= '0' && ch <= '9';
+}
 
-// Проверка, является ли оператором
+// Реализация конструктора Lexem
+Lexem::Lexem(LexemType t, const std::string& v, int p) : type(t), value(v), priority(p) {}
+
 bool Lexem::isOperator() const {
     return type == OPERATOR;
 }
 
-// Проверка, является ли функцией (sin, cos, ...)
 bool Lexem::isFunction() const {
     return type == FUNCTION;
 }
 
-// Проверка, является ли скобкой
-bool Lexem::isParenthesis() const {
-    return type == LEFT_PAREN  type == RIGHT_PAREN;
+bool Lexem::isVariable() const {
+    return type == VARIABLE;
 }
 
-// Проверка, является ли числом
 bool Lexem::isNumber() const {
     return type == NUMBER;
 }
 
-// Оператор вывода
+bool Lexem::isUnary() const {
+    return type == UNARY_MINUS;
+}
+
+bool Lexem::isParenthesis() const {
+    return type == LEFT_PAREN || type == RIGHT_PAREN;
+}
+
+// Перегрузка оператора вывода
 std::ostream& operator<<(std::ostream& os, const Lexem& lexem) {
     os << lexem.value;
     return os;
 }
 
-// Оператор ввода
+// Перегрузка оператора ввода
 std::istream& operator>>(std::istream& is, Lexem& lexem) {
     std::string value;
     is >> value;
 
     // Логика для определения типа лексемы
-    if (value == "+"  value == "-"   value == "*"  value == "/") {
-        lexem.type = OPERATOR;
+
+    if (value == "-" &&
+        (lexem.value.empty() || lexem.value.back() == '(' ||
+            lexem.value.back() == '+' || lexem.value.back() == '-' ||
+            lexem.value.back() == '*' || lexem.value.back() == '/')) {
+        lexem.type = UNARY_MINUS; // Унарный минус
     }
-    else if (value == "sin"  value == "cos"  value == "tg"  value == "ctg") {
+    else if (value == "+" || value == "-" || value == "*" || value == "/") {
+        lexem.type = OPERATOR; // Бинарный оператор
+    }
+    else if (value == "sin" || value == "cos" || value == "tg" || value == "ctg") {
         lexem.type = FUNCTION;
     }
     else if (value == "(") {
@@ -50,187 +66,154 @@ std::istream& operator>>(std::istream& is, Lexem& lexem) {
     else if (value == ")") {
         lexem.type = RIGHT_PAREN;
     }
-    else { // Число
-        lexem.type = NUMBER;
+    else if ((value[0] >= 'a' && value[0] <= 'z') || (value[0] >= 'A' && value[0] <= 'Z') || value[0] == '_') {
+        lexem.type = VARIABLE; // Переменная
+    }
+    else {
+        lexem.type = NUMBER; // Число
     }
 
     lexem.value = value;
-    lexem.priority = 0; // Можно настроить приоритет, если нужно
-
+    lexem.priority = 0;
     return is;
 }
 
-// Конструктор PostfixConverter
-PostfixConverter::PostfixConverter(const TDynamicVector<Lexem>& tokens)
-    : infixTokens(tokens) {}
+// Реализация класса PostfixConverter
+PostfixConverter::PostfixConverter(const TDynamicVector<Lexem>& tokens) : infixTokens(tokens) {}
 
-// Получение приоритета оператора
 int PostfixConverter::getPriority(const Lexem& op) const {
-    if (op.type == OPERATOR) {
-        if (op.value == "+"  op.value == "-") return 1;
-        if (op.value == "*"  op.value == "/") return 2;
-    }
-    if (op.type == FUNCTION) {
-        return 3; // Функции всегда имеют самый высокий приоритет
-    }
+    if (op.isUnary()) return 3;  // Унарный минус имеет самый высокий приоритет
+    if (op.value == "+" || op.value == "-") return 1;
+    if (op.value == "*" || op.value == "/") return 2;
     return 0;
 }
 
-// Преобразование в постфиксную нотацию
 void PostfixConverter::toPostfix() {
     TDynamicVector<Lexem> stack;
-    for (size_t i = 0; i < infixTokens.size(); ++i) {
-        Lexem token = infixTokens[i];  // Создаем копию объекта (не const!)
 
-        if (token.isNumber()) {
-            postfixTokens.push_back(token);
-        }
-        else if (token.isFunction()) {
-            stack.push_back(token);
+    for (const Lexem& token : infixTokens) {
+        if (token.isNumber() || token.isVariable()) {
+            postfixTokens.push_back(token);  // Если это число или переменная, добавляем в результат
         }
         else if (token.isOperator()) {
-            if (token.value == "-" && (i == 0  infixTokens[i - 1].isOperator()
-                infixTokens[i - 1].type == LEFT_PAREN)) {
-                // Если минус унарный, меняем приоритет в копии
-                token.priority = 3;  // Устанавливаем более высокий приоритет для унарного минуса
-                stack.push_back(token);
-            }
-            else {
-                // Для обычного оператора
-                while (!stack.empty() && getPriority(stack.back()) >= getPriority(token)) {
-                    postfixTokens.push_back(stack.back());
-                    stack.pop_back();
-                }
-                stack.push_back(token);
-            }
-        }
-        else if (token.type == LEFT_PAREN) {
-            stack.push_back(token);
-        }
-        else if (token.type == RIGHT_PAREN) {
-            while (!stack.empty() && stack.back().type != LEFT_PAREN) {
+            while (!stack.empty() && stack.back().type != LEFT_PAREN &&
+                getPriority(stack.back()) >= getPriority(token)) {
                 postfixTokens.push_back(stack.back());
                 stack.pop_back();
             }
-            if (stack.empty()) {
-                throw std::invalid_argument("Mismatched parentheses: missing left parenthesis");
+            stack.push_back(token);
+        }
+        else if (token.isUnary()) {
+            stack.push_back(token);
+        }
+        else if (token.isParenthesis()) {
+            if (token.type == LEFT_PAREN) {
+                stack.push_back(token);
             }
-            stack.pop_back(); // Убираем левую скобку из стека
+            else {
+                while (!stack.empty() && stack.back().type != LEFT_PAREN) {
+                    postfixTokens.push_back(stack.back());
+                    stack.pop_back();
+                }
+                stack.pop_back(); // Убираем открывающую скобку
+            }
         }
     }
 
     while (!stack.empty()) {
-        if (stack.back().type == LEFT_PAREN) {
-            throw std::invalid_argument("Mismatched parentheses: missing right parenthesis");
-        }
         postfixTokens.push_back(stack.back());
         stack.pop_back();
     }
 }
 
-// Вывод постфиксного выражения
 void PostfixConverter::printPostfix(std::ostream& os) const {
-    for (size_t i = 0; i < postfixTokens.size(); ++i) {
-        os << postfixTokens[i] << " ";
+    for (const Lexem& token : postfixTokens) {
+        os << token.value << " ";
     }
     os << std::endl;
 }
+// Преобразование строки в число
+double PostfixConverter::simpleStringToDouble(const std::string& str) {
+    double result = 0.0;
+    bool isNegative = false;
+    size_t i = 0;
 
-// Вычисление результата
-double PostfixConverter::evaluate() const {
-    TDynamicVector<double> stack;
+    // Обработка отрицательных чисел
+    if (str[i] == '-') {
+        isNegative = true;
+        i++;
+    }
 
-    // Перебираем все лексемы в постфиксной записи
-    for (size_t i = 0; i < postfixTokens.size(); ++i) {
-        const Lexem& token = postfixTokens[i];
+    // Обработка целой части
+    while (i < str.length() && isDigit(str[i])) {
+        result = result * 10 + (str[i] - '0');
+        i++;
+    }
 
-        if (token.isNumber()) {
-            // Если токен — это число, преобразуем его в double и пушим в стек
-            stack.push_back(std::stod(token.value));
+    // Обработка десятичной точки и дробной части
+    if (i < str.length() && str[i] == '.') {
+        i++;
+        double decimalPlace = 0.1;
+        while (i < str.length() && isDigit(str[i])) {
+            result += (str[i] - '0') * decimalPlace;
+            decimalPlace /= 10;
+            i++;
         }
-        else if (token.isFunction()) {
-            // Если токен — это функция
-            if (stack.empty()) {
-                throw std::invalid_argument("Insufficient arguments for function");
-            }
-            double arg = stack.back();
-            stack.pop_back();
+    }
 
-            // Выполняем функцию с аргументом
-            if (token.value == "sin") {
-                stack.push_back(std::sin(arg));
-            }
-            else if (token.value == "cos") {
-                stack.push_back(std::cos(arg));
-            }
-            else if (token.value == "tg") {
-                stack.push_back(std::tan(arg));
-            }
-            else if (token.value == "ctg") {
-                // Для ctg - деление на ноль
-                if (std::tan(arg) == 0.0) {
-                    throw std::invalid_argument("Division by zero in ctg function");
-                }
-                stack.push_back(1.0 / std::tan(arg));
+    // Применяем знак минус, если необходимо
+    if (isNegative) {
+        result = -result;
+    }
+
+    return result;
+}
+
+// Метод для вычисления выражения
+double PostfixConverter::evaluate() {
+    TDynamicVector<double> stack;
+    TDynamicVector<Variable> variables;
+
+    for (const Lexem& token : postfixTokens) {
+        if (token.isNumber()) {
+            stack.push_back(simpleStringToDouble(token.value));
+        }
+        else if (token.isVariable()) {
+            auto it = std::find_if(variables.begin(), variables.end(),
+                [&token](const Variable& var) { return var.name == token.value; });
+
+            if (it != variables.end()) {
+                stack.push_back(it->value);  // Используем значение переменной
             }
             else {
-                throw std::invalid_argument("Unknown function: " + token.value);
+                std::cout << "Enter value for variable " << token.value << ": ";
+                double val;
+                std::cin >> val;
+                variables.push_back({ token.value, val });
+                stack.push_back(val);  // Сохраняем переменную
             }
+        }
+        else if (token.isUnary()) {
+            if (stack.empty()) throw std::invalid_argument("Insufficient arguments for unary minus");
+            double operand = stack.back();
+            stack.pop_back();
+            stack.push_back(-operand);
         }
         else if (token.isOperator()) {
-            // Если токен — это оператор
-            if (stack.size() < 2 && token.value != "-") {
-                throw std::invalid_argument("Insufficient arguments for operator");
-            }
+            if (stack.size() < 2) throw std::invalid_argument("Insufficient arguments for operator");
+            double right = stack.back(); stack.pop_back();
+            double left = stack.back(); stack.pop_back();
 
-            if (token.value == "-") {
-                // Унарный минус
-                if (stack.size() == 0  (stack.size() == 1 && token.priority == 3)) {
-                    // Если стек пуст или мы только что встретили унарный минус
-                    double operand = stack.back();
-                    stack.pop_back();
-                    stack.push_back(-operand);  // Применяем унарный минус
-                }
-                else {
-                    // Бинарный минус
-                    double b = stack.back();
-                    stack.pop_back();
-                    double a = stack.back();
-                    stack.pop_back();
-                    stack.push_back(a - b);
-                }
-            }
-            else {
-                // Бинарные операторы: +, *, /
-                double b = stack.back();
-                stack.pop_back();
-                double a = stack.back();
-                stack.pop_back();
-
-                if (token.value == "+") {
-                    stack.push_back(a + b);
-                }
-                else if (token.value == "*") {
-                    stack.push_back(a * b);
-                }
-                else if (token.value == "/") {
-                    if (b == 0.0) {
-                        throw std::invalid_argument("Division by zero");
-                    }
-                    stack.push_back(a / b);
-                }
-                else {
-                    throw std::invalid_argument("Unknown operator: " + token.value);
-                }
+            if (token.value == "+") stack.push_back(left + right);
+            else if (token.value == "-") stack.push_back(left - right);
+            else if (token.value == "*") stack.push_back(left * right);
+            else if (token.value == "/") {
+                if (right == 0) throw std::invalid_argument("Division by zero");
+                stack.push_back(left / right);
             }
         }
     }
 
-    // Если в стеке остался не один элемент, это ошибка
-    if (stack.size() != 1) {
-        throw std::invalid_argument("Invalid expression");
-    }
-
-    // Возвращаем результат, который остался в стеке
+    if (stack.size() != 1) throw std::invalid_argument("Invalid expression");
     return stack.back();
 }
