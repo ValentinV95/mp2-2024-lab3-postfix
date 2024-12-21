@@ -18,6 +18,7 @@ using namespace std;
 class TPostfix
 {
     static map<string, function<double(double, double)> > binaryOperations; 
+    double to_double(const string& str);
     static map<string, function<double(double)>> unaryOperations;           
     static map<string, unsigned int> priority;                              
     string infix = "";                                                      

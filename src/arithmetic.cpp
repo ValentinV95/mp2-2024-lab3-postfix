@@ -41,6 +41,28 @@ map<string, function<double(double)>> TPostfix::unaryOperations = {
 	{"sqrt", [](double a) {if (a < 0)  throw logic_error("cant be calculated"); return sqrt(a); }},
 	
 };
+double TPostfix::to_double(const string& str) {
+	if (str.empty()) return 0.0;
+	double del = 10.0;
+	double res = 0.0;
+
+	int i = 0;
+	while (i < str.size() && str[i] != '.') {
+		if (isdigit(str[i])) {
+			res *= 10;
+			res += str[i] - '0';
+		}
+		++i;
+	}
+	++i;
+	while (i < str.size()) {
+		res += (str[i] - '0') / del;
+		++i;
+		del *= 10;
+	}
+	return (str.front() == '-') ? -res : res;
+}
+
 
 inline bool TPostfix::isOperator(const string s)
 {
