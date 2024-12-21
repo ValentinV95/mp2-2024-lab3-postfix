@@ -43,15 +43,19 @@ public:
 
 //класс дл€ преобразование в польскую нотацию
 
+
+
 class PostfixConverter {
 private:
 	TDynamicVector<Lexem> infixTokens;
 	TDynamicVector<Lexem> postfixTokens;
+	TDynamicVector<Variable> variables;  // ƒл€ хранени€ переменных
 
 	int getPriority(const Lexem& op) const;
 
 public:
 	PostfixConverter(const TDynamicVector<Lexem>& tokens);
+	void setVariables(const TDynamicVector<Variable>& vars);  // ”становить переменные
 	void toPostfix();
 	void printPostfix(std::ostream& os = std::cout) const;
 	double simpleStringToDouble(const std::string& str);

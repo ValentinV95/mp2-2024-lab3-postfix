@@ -1,98 +1,91 @@
 
 #include <iostream>
 #include "arithmetic.h"
+#include <stdexcept>
 
-// Функция для разделения строки на лексемы
-TDynamicVector<Lexem> tokenizeExpression(const char* expr) noexcept {
+
+TDynamicVector<Lexem> tokenizeExpression(const char* expression) {
     TDynamicVector<Lexem> tokens;
-    char token[256]; // Буфер для лексемы
-    int tokenIndex = 0;
-    bool prevWasOperatorOrParen = true; // Флаг для отслеживания унарного минуса
+    size_t length = std::strlen(expression);
+    bool isPreviousOperator = true;  // Считываем как унарный минус, если он идет первым
 
-    for (size_t i = 0; expr[i] != '\0'; ++i) {
-        char ch = expr[i];
+    for (size_t i = 0; i < length; ++i) {
+        char currentChar = expression[i];
+        Lexem token;
 
-        // Пропускаем пробелы
-        if (ch == ' ' || ch == '\t') {
-            continue;
-        }
+        if (currentChar >= '0' && currentChar <= '9') {
+            // Считываем число, в том числе с плавающей запятой и научной нотацией
+            size_t j = i;
+            bool hasDecimalPoint = false;
+            bool hasExponent = false;
 
-        // Если это число (включая десятичные)
-        if ((ch >= '0' && ch <= '9') || ch == '.') {
-            tokenIndex = 0;
-            while ((ch >= '0' && ch <= '9') || ch == '.') {
-                token[tokenIndex++] = ch;
-                ch = expr[++i];
-            }
-            --i; // Возвращаемся назад
-            token[tokenIndex] = '\0';
-            tokens.push_back(Lexem(NUMBER, token, 0)); // Число имеет приоритет 0
-            prevWasOperatorOrParen = false;
-        }
-        // Если это переменная или функция
-        else if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
-            tokenIndex = 0;
-            while ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
-                token[tokenIndex++] = ch;
-                ch = expr[++i];
-            }
-            --i;
-            token[tokenIndex] = '\0';
-
-            // Проверяем, является ли это функцией (смотрим на следующий символ)
-            if (expr[i + 1] == '(') {
-                // Это функция, добавляем с типом FUNCTION
-                tokens.push_back(Lexem(FUNCTION, token, 3)); // Функция имеет высокий приоритет
-            }
-            else {
-                // Это переменная, добавляем с типом VARIABLE
-                tokens.push_back(Lexem(VARIABLE, token, 0)); // Переменная
-            }
-
-            prevWasOperatorOrParen = false;
-        }
-
-
-        // Если это оператор
-        else if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
-            token[0] = ch;
-            token[1] = '\0';
-
-            // Проверяем, является ли это унарным минусом
-            if (ch == '-' && (prevWasOperatorOrParen || tokens.empty())) {
-                std::string num = "-"; // Начинаем собирать число с унарным минусом
-                i++; // Сдвигаем на следующий символ
-                while (i < strlen(expr) && ((expr[i] >= '0' && expr[i] <= '9') || expr[i] == '.')) {
-                    num += expr[i++]; // Собираем цифры и точку, если они есть
+            // Считываем цифры до точки или экспонента
+            while (j < length && (expression[j] >= '0' && expression[j] <= '9' || expression[j] == '.')) {
+                if (expression[j] == '.') {
+                    if (hasDecimalPoint) break;  // Если точка уже была, завершаем
+                    hasDecimalPoint = true;
                 }
-                --i; // Возвращаемся назад, чтобы не пропустить следующий символ в выражении
-                tokens.push_back(Lexem(NUMBER, num, 0)); // Добавляем число с унарным минусом
-                prevWasOperatorOrParen = false; // После числа не должно быть оператора
+                j++;
+            }
+
+            // Обрабатываем экспоненциальную часть (e или E)
+            if (j < length && (expression[j] == 'e' || expression[j] == 'E')) {
+                hasExponent = true;
+                j++;  // Пропускаем 'e' или 'E'
+
+                // Пропускаем знак экспоненты
+                if (j < length && (expression[j] == '+' || expression[j] == '-')) {
+                    j++;
+                }
+
+                // Считываем цифры экспоненты
+                while (j < length && expression[j] >= '0' && expression[j] <= '9') {
+                    j++;
+                }
+            }
+
+            token.value = std::string(expression + i, j - i);
+            token.type = NUMBER;
+            tokens.push_back(token);
+            i = j - 1;
+            isPreviousOperator = false;
+        }
+        else if (currentChar == '-' || currentChar == '+' || currentChar == '*' || currentChar == '/') {
+            // Это оператор
+            token.value = std::string(1, currentChar);
+            if (isPreviousOperator && currentChar == '-') {
+                token.type = UNARY_MINUS;  // Унарный минус
             }
             else {
-                int priority = (ch == '+' || ch == '-') ? 1 : 2; // Приоритет: 1 для + и -, 2 для * и /
-                tokens.push_back(Lexem(OPERATOR, token, priority)); // Бинарный оператор
-                prevWasOperatorOrParen = true; // После оператора ожидаем число или скобку
+                token.type = OPERATOR;  // Обычный оператор
             }
+            tokens.push_back(token);
+            isPreviousOperator = true;  // Следующий символ может быть числом или переменной
         }
-
-        // Если это скобка
-        else if (ch == '(') {
-            token[0] = ch;
-            token[1] = '\0';
-            tokens.push_back(Lexem(LEFT_PAREN, token, 0));
-            prevWasOperatorOrParen = true; // После скобки ожидается выражение
+        else if (currentChar == '(') {
+            token.value = "(";
+            token.type = LEFT_PAREN;
+            tokens.push_back(token);
+            isPreviousOperator = true;  // После открывающей скобки может идти оператор
         }
-        else if (ch == ')') {
-            token[0] = ch;
-            token[1] = '\0';
-            tokens.push_back(Lexem(RIGHT_PAREN, token, 0));
-            prevWasOperatorOrParen = false; // После скобки не ожидается оператора
+        else if (currentChar == ')') {
+            token.value = ")";
+            token.type = RIGHT_PAREN;
+            tokens.push_back(token);
+            isPreviousOperator = false;  // После закрывающей скобки не может быть оператора
         }
-        // Неизвестный символ
+        else if (currentChar >= 'a' && currentChar <= 'z' || currentChar >= 'A' && currentChar <= 'Z') {
+            // Считываем переменные
+            size_t j = i;
+            while (j < length && (expression[j] >= 'a' && expression[j] <= 'z' || expression[j] >= 'A' && expression[j] <= 'Z')) ++j;
+            token.value = std::string(expression + i, j - i);
+            token.type = VARIABLE;
+            tokens.push_back(token);
+            i = j - 1;
+            isPreviousOperator = false;
+        }
         else {
-            std::cerr << "Unknown token: " << ch << std::endl;
-            return tokens; // Возвращаем результат с ошибкой
+            // Пропускаем все остальные символы (например, пробелы)
         }
     }
 
@@ -104,10 +97,26 @@ int main() noexcept {
     TDynamicVector<Variable> variables;
 
     // Ввод переменных
-    size_t numVars;
+    int numVars;
     std::cout << "Enter the number of variables: ";
     std::cin >> numVars;
-    std::cin.ignore();
+
+    // Проверка на отрицательное число
+    if (numVars < 0) {
+        std::cerr << "Error: Number of variables cannot be negative!" << std::endl;
+        return 1;
+    }
+
+    if (std::cin.fail()) {
+        std::cerr << "Error: Invalid input!" << std::endl;
+        return 1;
+    }
+
+
+    // Если переменных больше 0, пропускаем символ новой строки
+    if (numVars > 0) {
+        std::cin.ignore();  // Пропускаем символ новой строки после ввода числа
+    }
 
     for (size_t i = 0; i < numVars; ++i) {
         Variable var;
@@ -115,18 +124,40 @@ int main() noexcept {
         std::cin >> var.name;
         std::cout << "Enter variable value: ";
         std::cin >> var.value;
+
+        if (std::cin.fail()) {
+            std::cerr << "Error: Invalid variable value input!" << std::endl;
+            return 1;
+        }
+
         variables.push_back(var);
     }
 
-    std::cout << "Enter an arithmetic expression: ";
-    std::cin.ignore();
-    std::cin.getline(expression, 256);
+    // После ввода переменных очищаем буфер, чтобы избежать лишних символов новой строки
+    std::cin.ignore();  // Очистка буфера перед вводом выражения
 
-    // Токенизируем строку
+    // Ввод арифметического выражения
+    std::cout << "Enter an arithmetic expression: ";
+    std::cin.getline(expression, 256);  // Считываем строку с выражением
+
+    // Проверка на пустое выражение
+    if (expression[0] == '\0') {
+        std::cerr << "Error: Empty expression!" << std::endl;
+        return 1;
+    }
+
     // Токенизируем строку
     TDynamicVector<Lexem> tokens = tokenizeExpression(expression);
 
     // Проверка полученных токенов
+    if (tokens.size() == 0) {
+        std::cerr << "Error: No tokens generated! Expression might be invalid." << std::endl;
+        return 1;
+    }
+
+    /*
+    // Отладочная информация о токенах
+   std::cout << "Tokens generated: " << std::endl;
     for (const auto& token : tokens) {
         std::cout << "Token: " << token.value << ", Type: ";
 
@@ -150,18 +181,17 @@ int main() noexcept {
         case RIGHT_PAREN:
             std::cout << "RIGHT_PAREN";
             break;
+        case UNARY_MINUS:
+            std::cout << "UNARY_MIN";
+            break;
         default:
             std::cout << "UNKNOWN";
             break;
         }
         std::cout << std::endl;
     }
+    */
 
-    // Проверка на пустоту
-    if (tokens.size() == 0) {
-        std::cerr << "Error: No tokens generated!" << std::endl;
-        return 1;
-    }
 
     // Создаём объект для преобразования в постфиксную запись
     PostfixConverter converter(tokens);
@@ -169,6 +199,9 @@ int main() noexcept {
     try {
         // Преобразуем выражение в постфиксную нотацию
         converter.toPostfix();
+
+        // Устанавливаем переменные в PostfixConverter
+        converter.setVariables(variables);
 
         // Печатаем результат
         std::cout << "Postfix notation: ";

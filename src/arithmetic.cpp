@@ -66,7 +66,7 @@ std::istream& operator>>(std::istream& is, Lexem& lexem) {
     else if (value == ")") {
         lexem.type = RIGHT_PAREN;
     }
-    else if ((value[0] >= 'a' && value[0] <= 'z') || (value[0] >= 'A' && value[0] <= 'Z') || value[0] == '_') {
+    else if (value.size() > 0 && (value[0] >= 'a' && value[0] <= 'z') || (value[0] >= 'A' && value[0] <= 'Z') || value[0] == '_') {
         lexem.type = VARIABLE; // Переменная
     }
     else {
@@ -89,13 +89,20 @@ int PostfixConverter::getPriority(const Lexem& op) const {
 }
 
 void PostfixConverter::toPostfix() {
+
     TDynamicVector<Lexem> stack;
 
     for (const Lexem& token : infixTokens) {
-        if (token.isNumber() || token.isVariable()) {
-            postfixTokens.push_back(token);  // Если это число или переменная, добавляем в результат
+        if (token.isNumber()) {
+            // Если это число, добавляем в постфикс
+            postfixTokens.push_back(token);
+        }
+        else if (token.isVariable()) {
+            // Если это переменная, добавляем в постфикс
+            postfixTokens.push_back(token);
         }
         else if (token.isOperator()) {
+            // Если это оператор, обрабатываем с учетом приоритетов
             while (!stack.empty() && stack.back().type != LEFT_PAREN &&
                 getPriority(stack.back()) >= getPriority(token)) {
                 postfixTokens.push_back(stack.back());
@@ -104,9 +111,11 @@ void PostfixConverter::toPostfix() {
             stack.push_back(token);
         }
         else if (token.isUnary()) {
+            // Унарный минус, например, обработаем как оператор
             stack.push_back(token);
         }
         else if (token.isParenthesis()) {
+            // Обработка скобок
             if (token.type == LEFT_PAREN) {
                 stack.push_back(token);
             }
@@ -115,16 +124,18 @@ void PostfixConverter::toPostfix() {
                     postfixTokens.push_back(stack.back());
                     stack.pop_back();
                 }
-                stack.pop_back(); // Убираем открывающую скобку
+                stack.pop_back();  // Убираем открывающую скобку
             }
         }
     }
 
+    // Добавляем все оставшиеся операторы в стек в конец
     while (!stack.empty()) {
         postfixTokens.push_back(stack.back());
         stack.pop_back();
     }
 }
+
 
 void PostfixConverter::printPostfix(std::ostream& os) const {
     for (const Lexem& token : postfixTokens) {
@@ -141,6 +152,9 @@ double PostfixConverter::simpleStringToDouble(const std::string& str) {
     // Обработка отрицательных чисел
     if (str[i] == '-') {
         isNegative = true;
+        i++;
+    }
+    else if (str[i] == '+') {
         i++;
     }
 
@@ -161,6 +175,38 @@ double PostfixConverter::simpleStringToDouble(const std::string& str) {
         }
     }
 
+    // Обработка экспоненты
+    if (i < str.length() && (str[i] == 'e' || str[i] == 'E')) {
+        i++;
+        bool expIsNegative = false;
+        if (i < str.length() && str[i] == '-') {
+            expIsNegative = true;
+            i++;
+        }
+        else if (i < str.length() && str[i] == '+') {
+            i++;
+        }
+
+        int exponent = 0;
+        while (i < str.length() && isDigit(str[i])) {
+            exponent = exponent * 10 + (str[i] - '0');
+            i++;
+        }
+
+        // Применяем экспоненту
+        double expValue = 1.0;
+        for (int j = 0; j < exponent; ++j) {
+            expValue *= 10.0;
+
+        }
+        if (expIsNegative) {
+            result /= expValue;
+        }
+        else {
+            result *= expValue;
+        }
+    }
+
     // Применяем знак минус, если необходимо
     if (isNegative) {
         result = -result;
@@ -169,10 +215,13 @@ double PostfixConverter::simpleStringToDouble(const std::string& str) {
     return result;
 }
 
+void PostfixConverter::setVariables(const TDynamicVector<Variable>& vars) {
+    variables = vars;  // Копируем переменные
+}
+
 // Метод для вычисления выражения
 double PostfixConverter::evaluate() {
     TDynamicVector<double> stack;
-    TDynamicVector<Variable> variables;
 
     for (const Lexem& token : postfixTokens) {
         if (token.isNumber()) {
@@ -183,14 +232,10 @@ double PostfixConverter::evaluate() {
                 [&token](const Variable& var) { return var.name == token.value; });
 
             if (it != variables.end()) {
-                stack.push_back(it->value);  // Используем значение переменной
+                stack.push_back(it->value);
             }
             else {
-                std::cout << "Enter value for variable " << token.value << ": ";
-                double val;
-                std::cin >> val;
-                variables.push_back({ token.value, val });
-                stack.push_back(val);  // Сохраняем переменную
+                throw std::invalid_argument("Undefined variable: " + token.value);
             }
         }
         else if (token.isUnary()) {
