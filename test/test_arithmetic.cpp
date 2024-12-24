@@ -1,4 +1,4 @@
-// тесты для вычисления арифметических выражений
+// С‚РµСЃС‚С‹ РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРёС… РІС‹СЂР°Р¶РµРЅРёР№
 #pragma once
 #include <gtest.h>
 #include "arithmetic.h"
@@ -80,14 +80,14 @@ TEST(TPostfix, calc_exp_2) {
 	ASSERT_EQ(res == 1e-5, 1);
 }
 TEST(TPostfix, calc_sin_1) {
-	TPostfix<double> d("sin(0)");
+	TPostfix<double> d("sin(3.14)");
 	d.ToPostfix();
 	double res = d.simple_calc();
-	ASSERT_EQ(res == sin(0), 1);
+	ASSERT_EQ(abs(res - sin(3.14)) < 1e-5, 1);
 }
 TEST(TPostfix, calc_sin_2) {
-	TPostfix<double> d("sin(sin(0))");
+	TPostfix<double> d("sin(sin(0) + 3.14)");
 	d.ToPostfix();
 	double res = d.simple_calc();
-	ASSERT_EQ(res == sin(sin(0)), 1);
+	ASSERT_EQ(abs(res - sin(sin(0) + 3.14)) < 1e-5, 1);
 }
