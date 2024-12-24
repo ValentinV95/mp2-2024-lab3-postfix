@@ -1,3 +1,4 @@
+#pragma once
 #include "lexem.h"
 char const* operation::lst[] = {"(", ")", "+", "-", "*", "/", "^", "-", "abs", "log", "sin", "asin", "sinh", "asinh", "cos", "acos", "cosh", "acosh", "tan", "atan", "tanh", "atanh"};
 size_t const operation::lst_size = 22;
