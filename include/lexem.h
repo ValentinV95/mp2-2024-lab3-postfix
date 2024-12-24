@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <stdexcept>
 #include "datavec.h"
@@ -29,7 +30,7 @@ public:
 	operation(short int const _id);
 	operation(operation const& A);
 	~operation() = default;
-	inline bool IsStmt() noexcept override final { return true; };
+	inline bool IsStmt() noexcept override { return true; };
 	short int GetId() noexcept override final;
 	std::string GetName() override final;
 	static size_t StmtId(std::string const& s);

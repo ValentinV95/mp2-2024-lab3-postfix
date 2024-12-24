@@ -1,9 +1,16 @@
+#pragma once
 #include <gtest.h>
 #include "lexem.h"
 
 TEST(operation, can_be_created)
 {
 	ASSERT_NO_THROW(operation a);
+}
+
+TEST(operation, is_statement)
+{
+	operation a;
+	EXPECT_TRUE(a.IsStmt());
 }
 
 TEST(operation, can_be_created_with_id)
