@@ -14,7 +14,7 @@
     <ClCompile Include="..\..\..\src\arithmetic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\include\lexem.cpp">
+    <ClCompile Include="..\..\..\src\lexem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

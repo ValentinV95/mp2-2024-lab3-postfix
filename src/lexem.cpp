@@ -3,7 +3,7 @@
 char const* operation::lst[] = {"(", ")", "+", "-", "*", "/", "^", "-", "abs", "log", "sin", "asin", "sinh", "asinh", "cos", "acos", "cosh", "acosh", "tan", "atan", "tanh", "atanh"};
 size_t const operation::lst_size = 22;
 
-/*operation::operation()
+operation::operation()
 {
 	id = -1;
 	priority = 0;
@@ -72,4 +72,4 @@ void operation::SetArity()
 short int operation::GetArity() noexcept
 {
 	return arity;
-}*/
+}
