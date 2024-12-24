@@ -87,7 +87,7 @@ TEST(MyStack, decrease_size_after_pop)
 
 TEST(MyStack, can_clear_itself)
 {
-	MyStack<double> stk;
+	MyStack<size_t> stk;
 	for (size_t i = 0; i < 10; i++)
 	{
 		stk.push(i);
