@@ -57,7 +57,7 @@ public:
 		return sz;
 	};
 
-	size_t SetSize(size_t _sz)	//Только для тестов
+	void SetSize(size_t _sz)	//Только для тестов
 	{
 		if (_sz > cap)
 			throw("Can not set size because it's biggen than current capacity");
