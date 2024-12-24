@@ -79,8 +79,8 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\include\lexem.cpp" />
     <ClCompile Include="..\..\..\src\arithmetic.cpp" />
-    <ClCompile Include="..\..\..\src\lexem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\arithmetic.h" />
