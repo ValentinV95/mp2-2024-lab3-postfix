@@ -1,6 +1,6 @@
 // тесты для вектора, на котором написан стек
 
-#include "stack.h"
+#include "datavec.h"
 #include <gtest.h>
 
 TEST(Vec, can_create_vector_with_positive_capacity)
