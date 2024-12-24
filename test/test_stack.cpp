@@ -61,6 +61,13 @@ TEST(MyStack, can_take_top_value)
 	EXPECT_DOUBLE_EQ(5.0, f);
 }
 
+TEST(MyStack, taking_value_from_empty_stack_throws)
+{
+	MyStack<double> stk;
+	double f;
+	ASSERT_ANY_THROW(f = stk.Top());
+}
+
 TEST(MyStack, can_pop_value)
 {
 	MyStack<double> stk;

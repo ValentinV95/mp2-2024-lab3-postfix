@@ -138,6 +138,8 @@ public:
 
 	T Top()
 	{
+		if (Is_Empty())
+			throw underflow_error("Trying to take element from empty vector");
 		return pMem[sz - 1];
 	};
 

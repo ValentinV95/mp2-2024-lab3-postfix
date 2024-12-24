@@ -63,6 +63,20 @@ TEST(Vec, copied_vector_has_its_own_memory)
 	EXPECT_NE(v, w);
 }
 
+TEST(Vec, can_access_to_its_memory_via_squre_brackets)
+{
+	Vec<int> v(5);
+	int* p = v.GetData();
+	int a = 0;
+	v.SetSize(5);
+	v[2] = 5;
+	EXPECT_EQ(5, p[2]);
+	a = v[2];
+	EXPECT_EQ(5, a);
+	v[2] += 4;
+	EXPECT_EQ(9, p[2]);
+}
+
 TEST(Vec, can_determine_if_its_empty_or_full)
 {
 	Vec<int> v(10);
@@ -90,6 +104,13 @@ TEST(Vec, can_take_value_from_its_top)
 	EXPECT_EQ(9, a);
 }
 
+TEST(Vec, taking_value_from_empty_vector_throws)
+{
+	Vec<int> v(10);
+	int i;
+	ASSERT_ANY_THROW(i = v.Top());
+}
+
 TEST(Vec, can_push_value_to_its_top)
 {
 	Vec<int> v(10);
@@ -102,7 +123,7 @@ TEST(Vec, can_push_value_to_its_top)
 	ASSERT_NO_THROW(v.push_back(15));
 }
 
-TEST(Vec, pushind_a_value_changes_vector_size)
+TEST(Vec, pushing_a_value_changes_vector_size)
 {
 	Vec<int> v(10);
 	v.SetSize(5);
