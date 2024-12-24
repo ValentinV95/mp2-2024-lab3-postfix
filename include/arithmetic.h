@@ -1,11 +1,11 @@
-﻿// объявление функций и классов для вычисления арифметических выражений
+// объявление функций и классов для вычисления арифметических выражений
 #pragma once
 #include "stack.h"
 #include <string>
 #include <vector>
 #include <cmath>
 
-#define logic std::logic_error("Invalid bracket sequence");
+#define logic std::logic_error("Invalid_arithmetic_expression");
 
 int precedence(char op) {
     if (op == '+' || op == '-') return 1;
@@ -93,23 +93,25 @@ public:
                 i++;
             }
 
-            if (per == "sin" || per == "cos") {
+            if (per == "sin" || per == "cos" || per == "exp") {
                 std::string s;
                 int cnt = 1;
                 for (i = i + 1;; i++) {
                     cnt += (infix[i] == '(');
-                    cnt -= (infix[i] == ')'); //чтобы считать композицию sin(sin(...))
+                    cnt -= (infix[i] == ')'); 
                     if (cnt == 0)
                         break;
                     s += infix[i];
                 }
-                TPostfix<T> func(s);
+                TPostfix<T> func(s); //чтобы считать композицию sin(sin(...) + ...)
                 func.ToPostfix();
                 T num = func.simple_calc();
                 if (per == "sin")
                     post.push_back(std::to_string(sin(num)));
                 if (per == "cos")
                     post.push_back(std::to_string(cos(num)));
+                if (per == "exp")
+                    post.push_back(std::to_string(exp(num)));
                 per.clear();
                 i++;
             }
@@ -153,7 +155,7 @@ public:
                     post.push_back(std::string(1, operators.top()));
                     operators.pop();
                 }
-                if (infix[i] == '-' && (i==0 || infix[i-1] == '(')) {
+                if (infix[i] == '-' && (i==0 || infix[i-1] == '(')) { //унарный минус требует скобу (-1)
                     unar = 1;
                 }
                 else if (isOperator(infix[i])){
@@ -161,7 +163,7 @@ public:
                 }
             }
             if (cnt < 0)
-                throw logic;
+                throw logic; //проверяем скобочную последовательность на корректность
         }
 
         if (cnt != 0)
