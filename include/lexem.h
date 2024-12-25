@@ -28,7 +28,7 @@ public:
 	~operation() = default;
 	inline bool IsStmt() noexcept override { return true; };
 	short int GetId() noexcept;
-	string const& GetName();
+	string GetName();
 	static size_t StmtId(string const& s);
 	short int GetPriority() noexcept;
 	short int GetArity() noexcept;
@@ -74,7 +74,7 @@ public:
 	variable(variable const& Var);
 	short int GetId() noexcept { return id; };
 	double GetVal() override;
-	string const& GetName();
+	string GetName();
 	static void Init(short int id, double val);
 	ostream& Print();
 };

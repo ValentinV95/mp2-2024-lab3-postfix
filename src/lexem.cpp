@@ -40,7 +40,7 @@ short int operation::GetId() noexcept
 {
 	return id;
 }
-string const& operation::GetName()
+string operation::GetName()
 {
 	string _name;
 	if (id == -1)
@@ -135,7 +135,7 @@ double variable::GetVal()
 {
 	return _Val[id];
 }
-string const& variable::GetName()
+string variable::GetName()
 {
 	if (id == -1)
 		throw std::runtime_error("No string assigned to variable");

@@ -117,12 +117,12 @@ public:
 		return !(*this == v);
 	};
 
-	T& operator [](size_t ind) noexcept		// Только для тестов
+	T& operator [](size_t ind) noexcept
 	{
 		return pMem[ind];
 	}
 
-	const T& operator [](size_t ind) const noexcept		// Только для тестов
+	const T& operator [](size_t ind) const noexcept
 	{
 		return pMem[ind];
 	}
