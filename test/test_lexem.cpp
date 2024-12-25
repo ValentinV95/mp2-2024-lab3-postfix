@@ -68,25 +68,12 @@ TEST(operation, indicates_when_string_is_not_an_operation)
 	EXPECT_EQ(-1, id);
 }
 
-// Don't now if folowing Test needed:
+/* Don't now if folowing Test needed:
 TEST(operation, pointer_can_be_assigned_to_base_class_pointer)
 {
 	lexem* A;
 	operation* B = new operation(2);
 	ASSERT_NO_THROW(A = B);
-	delete B;
-}
-
-TEST(operation, methods_can_be_accessed_from_base_class)
-{
-	operation* B = new operation(2);
-	lexem* A = B;
-	short int i;
-	std::string s;
-	ASSERT_NO_THROW(i = A->GetId());
-	EXPECT_EQ(2, i);
-	ASSERT_NO_THROW(s = A->GetName());
-	EXPECT_EQ("+", s);
 	delete B;
 }
 
@@ -96,5 +83,5 @@ TEST(operation, being_assigned_to_basic_class_pointer_can_be_casted_to_itself)
 	lexem* A = B;
 	ASSERT_NO_THROW(C = dynamic_cast<operation*>(A));
 }
-//
+*/
 

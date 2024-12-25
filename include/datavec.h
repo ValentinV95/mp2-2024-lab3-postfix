@@ -28,6 +28,20 @@ public:
 		copy(v.pMem, v.pMem + sz, pMem);
 	};
 
+	Vec(T* arr, size_t _sz) : sz(_sz), cap(64)
+	{
+		if (!arr)
+			throw exception("arr shall not be nullptr");
+		if (_sz == 0)
+			throw length_error("Vector size should be greater than zero");
+		if (sz > Vec_Max_Capacity)
+			throw length_error("Vector size is too big");
+		if (_sz >= cap)
+			cap = _sz * 3 / 2;
+		pMem = new T[cap];
+		copy(arr, arr + sz, pMem);
+	}
+
 	/*Vec(Vec<T>&& v) : cap(64), sz(0), pMem(nullptr) noexcept
 	{
 		swap(*this, v);

@@ -19,10 +19,31 @@ TEST(Vec, throws_when_create_vector_with_zero_capacity)
 	ASSERT_ANY_THROW(Vec<int> v(-5));
 }
 
+TEST(Vec, can_get_size)
+{
+	Vec<int> v(4);
+	v.SetSize(2);
+	EXPECT_EQ(2, v.GetSize());
+}
+
 TEST(Vec, can_get_capacity)
 {
 	Vec<int> v(4);
 	EXPECT_EQ(4, v.GetCapacity());
+}
+
+TEST(Vec, can_access_to_its_memory_via_squre_brackets)
+{
+	Vec<int> v(5);
+	int* p = v.GetData();
+	int a = 0;
+	v.SetSize(5);
+	v[2] = 5;
+	EXPECT_EQ(5, p[2]);
+	a = v[2];
+	EXPECT_EQ(5, a);
+	v[2] += 4;
+	EXPECT_EQ(9, p[2]);
 }
 
 TEST(Vec, can_create_copied_vector)
@@ -63,18 +84,63 @@ TEST(Vec, copied_vector_has_its_own_memory)
 	EXPECT_NE(v, w);
 }
 
-TEST(Vec, can_access_to_its_memory_via_squre_brackets)
+TEST(Vec, can_create_vector_with_T_pointer)
 {
-	Vec<int> v(5);
-	int* p = v.GetData();
-	int a = 0;
-	v.SetSize(5);
-	v[2] = 5;
-	EXPECT_EQ(5, p[2]);
-	a = v[2];
-	EXPECT_EQ(5, a);
-	v[2] += 4;
-	EXPECT_EQ(9, p[2]);
+	int sz = 10;
+	int* arr = new int[sz];
+	ASSERT_NO_THROW(Vec<int> v(arr, sz));
+	delete[] arr;
+	sz = 80;
+	arr = new int[sz];
+	ASSERT_NO_THROW(Vec<int> w(arr, sz));
+	delete[] arr;
+}
+
+TEST(Vec, elements_of_vector_created_with_T_point_are_equal_to_el_from_array)
+{
+	int sz = 10, offset = 0, scale = 1;
+	int* arr = new int[sz];
+	Vec<int> w, u(80 * 3 / 2);
+	w.SetSize(sz);
+	u.SetSize(80);
+	for (size_t i = 0; i < sz; i++)
+	{
+		arr[i] = (offset + i * scale);
+		w[i] = (offset + i * scale);
+	}
+	Vec<int> v(arr, sz);
+	EXPECT_EQ(w, v);
+	delete[] arr;
+	sz = 80;
+	arr = new int[sz];
+	for (size_t i = 0; i < sz; i++)
+	{
+		arr[i] = (offset + i * scale);
+		u[i] = (offset + i * scale);
+	}
+	Vec<int> t(arr, sz);
+	EXPECT_EQ(u, t);
+}
+
+TEST(Vec, vector_created_with_T_pointer_has_its_own_memory)
+{
+	int sz = 10, offset = 0, scale = 1;
+	int* arr = new int[sz];
+	Vec<int> w(sz), t(sz);
+	for (size_t i = 0; i < sz; i++)
+	{
+		arr[i] = (offset + i * scale);
+		w[i] = (offset + i * scale);
+	}
+	Vec<int> v(arr, sz);
+	offset = 1, scale = 2;
+	for (size_t i = 0; i < sz; i++)
+		v[i] = (offset + i * scale);
+	for (size_t i = 0; i < sz; i++)
+		t[i] = arr[i];
+	EXPECT_EQ(w, t);
+	EXPECT_NE(w, v);
+	delete[] arr;
 }
 
 TEST(Vec, can_determine_if_its_empty_or_full)
@@ -229,47 +295,6 @@ TEST(Vec, clearing_itself_changes_size)
 	v.clear();
 	EXPECT_EQ(0, v.GetSize());
 }
-
-/*TEST(Vec, can_create_vector_with_T_pointer)
-{
-	int sz = 10;
-	int arr[10] = { 0,1,2,3,4,5,6,7,8,9 };
-	ASSERT_NO_THROW(Vec<int> v(arr, sz));
-}
-
-TEST(Vec, elements_of_vector_created_with_T_point_are_equal_to_el_from_array)
-{
-	int sz = 64, offset = 0, scale = 1;
-	int arr[10] = { 0,1,2,3,4,5,6,7,8,9 };
-	Vec<int> w(sz);
-	for (size_t i = 0; i < sz; i++)
-	{
-		w[i] = (offset + i * scale);
-	}
-	Vec<int> v(arr, 10);
-	EXPECT_EQ(w, v);
-}
-
-TEST(Vec, vector_created_with_T_pointer_has_its_own_memory)
-{
-	int sz = 10, offset = 0, scale = 1;
-	int* arr = new int[sz];
-	Vec<int> w(sz), t(sz);
-	for (size_t i = 0; i < sz; i++)
-	{
-		arr[i] = (offset + i * scale);
-		w[i] = (offset + i * scale);
-	}
-	Vec<int> v(arr, sz);
-	offset = 1, scale = 2;
-	for (size_t i = 0; i < sz; i++)
-		v[i] = (offset + i * scale);
-	for (size_t i = 0; i < sz; i++)
-		t[i] = arr[i];
-	EXPECT_EQ(w, t);
-	EXPECT_NE(w, v);
-	delete[] arr;
-}*/
 
 /*TEST(Vec, can_move_vectors)
 {

@@ -1,7 +1,12 @@
 #pragma once
 #include "lexem.h"
+#include "cmath"
+
 char const* operation::lst[] = {"(", ")", "+", "-", "*", "/", "^", "-", "abs", "log", "sin", "asin", "sinh", "asinh", "cos", "acos", "cosh", "acosh", "tan", "atan", "tanh", "atanh"};
 size_t const operation::lst_size = 22;
+Vec<double> variable::_Val;
+Vec <string> variable::_Name;
+
 
 operation::operation()
 {
@@ -13,7 +18,7 @@ operation::operation(short int const _id)
 {
 	id = _id;
 	if (id < 0 || id >= 22)
-		throw std::exception("Wrong operation ID");
+		throw exception("Wrong operation ID");
 	SetPriority();
 	SetArity();
 }
@@ -23,7 +28,7 @@ operation::operation(operation const& A)
 	priority = A.priority;
 	arity = A.arity;
 }
-size_t operation::StmtId(std::string const& s)
+size_t operation::StmtId(string const& s)
 {
 	size_t _id = -1, i = 0;
 	for (; (i < lst_size) && (_id == -1); i++)
@@ -35,9 +40,9 @@ short int operation::GetId() noexcept
 {
 	return id;
 }
-std::string operation::GetName()
+string const& operation::GetName()
 {
-	std::string _name;
+	string _name;
 	if (id == -1)
 		throw std::runtime_error("No string assigned to operation");
 	_name = operation::lst[id];
@@ -73,7 +78,77 @@ short int operation::GetArity() noexcept
 {
 	return arity;
 }
+ostream& operation::Print()
+{
+	ostringstream osstr;
+	osstr << GetName();
+	return osstr;
+}
 
 constant::constant() : val(0.0) {}
 constant::constant(double const d) : val(d) {}
 constant::constant(constant const& C) : val(C.val) {}
+ostream& constant::Print()
+{
+	ostringstream osstr;
+	osstr << GetVal();
+	return osstr;
+}
+
+void variable::primeInit()
+{
+	if (_Name.Is_Empty())
+	{
+		_Name.push_back("pi");
+		_Name.push_back("e");
+		_Val.push_back(asin(1.0));
+		_Val.push_back(exp(1.0));
+	}
+	return;
+}
+void variable::AddVar(string const& s)
+{
+	_Name.push_back(s);
+	_Val.push_back(0.0);
+	id = _Name.GetSize() - 1;
+}
+variable::variable() : id(-1)
+{
+	primeInit();
+}
+variable::variable(string const& s) : id(-1)
+{
+	primeInit();
+	if (_Name.GetSize() == 1024)
+		throw overflow_error("Maximum of variables is reached");
+	if (s.length()>16)
+		throw length_error("Too long variable name");
+	size_t sz = _Name.GetSize();
+	for (size_t i = 0; i < sz && id == -1; i++)
+		if (s == _Name[i])
+			id = i;
+	if (id == -1)
+		AddVar(s);
+}
+variable::variable(variable const& V) : id(V.id) {}
+double variable::GetVal()
+{
+	return _Val[id];
+}
+string const& variable::GetName()
+{
+	if (id == -1)
+		throw std::runtime_error("No string assigned to variable");
+	return _Name[id];
+}
+void variable::Init(short int _id, double val)
+{
+	_Val[_id] = val;
+	return;
+}
+ostream& variable::Print()
+{
+	ostringstream osstr;
+	osstr << GetName();
+	return osstr;
+}
