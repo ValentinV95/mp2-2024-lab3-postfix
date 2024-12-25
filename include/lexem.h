@@ -41,15 +41,33 @@ public:
 class operand : public lexem
 {
 public:
+	virtual bool IsConst() = 0;
 	inline bool IsStmt() noexcept override final { return false; };
 };
 
-/*class constant : public operand
+class constant : public operand
 {
 private:
 	double val;
 	short int GetId() override { return 0; };
 	std::string GetName() override { return "\0"; };
+	void SetVal() override {};
 public:
 	using operand::IsStmt;
+	inline bool IsConst() noexcept override { return true; };
+	constant();
+	constant(double const d);
+	constant(constant const& C);
+	~constant() = default;
+	double GetVal() { return val; };
+};
+
+/*class variable : public operand
+{
+private:
+	short int id;
+	static Vec<double> _Val;
+	static Vec <double> _Name;
+public:
+
 };*/

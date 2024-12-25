@@ -60,8 +60,9 @@ public:
 	void SetSize(size_t _sz)	//Только для тестов
 	{
 		if (_sz > cap)
-			throw("Can not set size because it's biggen than current capacity");
+			throw("Can not set size because it's bigger than current capacity");
 		sz = _sz;
+		return;
 	};
 
 	size_t GetCapacity() noexcept
@@ -103,6 +104,11 @@ public:
 	};
 
 	T& operator [](size_t ind) noexcept		// Только для тестов
+	{
+		return pMem[ind];
+	}
+
+	const T& operator [](size_t ind) const noexcept		// Только для тестов
 	{
 		return pMem[ind];
 	}

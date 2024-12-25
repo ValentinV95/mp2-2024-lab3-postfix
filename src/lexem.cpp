@@ -73,3 +73,7 @@ short int operation::GetArity() noexcept
 {
 	return arity;
 }
+
+constant::constant() : val(0.0) {}
+constant::constant(double const d) : val(d) {}
+constant::constant(constant const& C) : val(C.val) {}
