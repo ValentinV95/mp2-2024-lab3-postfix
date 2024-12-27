@@ -1,44 +1,49 @@
-// тесты для вычисления арифметических выражений
-
-#include <gtest.h>
+#include "gtest.h"
 #include "Arithmetik.h"
 
-class ArithmetikTest : public ::testing::Test {
-protected:
-    Arithmetik arithmetik;
+// Тесты на правильность вычисления
+TEST(ArithmetikTest, CalculateTest1) {
+    Arithmetik arith("(2 + 3) * 4");
+    
+    double result = arith.calculate();
+    EXPECT_EQ(result, (2 + 3) * 4); 
+}
+TEST(ArithmetikTest, CalculateTest2) {
+    Arithmetik arith("2 + 3 - 4");
 
-    void SetUp() override {
+    double result = arith.calculate();
+    EXPECT_EQ(result, 2 + 3 - 4);
+}
+TEST(ArithmetikTest, CalculateTest3) {
+    Arithmetik arith("2 + 3 * 4");
 
-    }
-};
+    double result = arith.calculate();
+    EXPECT_EQ(result, 2 + 3 * 4);
+}
+TEST(ArithmetikTest, CalculateTest4) {
+    Arithmetik arith("2 * 4* 6 * 8 * 9 * 1");
 
-TEST_F(ArithmetikTest, TestAddition) {
-    arithmetik.setVar(0, 5);
-    arithmetik.setVar(1, 3);
-    arithmetik.calculate();
-    EXPECT_DOUBLE_EQ(arithmetik.calculate(), 8);
+    double result = arith.calculate();
+    EXPECT_EQ(result, 2 * 4 * 6 * 8 * 9 * 1);
+}
+TEST(ArithmetikTest, CalculateTest5) {
+    Arithmetik arith("2 - 3 * 4");
+
+    double result = arith.calculate();
+    EXPECT_EQ(result, 2 - 3 * 4);
+}
+TEST(ArithmetikTest, CalculateTest6) {
+    Arithmetik arith("2 * 3  *(0-4)");
+
+    double result = arith.calculate();
+    EXPECT_EQ(result, 2 * 3 *(0-4));
 }
 
-TEST_F(ArithmetikTest, TestSubtraction) {
-    arithmetik.setVar(0, 10);
-    arithmetik.setVar(1, 4);
-    EXPECT_DOUBLE_EQ(arithmetik.calculate(), 6);
-}
+// Тест на деление на ноль
+TEST(ArithmetikTest, DivisionByZero) {
+    Arithmetik arith("a / b");  // Пример деления
+    arith.setVar(0, 5);
+    arith.setVar(1, 0);  // Установим b равным нулю
 
-TEST_F(ArithmetikTest, TestMultiplication) {
-    arithmetik.setVar(0, 7);
-    arithmetik.setVar(1, 6);
-    EXPECT_DOUBLE_EQ(arithmetik.calculate(), 42);
-}
-
-TEST_F(ArithmetikTest, TestDivision) {
-    arithmetik.setVar(0, 8);
-    arithmetik.setVar(1, 2);
-    EXPECT_DOUBLE_EQ(arithmetik.calculate(), 4);
-}
-
-TEST_F(ArithmetikTest, TestPower) {
-    arithmetik.setVar(0, 2);
-    arithmetik.setVar(1, 3);
-    EXPECT_DOUBLE_EQ(arithmetik.calculate(), 8);
+    EXPECT_ANY_THROW(arith.calculate());  // Ожидаем исключение при делении на ноль
 }
