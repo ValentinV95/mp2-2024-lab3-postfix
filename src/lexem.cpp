@@ -36,11 +36,11 @@ size_t operation::StmtId(string const& s)
 			_id = i;
 	return _id;
 }
-short int operation::GetId() noexcept
+short int operation::GetId() const noexcept
 {
 	return id;
 }
-string operation::GetName()
+string operation::GetName() const
 {
 	string _name;
 	if (id == -1)
@@ -61,7 +61,7 @@ void operation::SetPriority()
 		priority = 4;
 	return;
 }
-short int operation::GetPriority() noexcept
+short int operation::GetPriority() const noexcept
 {
 	return priority;
 }
@@ -74,26 +74,32 @@ void operation::SetArity()
 		arity = 1;
 	return;
 }
-short int operation::GetArity() noexcept
+short int operation::GetArity() const noexcept
 {
 	return arity;
 }
-ostream& operation::Print()
+ostream& operation::PrintS(ostream& ostr) const
 {
-	ostringstream osstr;
-	osstr << GetName();
-	return osstr;
+	ostr << GetName();
+	return ostr;
 }
+
+
+
+
 
 constant::constant() : val(0.0) {}
 constant::constant(double const d) : val(d) {}
 constant::constant(constant const& C) : val(C.val) {}
-ostream& constant::Print()
+ostream& constant::PrintS(ostream& ostr) const
 {
-	ostringstream osstr;
-	osstr << GetVal();
-	return osstr;
+	ostr << GetVal();
+	return ostr;
 }
+
+
+
+
 
 void variable::primeInit()
 {
@@ -119,23 +125,25 @@ variable::variable() : id(-1)
 variable::variable(string const& s) : id(-1)
 {
 	primeInit();
-	if (_Name.GetSize() == 1024)
+	if (_Name.GetSize() == 1026)
 		throw overflow_error("Maximum of variables is reached");
 	if (s.length()>16)
 		throw length_error("Too long variable name");
 	size_t sz = _Name.GetSize();
 	for (size_t i = 0; i < sz && id == -1; i++)
+	{
 		if (s == _Name[i])
 			id = i;
+	}
 	if (id == -1)
 		AddVar(s);
 }
 variable::variable(variable const& V) : id(V.id) {}
-double variable::GetVal()
+double variable::GetVal() const noexcept
 {
 	return _Val[id];
 }
-string variable::GetName()
+string const& variable::GetName() const
 {
 	if (id == -1)
 		throw std::runtime_error("No string assigned to variable");
@@ -146,9 +154,8 @@ void variable::Init(short int _id, double val)
 	_Val[_id] = val;
 	return;
 }
-ostream& variable::Print()
+ostream& variable::PrintS(ostream& ostr) const
 {
-	ostringstream osstr;
-	osstr << GetName();
-	return osstr;
+	ostr << GetName();
+	return ostr;
 }

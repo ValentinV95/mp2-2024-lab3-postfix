@@ -1,14 +1,17 @@
 #pragma once
 #include <iostream>
 #include <sstream>
-#include <stdexcept>
 #include "datavec.h"
 
 class lexem
 {
 public:
-	virtual bool IsStmt() = 0;
-	virtual ostream& Print() = 0;
+	virtual bool IsStmt() const = 0;
+	virtual ostream& PrintS(ostream& ostr) const = 0;
+	friend ostream& operator<<(ostream& ostr, lexem const& A)
+	{
+		return A.PrintS(ostr);
+	}
 };
 
 class operation : public lexem
@@ -26,21 +29,29 @@ public:
 	operation(short int const _id);
 	operation(operation const& A);
 	~operation() = default;
-	inline bool IsStmt() noexcept override { return true; };
-	short int GetId() noexcept;
-	string GetName();
+	inline bool IsStmt() const noexcept override { return true; };
+	short int GetId() const noexcept;
+	string GetName() const;
 	static size_t StmtId(string const& s);
-	short int GetPriority() noexcept;
-	short int GetArity() noexcept;
-	ostream& Print() override;
+	short int GetPriority() const noexcept;
+	short int GetArity() const noexcept;
+	ostream& PrintS(ostream& ostr) const override;
+	friend ostream& operator<<(ostream& ostr, operation const& A)
+	{
+		return A.PrintS(ostr);
+	};
 };
 
 class operand : public lexem
 {
 public:
-	virtual bool IsConst() = 0;
-	virtual double GetVal() = 0;
-	inline bool IsStmt() noexcept override final { return false; };
+	virtual bool IsConst() const = 0;
+	virtual double GetVal() const noexcept = 0;
+	inline bool IsStmt() const noexcept override final { return false; };
+	friend ostream& operator<<(ostream& ostr, operand const& A)
+	{
+		return A.PrintS(ostr);
+	}
 };
 
 class constant : public operand
@@ -49,13 +60,18 @@ private:
 	double val;
 public:
 	using operand::IsStmt;
-	inline bool IsConst() noexcept override { return true; };
+	inline bool IsConst() const noexcept override { return true; };
 	constant();
 	constant(double const d);
 	constant(constant const& C);
 	~constant() = default;
-	double GetVal() noexcept override { return val; };
-	ostream& Print();
+	double GetVal() const noexcept override { return val; };
+	ostream& PrintS(ostream& ostr) const override;
+	friend ostream& operator<<(ostream& ostr, constant const& A)
+	{
+		return A.PrintS(ostr);
+	}
+
 };
 
 class variable : public operand
@@ -68,13 +84,19 @@ private:
 	void primeInit();
 public:
 	using operand::IsStmt;
-	inline bool IsConst() noexcept override { return false; };
+	inline bool IsConst() const noexcept override { return false; };
 	variable();
 	variable(string const& s);
 	variable(variable const& Var);
 	short int GetId() noexcept { return id; };
-	double GetVal() override;
-	string GetName();
+	double GetVal() const noexcept override;
+	string const& GetName() const;
 	static void Init(short int id, double val);
-	ostream& Print();
+	ostream& PrintS(ostream& ostr) const override;
+	friend ostream& operator<<(ostream& ostr, variable const& A)
+	{
+		return A.PrintS(ostr);
+	}
+	static Vec<double>& const GetValVec() { return _Val; }		//  For tests only
+	static Vec<string>& const GetNameVec() { return _Name; }		//  For tests only
 };
