@@ -10,4 +10,6 @@ private:
 public:
 	AnaliticExpression();
 	AnaliticExpression(string const& s);
+	ostream& PrintInfix(ostream& ostr) const;
+	ostream& PrintPostfix(ostream& ostr) const;
 };

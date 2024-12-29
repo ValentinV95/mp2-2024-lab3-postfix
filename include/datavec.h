@@ -61,12 +61,12 @@ public:
 	}
 
 
-	T* GetData() noexcept
+	T* GetData() const noexcept
 	{
 		return pMem;
 	}
 
-	size_t GetSize() noexcept
+	size_t GetSize() const noexcept
 	{
 		return sz;
 	}
@@ -79,7 +79,7 @@ public:
 		return;
 	}
 
-	size_t GetCapacity() noexcept
+	size_t GetCapacity() const noexcept
 	{
 		return cap;
 	}
@@ -127,12 +127,12 @@ public:
 		return pMem[ind];
 	}
 
-	bool Is_Full() noexcept
+	bool Is_Full() const noexcept
 	{
 		return (sz == cap);
 	}
 
-	bool Is_Empty() noexcept
+	bool Is_Empty() const noexcept
 	{
 		return (sz == 0);
 	}
@@ -156,7 +156,7 @@ public:
 		return;
 	}
 
-	T Top()
+	T Top() const
 	{
 		if (sz == 0)
 			throw underflow_error("Trying to take element from empty vector");

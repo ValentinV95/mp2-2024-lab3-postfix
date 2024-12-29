@@ -20,17 +20,17 @@ public:
 	MyStack(MyStack const& stack_) = delete;
 	~MyStack() = default;
 
-	bool Is_Empty()
+	bool Is_Empty() const
 	{
 		return data.Is_Empty();
 	};
 
-	bool Is_Full()
+	bool Is_Full() const
 	{
 		return data.Is_Full();
 	};
 
-	size_t GetSize()
+	size_t GetSize() const
 	{
 		return data.GetSize();
 	};
@@ -46,7 +46,7 @@ public:
 		return;
 	};
 
-	T const& Top()
+	T const& Top() const
 	{
 		return data.Top();
 	};
