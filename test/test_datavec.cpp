@@ -56,6 +56,7 @@ TEST(Vec, copied_vector_is_equal_to_source_one)
 {
 	Vec<int> v(20);
 	int offset = 0, scale = 1;
+	v.SetSize(10);
 	for (size_t i = 0; i < 10; i++)
 	{
 		v[i] = (offset + i * scale);
@@ -75,7 +76,6 @@ TEST(Vec, copied_vector_has_its_own_memory)
 		t[i] = (0);
 	}
 	Vec<int> w(v);
-	w.SetSize(64);
 	for (size_t i = 0; i < 64; i++)
 	{
 		w[i] = 1;
@@ -127,6 +127,8 @@ TEST(Vec, vector_created_with_T_pointer_has_its_own_memory)
 	int sz = 10, offset = 0, scale = 1;
 	int* arr = new int[sz];
 	Vec<int> w(sz), t(sz);
+	w.SetSize(10);
+	t.SetSize(10);
 	for (size_t i = 0; i < sz; i++)
 	{
 		arr[i] = (offset + i * scale);
@@ -269,6 +271,12 @@ TEST(Vec, popping_changes_vector_size)
 	}
 	v.pop_back();
 	EXPECT_EQ(4, v.GetSize());
+}
+
+TEST(Vec, popping_from_empty_vector_throws)
+{
+	Vec<int> v(10);
+	ASSERT_ANY_THROW(v.pop_back());
 }
 
 TEST(Vec, can_clear_itself)

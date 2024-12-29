@@ -278,7 +278,7 @@ TEST(variable, has_pi_and_e_constants_upon_creation)
 	EXPECT_EQ(2, variable::GetNameVec().GetSize());
 	variable B("pi");
 	EXPECT_EQ(2, variable::GetNameVec().GetSize());
-	EXPECT_DOUBLE_EQ(asin(1.0), B.GetVal());
+	EXPECT_DOUBLE_EQ(acos(-1.0), B.GetVal());
 	variable C("e");
 	EXPECT_EQ(2, variable::GetNameVec().GetSize());
 	EXPECT_DOUBLE_EQ(exp(1.0), C.GetVal());

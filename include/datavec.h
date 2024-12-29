@@ -71,7 +71,7 @@ public:
 		return sz;
 	};
 
-	void SetSize(size_t _sz)	//Только для тестов
+	void SetSize(size_t _sz)	//  For tests only
 	{
 		if (_sz > cap)
 			throw("Can not set size because it's bigger than current capacity");
@@ -107,12 +107,12 @@ public:
 		return *this;
 	};*/
 
-	bool operator==(const Vec<T>& v) const	// Только для тестов
+	bool operator==(const Vec<T>& v) const	// For tests only
 	{
 		return (cap == v.cap && sz == v.sz && equal(pMem, pMem + sz, v.pMem));
 	};
 
-	bool operator!=(const Vec<T>& v) const	// Только для тестов
+	bool operator!=(const Vec<T>& v) const	// For tests only
 	{
 		return !(*this == v);
 	};
@@ -139,14 +139,14 @@ public:
 
 	void push_back(T const& val)
 	{
-		if (this->Is_Full())
+		if (sz == cap)
 		{
 			if (cap == Vec_Max_Capacity)
 				throw overflow_error("Eventually ran out of memory");
 			size_t neu_cap = cap * 3 / 2;
 			if (neu_cap > Vec_Max_Capacity)
 				neu_cap = Vec_Max_Capacity;
-			T* tmp = new T[neu_cap]();
+			T* tmp = new T[neu_cap];
 			copy(pMem, pMem + sz, tmp);
 			swap(tmp, pMem);
 			delete[] tmp;
@@ -158,13 +158,15 @@ public:
 
 	T Top()
 	{
-		if (Is_Empty())
+		if (sz == 0)
 			throw underflow_error("Trying to take element from empty vector");
 		return pMem[sz - 1];
 	};
 
-	void pop_back() noexcept
+	void pop_back()
 	{
+		if (sz == 0)
+			throw underflow_error("Trying to pop from empty vector");
 		sz--;
 		return;
 	};

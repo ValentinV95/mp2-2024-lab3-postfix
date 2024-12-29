@@ -107,7 +107,7 @@ void variable::primeInit()
 	{
 		_Name.push_back("pi");
 		_Name.push_back("e");
-		_Val.push_back(asin(1.0));
+		_Val.push_back(acos(-1.0));
 		_Val.push_back(exp(1.0));
 	}
 	return;
@@ -118,7 +118,7 @@ void variable::AddVar(string const& s)
 	_Val.push_back(0.0);
 	id = _Name.GetSize() - 1;
 }
-variable::variable() : id(-1)
+variable::variable() : id(0)
 {
 	primeInit();
 }
@@ -143,10 +143,8 @@ double variable::GetVal() const noexcept
 {
 	return _Val[id];
 }
-string const& variable::GetName() const
+string const& variable::GetName() const noexcept
 {
-	if (id == -1)
-		throw std::runtime_error("No string assigned to variable");
 	return _Name[id];
 }
 void variable::Init(short int _id, double val)

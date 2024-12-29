@@ -90,7 +90,7 @@ public:
 	variable(variable const& Var);
 	short int GetId() noexcept { return id; };
 	double GetVal() const noexcept override;
-	string const& GetName() const;
+	string const& GetName() const noexcept;
 	static void Init(short int id, double val);
 	ostream& PrintS(ostream& ostr) const override;
 	friend ostream& operator<<(ostream& ostr, variable const& A)
