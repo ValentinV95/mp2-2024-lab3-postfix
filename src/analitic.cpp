@@ -10,7 +10,7 @@ AnaliticExpression::AnaliticExpression() : postfix(1)
 AnaliticExpression::AnaliticExpression(string const& s)
 {
 	infix = PreParse(s);
-	//ToPostfix();
+	ToPostfix();
 }
 
 void AnaliticExpression::ToPostfix()
