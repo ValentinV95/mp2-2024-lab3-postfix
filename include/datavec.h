@@ -11,7 +11,6 @@ private:
 	T* pMem;
 	size_t cap, sz;
 	static size_t const Vec_Max_Capacity{ (1ull << 32) / sizeof(T) - 1 };
-	//static const default_capacity
 public:
 	Vec(size_t const& capacity = 64) : cap(capacity), sz(0)
 	{
@@ -20,13 +19,13 @@ public:
 		if (cap > Vec_Max_Capacity)
 			throw overflow_error("Too many elements");
 		pMem = new T[cap]();
-	};
+	}
 
 	Vec(Vec<T> const& v) : cap(v.cap), sz(v.sz)
 	{
 		pMem = new T[cap]();
 		copy(v.pMem, v.pMem + sz, pMem);
-	};
+	}
 
 	Vec(T* arr, size_t _sz) : sz(_sz), cap(64)
 	{
@@ -42,34 +41,35 @@ public:
 		copy(arr, arr + sz, pMem);
 	}
 
-	/*Vec(Vec<T>&& v) : cap(64), sz(0), pMem(nullptr) noexcept
+	Vec(Vec<T>&& v) noexcept : cap(64), sz(0), pMem(nullptr)
 	{
 		swap(*this, v);
-	};
-		friend void swap(Vec<T>& lhs, Vec<T>& rhs) noexcept
+	}
+
+	friend void swap(Vec<T>& lhs, Vec<T>& rhs) noexcept
 	{
-		swap(lhs.sz, rhs.sz);
+	swap(lhs.sz, rhs.sz);
 		swap(lhs.cap, rhs.cap);
 		swap(lhs.pMem, rhs.pMem);
 		return;
-	};*/
+	}
 
 	~Vec()
 	{
 		delete[] pMem;
 		pMem = nullptr;
-	};
+	}
 
 
 	T* GetData() noexcept
 	{
 		return pMem;
-	};
+	}
 
 	size_t GetSize() noexcept
 	{
 		return sz;
-	};
+	}
 
 	void SetSize(size_t _sz)	//  For tests only
 	{
@@ -77,14 +77,14 @@ public:
 			throw("Can not set size because it's bigger than current capacity");
 		sz = _sz;
 		return;
-	};
+	}
 
 	size_t GetCapacity() noexcept
 	{
 		return cap;
-	};
+	}
 
-	/*Vec<T>& operator = (Vec<T> const& v)
+	Vec<T>& operator = (Vec<T> const& v)
 	{
 		if (this != &v)
 		{
@@ -99,23 +99,23 @@ public:
 			copy(v.pMem, v.pMem + sz, pMem);
 		}
 		return *this;
-	};
+	}
 
 	Vec<T>& operator = (Vec<T>&& v) noexcept
 	{
 		swap(*this, v);
 		return *this;
-	};*/
+	}
 
 	bool operator==(const Vec<T>& v) const	// For tests only
 	{
 		return (cap == v.cap && sz == v.sz && equal(pMem, pMem + sz, v.pMem));
-	};
+	}
 
 	bool operator!=(const Vec<T>& v) const	// For tests only
 	{
 		return !(*this == v);
-	};
+	}
 
 	T& operator [](size_t ind) noexcept
 	{
@@ -130,12 +130,12 @@ public:
 	bool Is_Full() noexcept
 	{
 		return (sz == cap);
-	};
+	}
 
 	bool Is_Empty() noexcept
 	{
 		return (sz == 0);
-	};
+	}
 
 	void push_back(T const& val)
 	{
@@ -154,14 +154,14 @@ public:
 		}
 		pMem[sz++] = val;
 		return;
-	};
+	}
 
 	T Top()
 	{
 		if (sz == 0)
 			throw underflow_error("Trying to take element from empty vector");
 		return pMem[sz - 1];
-	};
+	}
 
 	void pop_back()
 	{
@@ -169,7 +169,7 @@ public:
 			throw underflow_error("Trying to pop from empty vector");
 		sz--;
 		return;
-	};
+	}
 
 	void clear()
 	{
@@ -179,5 +179,5 @@ public:
 		sz = 0;
 		cap = 64;
 		return;
-	};
+	}
 };

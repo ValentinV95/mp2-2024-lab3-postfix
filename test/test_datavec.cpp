@@ -69,7 +69,8 @@ TEST(Vec, copied_vector_has_its_own_memory)
 {
 	Vec<int> v(64), t(64);
 	int offset = 0, scale = 1;
-	v.SetSize(64), t.SetSize(64);
+	v.SetSize(64);
+	t.SetSize(64);
 	for (size_t i = 0; i < 64; i++)
 	{
 		v[i] = (0);
@@ -82,6 +83,59 @@ TEST(Vec, copied_vector_has_its_own_memory)
 	}
 	EXPECT_EQ(t, v);
 	EXPECT_NE(v, w);
+}
+
+TEST(Vec, can_be_assigned)
+{
+	Vec<int> v(64), t(32);
+	v.SetSize(64);
+	t.SetSize(32);
+	for (size_t i = 0; i < 64; i++)
+		v[i] = i;
+	ASSERT_NO_THROW(t = v);
+}
+
+TEST(Vec, assigned_vec_equals_to_its_source)
+{
+	Vec<int> v(64), t(32);
+	v.SetSize(64);
+	t.SetSize(32);
+	for (size_t i = 0; i < 64; i++)
+		v[i] = i;
+	t = v;
+	EXPECT_EQ(t, v);
+}
+
+TEST(Vec, assigned_vec_has_its_own_memory)
+{
+	Vec<int> v(64), w(64), t(32);
+	v.SetSize(64);
+	w.SetSize(64);
+	t.SetSize(32);
+	for (size_t i = 0; i < 64; i++)
+	{
+		v[i] = i;
+		w[i] = i;
+	}
+	t = v;
+	for (size_t i = 0; i < 64; i++)
+		v[i] = 5;
+	EXPECT_EQ(t, w);
+	EXPECT_NE(t, v);
+}
+
+TEST(Vec, can_be_assigned_to_itself)
+{
+	Vec<int> v(64), w(64);
+	v.SetSize(64);
+	w.SetSize(64);
+	for (size_t i = 0; i < 64; i++)
+	{
+		v[i] = i;
+		w[i] = i;
+	}
+	ASSERT_NO_THROW(v = v);
+	EXPECT_EQ(v, w);
 }
 
 TEST(Vec, can_create_vector_with_T_pointer)
@@ -295,7 +349,7 @@ TEST(Vec, clearing_itself_changes_size)
 {
 	Vec<int> v(10);
 	v.SetSize(5);
-	int offset = 0, scale = 1, a;
+	int offset = 0, scale = 1;
 	for (size_t i = 0; i < 5; i++)
 	{
 		v[i] = (offset + i * scale);
@@ -304,46 +358,56 @@ TEST(Vec, clearing_itself_changes_size)
 	EXPECT_EQ(0, v.GetSize());
 }
 
-/*TEST(Vec, can_move_vectors)
+TEST(Vec, can_be_moved)
 {
-	Vec<int> w(10), t(10);
-	int sz = w.size();
-	for (size_t i = 0; i < sz; i++)
+	Vec<int> v(10);
+	v.SetSize(10);
+	int offset = 0, scale = 1;
+	for (size_t i = 0; i < 10; i++)
 	{
-		w[i] = -1 + i;
-		t[i] = 2 + 3 * i;
+		v[i] = (offset + i * scale);
 	}
-	ASSERT_NO_THROW(Vec<int> v(t - w));
+	ASSERT_NO_THROW(Vec<int> t(std::move(v)));
 }
 
-TEST(Vec, moved_vector_is_equal_to_source_one)
+TEST(Vec, moved_vec_equals_to_its_source)
 {
-	Vec<int> w(10), t(10), s(10);
-	int sz = w.size();
-	for (size_t i = 0; i < sz; i++)
+	Vec<int> v(10), w(10);
+	v.SetSize(10);
+	w.SetSize(10);
+	int offset = 0, scale = 1;
+	for (size_t i = 0; i < 10; i++)
 	{
-		w[i] = -1 + i;
-		t[i] = 2 + 3 * i;
-		s[i] = 3 + 2 * i;
+		v[i] = (offset + i * scale);
+		w[i] = (offset + i * scale);
 	}
-	Vec<int> v(t - w);
-	EXPECT_EQ(s, v);
+	Vec<int> t(std::move(v));
+	EXPECT_EQ(t, w);
 }
 
-TEST(Vec, assigned_moved_vector_is_equal_to_source_one)
+TEST(Vec, can_be_assigned_moved)
 {
-	Vec<int> v(10), w(10), t(10), s(10), r(10);
-	int sz = v.size();
-	for (size_t i = 0; i < sz; i++)
+	Vec<int> v(10), t(10);
+	v.SetSize(10), t.SetSize(10);
+	int offset = 0, scale = 1;
+	for (size_t i = 0; i < 10; i++)
 	{
-		w[i] = -1 + i;
-		t[i] = 2 + 3 * i;
-		s[i] = 3 + 2 * i;
-		r[i] = 1 - i;;
+		v[i] = (offset + i * scale);
 	}
-	ASSERT_NO_THROW(v = t - w);
-	EXPECT_EQ(s, v);
-	ASSERT_NO_THROW(r += s - 5);
-	EXPECT_EQ(w, r);
-}*/
+	ASSERT_NO_THROW(t = std::move(v));
+}
 
+TEST(Vec, assigned_moved_vec_equals_to_its_source)
+{
+	Vec<int> v(10), w(10), t;
+	v.SetSize(10);
+	w.SetSize(10);
+	int offset = 0, scale = 1;
+	for (size_t i = 0; i < 10; i++)
+	{
+		v[i] = (offset + i * scale);
+		w[i] = (offset + i * scale);
+	}
+	t = std::move(v);
+	EXPECT_EQ(t, w);
+}
