@@ -46,7 +46,7 @@ public:
 		return;
 	};
 
-	T const& Top() const
+	T Top() const
 	{
 		return data.Top();
 	};

@@ -82,10 +82,12 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\analitic.cpp" />
     <ClCompile Include="..\..\..\src\lexem.cpp" />
+    <ClCompile Include="..\..\..\src\parsers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\analitic.h" />
     <ClInclude Include="..\..\..\include\datavec.h" />
+    <ClInclude Include="..\..\..\include\expr_err.h" />
     <ClInclude Include="..\..\..\include\lexem.h" />
     <ClInclude Include="..\..\..\include\parsers.h" />
     <ClInclude Include="..\..\..\include\stack.h" />
