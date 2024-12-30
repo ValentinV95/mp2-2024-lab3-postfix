@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <sstream>
-#include "datavec.h"
+#include "stack.h"
 
 class lexem
 {
@@ -24,6 +24,7 @@ private:
 	short int arity;
 	void SetPriority();
 	void SetArity();
+	ostream& PrintS(ostream& ostr) const override;
 public:
 	operation();
 	operation(short int const _id);
@@ -35,18 +36,14 @@ public:
 	static size_t StmtId(string const& s);
 	short int GetPriority() const noexcept;
 	short int GetArity() const noexcept;
-	ostream& PrintS(ostream& ostr) const override;
-	friend ostream& operator<<(ostream& ostr, operation const& A)
-	{
-		return A.PrintS(ostr);
-	};
+	friend ostream& operator<<(ostream& ostr, operation const& A) { return A.PrintS(ostr); };
 };
 
 class operand : public lexem
 {
 public:
 	virtual bool IsConst() const = 0;
-	virtual double GetVal() const noexcept = 0;
+	virtual double GetVal() const = 0;
 	inline bool IsStmt() const noexcept override final { return false; };
 	friend ostream& operator<<(ostream& ostr, operand const& A)
 	{
@@ -58,6 +55,7 @@ class constant : public operand
 {
 private:
 	double val;
+	ostream& PrintS(ostream& ostr) const override;
 public:
 	using operand::IsStmt;
 	inline bool IsConst() const noexcept override { return true; };
@@ -66,7 +64,6 @@ public:
 	constant(constant const& C);
 	~constant() = default;
 	double GetVal() const noexcept override { return val; };
-	ostream& PrintS(ostream& ostr) const override;
 	friend ostream& operator<<(ostream& ostr, constant const& A)
 	{
 		return A.PrintS(ostr);
@@ -82,6 +79,7 @@ private:
 	static Vec <string> _Name;
 	void AddVar(string const& s);
 	void primeInit();
+	ostream& PrintS(ostream& ostr) const override;
 public:
 	using operand::IsStmt;
 	inline bool IsConst() const noexcept override { return false; };
@@ -89,10 +87,9 @@ public:
 	variable(string const& s);
 	variable(variable const& Var);
 	short int GetId() noexcept { return id; };
-	double GetVal() const noexcept override;
-	string const& GetName() const noexcept;
+	double GetVal() const override;
+	string const& GetName() const;
 	static void Init(short int id, double val);
-	ostream& PrintS(ostream& ostr) const override;
 	friend ostream& operator<<(ostream& ostr, variable const& A)
 	{
 		return A.PrintS(ostr);

@@ -2,8 +2,8 @@
 #include "lexem.h"
 #include "cmath"
 
-char const* operation::lst[] = {"(", ")", "+", "-", "*", "/", "^", "-", "abs", "log", "sin", "asin", "sinh", "asinh", "cos", "acos", "cosh", "acosh", "tan", "atan", "tanh", "atanh"};
-size_t const operation::lst_size = 22;
+char const* operation::lst[] = {"(", ")", "+", "-", "*", "/", "^", "-", "abs", "log", "sin", "asin", "sinh", "asinh", "cos", "acos", "cosh", "acosh", "tan", "atan", "tanh", "atanh", "cot", "acot", "coth", "acoth"};
+size_t const operation::lst_size = 26;
 Vec<double> variable::_Val;
 Vec <string> variable::_Name;
 
@@ -17,7 +17,7 @@ operation::operation()
 operation::operation(short int const _id)
 {
 	id = _id;
-	if (id < 0 || id >= 22)
+	if (id < 0 || id >= lst_size)
 		throw exception("Wrong operation ID");
 	SetPriority();
 	SetArity();
@@ -118,7 +118,7 @@ void variable::AddVar(string const& s)
 	_Val.push_back(0.0);
 	id = _Name.GetSize() - 1;
 }
-variable::variable() : id(0)
+variable::variable() : id(-1)
 {
 	primeInit();
 }
@@ -139,12 +139,16 @@ variable::variable(string const& s) : id(-1)
 		AddVar(s);
 }
 variable::variable(variable const& V) : id(V.id) {}
-double variable::GetVal() const noexcept
+double variable::GetVal() const
 {
+	if (id == -1)
+		throw underflow_error("No value is assigned to default variable");
 	return _Val[id];
 }
-string const& variable::GetName() const noexcept
+string const& variable::GetName() const
 {
+	if (id == -1)
+		throw underflow_error("No name is assigned to default variable");
 	return _Name[id];
 }
 void variable::Init(short int _id, double val)

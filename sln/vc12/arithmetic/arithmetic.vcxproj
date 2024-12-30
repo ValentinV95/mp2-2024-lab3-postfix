@@ -83,6 +83,7 @@
     <ClCompile Include="..\..\..\src\analitic.cpp" />
     <ClCompile Include="..\..\..\src\lexem.cpp" />
     <ClCompile Include="..\..\..\src\parsers.cpp" />
+    <ClCompile Include="..\..\..\src\simple_math.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\analitic.h" />
@@ -90,6 +91,7 @@
     <ClInclude Include="..\..\..\include\expr_err.h" />
     <ClInclude Include="..\..\..\include\lexem.h" />
     <ClInclude Include="..\..\..\include\parsers.h" />
+    <ClInclude Include="..\..\..\include\simple_math.h" />
     <ClInclude Include="..\..\..\include\stack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

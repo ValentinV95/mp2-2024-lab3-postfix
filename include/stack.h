@@ -40,7 +40,7 @@ public:
 		return &data;
 	};
 
-	void push(T const& val)
+	void Push(T const& val)
 	{
 		data.push_back(val);
 		return;

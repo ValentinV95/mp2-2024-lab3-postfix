@@ -1,5 +1,6 @@
 #pragma once
 #include "lexem.h"
+#include "simple_math.h"
 
 class AnaliticExpression
 {

@@ -1,8 +1,10 @@
 #include "parsers.h"
 #include "expr_err.h"
-#define IsLetter(c)		(( 'a' <= c && c <= 'z' ) || ( 'A' <= c && c <= 'Z' ))
+#include "simple_math.h"
+#define IsLetter(c)		(( 'a' <= c && c <= 'z' ) || ( 'A' <= c && c <= 'Z' ) || c == '_')
 #define IsDigit(c)		('0' <= c && c <= '9')
-#define IsMath(c)		((c=='*') || (c=='+') || (c=='-') || (c=='/') || (c=='^'))
+#define IsMathOp(c)		((c=='*') || (c=='+') || (c=='-') || (c=='/') || (c=='^'))
+#define IsMath(c)		((c=='*') || (c=='+') || (c=='-') || (c=='/') || (c=='^') || (c=='(') || (c==')'))
 
 double ToDouble(char c)
 {
@@ -116,7 +118,7 @@ double NumParse(string const& s)
 	if (i < sz && (s[i] == 'e' || s[i] == 'E'))
 	{
 		i++;
-		if (i < sz && IsMath(s[i]))
+		if (i < sz && (s[i] == '+' || s[i] == '-'))
 		{
 			if (s[i] == '+')
 				pow_s = 1;
@@ -139,6 +141,8 @@ double NumParse(string const& s)
 		}
 		else { throw expression_error("If number has exponential part it must have explicit sign of power"); };
 	}
+	if (i < sz)
+		throw expression_error("Unexpected symbol encountered in number");
 	pow = pow_s * pow + foo;
 	if (pow * pow_s < 0)
 		pow_s *= -1;
@@ -153,10 +157,182 @@ double NumParse(string const& s)
 
 Vec<lexem*> MainParse(string const& s)
 {
+	double (*binary[5]) (operand const* , operand const*) = { ADD, SUB, MUL, DIV, POW };
+	double (*unary[19]) (operand const*) = { NEG, ABS, LOG, SIN, ASIN, SINH, ASINH, COS, ACOS, COSH, ACOSH, TAN, ATAN, TANH, ATANH, COT, ACOT, COTH, ACOTH };
 	Vec<lexem*> VL;
-	Vec<operand*> VOp;
-	Vec<operation> VStmt;
+	MyStack<operand*> SOp;
+	MyStack<operation*> SStmt;
+	operand* lhs = nullptr, * rhs = nullptr;
+	operation* stm = nullptr;
 	string tmp{ "" };
-	bool unary_minus_candidate = false, unary_minus = false, prev_is_operand = false;
+	double res=0.0;
+	bool unary_minus_candidate = false, unary_minus = false, prev_is_operand = false, prev_is_func = false;
+	size_t sz = s.size(), i = 0, ret = 0;
+	int id, prior;
+	while (i < sz)
+	{
+		if (IsLetter(s[i]))
+		{
+			tmp = "";
+			ret = i;
+			while (i < sz && IsLetter(s[i]))
+			{
+				tmp += s[i];
+				i++;
+			}
+			while (i < sz && IsDigit(s[i]))
+			{
+				tmp += s[i];
+				i++;
+			}
+			if (i < sz && IsLetter(s[i]))
+				throw expression_error("Invalid variable form at " + to_string(ret) + " position");
+			id = operation::StmtId(tmp);
+			if (id != -1)
+			{
+				if (prev_is_operand)
+					throw expression_error("No operation between operand and function at " + to_string(ret - 1) + " position");
+				if (prev_is_func)
+					throw expression_error("Previous function must have an arguement at " + to_string(ret - 1) + " position");
+				prev_is_func = true;
+				SStmt.Push(new operation(id));
+			}
+			else 
+			{
+				if (prev_is_operand)
+					throw expression_error("No operation between operands at " + to_string(ret - 1) + " position");
+				if (prev_is_func)
+					throw expression_error("Function arguement must be placed in brackets at " + to_string(ret - 1) + " position");
+				prev_is_operand = true;
+				SOp.Push(new variable(tmp));
+			}
+		}
+		else if (IsDigit(s[i]))
+		{
+			tmp = "";
+			ret = i;
+			if (prev_is_operand)
+				throw expression_error("No operation between operands at " + to_string(ret) + " position");
+			if (prev_is_func)
+				throw expression_error("No operation between operand and function at " + to_string(ret - 1) + " position");
+			if (unary_minus)
+			{
+				tmp += '-';
+				unary_minus = false;
+			}
+			while (i < sz && (IsDigit(s[i]) || s[i] == '.' || s[i] == 'e' || s[i] == 'E'))
+			{
+				tmp += s[i];
+				if (s[i] == 'e' || s[i] == 'E')
+				{
+					i++;
+					if (i < sz && (s[i] == '+' || s[i] == '-'))
+					{
+						tmp += s[i];
+						i++;
+					}
+				}
+				i++;
+			}
+			prev_is_func = false;
+			prev_is_operand = true;
+			try
+			{
+				res = NumParse(tmp);
+			}
+			catch (expression_error e) { 
+				throw expression_error(string(e.what()) + " at " + to_string(ret - 1) + " position"); }
+			SOp.Push(new constant(res));
+		}
+		else if (IsMath(s[i]))
+		{
+			ret = i;
+			if (s[i] == '(')
+			{
+				if (prev_is_operand)
+					throw expression_error("No operation between operand and '(' at " + to_string(ret - 1) + " position");
+				prev_is_operand = false;
+				prev_is_func = false;
+				SStmt.Push(new operation(0));
+				i++;
+			}
+			else if (s[i] == ')')
+			{
+				if (!prev_is_operand)
+					if (SStmt.Top()->GetId() == 0)
+						throw expression_error("Brackets may not be epty at " + to_string(ret - 1) + " position");
+					else { throw expression_error("Operand required at " + to_string(ret - 1) + " position"); }
+				if (prev_is_func)
+					throw expression_error("Arguement required for function at " + to_string(ret - 1) + " position");
+				stm = SStmt.Top();
+				SStmt.Pop();
+				while (stm->GetId() != 0)
+				{
+					if (stm->GetArity() == 1)
+					{
+						rhs = SOp.Top();
+						if (rhs->IsConst())
+						{
+							SOp.Pop();
+							id = stm->GetId();
+							res = unary[id - 7](rhs);
+							SOp.Push(new constant(res));
+						}
+						else
+						{
+							if (dynamic_cast<variable*>(rhs)->GetId() != -1)
+							{
+								SOp.Pop();
+								VL.push_back(rhs);
+								SOp.Push(new variable());
+							}
+							VL.push_back(stm);
+						}
+					}
+					else
+					{
+
+					}
+					stm = SStmt.Top();
+					SStmt.Pop();
+				}
+				prev_is_operand = true;
+				i++;
+			}
+			else if (IsMathOp(s[i]))
+			{
+				if (prev_is_func)
+					throw expression_error("Arguement required for function at " + to_string(ret - 1) + " position");
+				if (prev_is_operand)
+				{
+
+				}
+			}
+		}
+		else if (s[i] == ' ')
+			i++;
+		else { throw expression_error("Unexpected symbol encountered at " + to_string(i) + " position"); }
+	}
+	while (!SStmt.Is_Empty())
+	{
+		stm = SStmt.Top();
+		SStmt.Pop();
+		rhs = SOp.Top();
+		SOp.Pop();
+		if (stm->GetArity() == 2)
+		{
+			lhs = SOp.Top();
+			SOp.Pop();
+			VL.push_back(lhs);
+		}
+		VL.push_back(rhs);
+		VL.push_back(stm);
+	}
+	if (VL.Is_Empty() && !SOp.Is_Empty())
+	{
+		rhs = SOp.Top();
+		SOp.Pop();
+		VL.push_back(rhs);
+	}
 	return VL;
 }

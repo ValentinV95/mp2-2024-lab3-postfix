@@ -37,6 +37,10 @@ TEST(PreParse, throws_when_closing_brackets_are_missing)
 	}
 }
 
+
+
+
+
 TEST(NumParse, can_convert_string_to_double)
 {
 	string s{ "-25.35E+2" };
@@ -165,4 +169,43 @@ TEST(NumParse,throws_when_there_is_no_sign_after_e)
 	ASSERT_ANY_THROW(NumParse(s));
 	s = "15.E";
 	ASSERT_ANY_THROW(NumParse(s));
+}
+
+TEST(NumParse, throws_when_unexpected_symbol_encountered)
+{
+	string s{ "15.05.e+2" };
+	ASSERT_ANY_THROW(NumParse(s));
+	s = "15.05.15e+2";
+	ASSERT_ANY_THROW(NumParse(s));
+	s = "15.0515eE+2";
+	ASSERT_ANY_THROW(NumParse(s));
+	s = "15.0515e+-2";
+	ASSERT_ANY_THROW(NumParse(s));
+	s = "15.0515e-+2";
+	ASSERT_ANY_THROW(NumParse(s));
+	s = "15.0515e++2";
+	ASSERT_ANY_THROW(NumParse(s));
+	s = "15.0515e--2";
+	ASSERT_ANY_THROW(NumParse(s));
+	s = "15.0515e+2e-2";
+	ASSERT_ANY_THROW(NumParse(s));
+	s = "15.05*15e+2";
+	ASSERT_ANY_THROW(NumParse(s));
+}
+
+
+
+
+TEST(MainParse, can_parse_single_operand)
+{
+	string s{ "abc" };
+	Vec<lexem*> VL;
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ((dynamic_cast<variable*>(VL[0]))->GetName(), "abc");
+}
+
+TEST(MainParse, _end)
+{
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
 }

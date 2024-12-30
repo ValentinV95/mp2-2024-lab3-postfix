@@ -363,4 +363,6 @@ TEST(variable, methods_can_be_called_from_base_classes)
 	ASSERT_NO_THROW(d = O->GetVal());
 	EXPECT_DOUBLE_EQ(4.5, d);
 	delete V;
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
 }
