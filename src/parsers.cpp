@@ -64,8 +64,9 @@ string PreParse(string const& s)
 
 double NumParse(string const& s)
 {
-	double res = 0.0, sign = 1.0, frac = 0.0;
-	int pow = 0, foo = 0, bar = 0, pow_s = 1, prec = 0;
+	string normal{ "" };
+	double res = 0.0, sign = 1.0;
+	int pow = 0, foo = 0, pow_s = 1;
 	size_t i = 0, sz = s.size();
 	if (s[0] == '-')
 	{
@@ -74,17 +75,14 @@ double NumParse(string const& s)
 	}
 	if (s[i] == '.')
 		throw expression_error("Real number can't begin without explicit integer part");
+	while (i < sz && s[i] == '0')
+		i++;
 	while (i < sz && IsDigit(s[i]))
 	{
-		if (prec < 16)
-		{
-			res *= 10.0;
-			res += ToDouble(s[i]);
-			if (res != 0)
-				prec++;
-		}
+		if (normal.size() < 17)
+			normal += s[i];
 		else
-			bar++;
+			foo += 1;
 		i++;
 	}
 	if (i < sz && s[i] == '.')
@@ -93,19 +91,28 @@ double NumParse(string const& s)
 		if (i == sz || !IsDigit(s[i]))
 			throw expression_error("Fractional part must follow '.' in real numbers");
 	}
+	if (normal == "")
+		while (i < sz && s[i] == '0')
+		{
+			i++;
+			foo -= 1;
+		}
 	while (i < sz && IsDigit(s[i]))
 	{
-		if (prec < 16)
+		if (normal.size() < 17)
 		{
-			frac *= 10.0;
-			frac += ToDouble(s[i]);
-			if (frac != 0.0)
-				prec++;
-			foo += 1;
+			normal += s[i];
+			foo -= 1;
 		}
 		i++;
 	}
-	res += frac / POW(foo);
+	for (int j = 0, tmp = normal.size(); j < tmp; j++)
+	{
+		res *= 10;
+		res += ToDouble(normal[j]);
+	}
+	res /= POW(normal.size() - 1);
+	foo += normal.size() - 1;
 	if (i < sz && (s[i] == 'e' || s[i] == 'E'))
 	{
 		i++;
@@ -132,6 +139,10 @@ double NumParse(string const& s)
 		}
 		else { throw expression_error("If number has exponential part it must have explicit sign of power"); };
 	}
+	pow = pow_s * pow + foo;
+	if (pow * pow_s < 0)
+		pow_s *= -1;
+	pow = pow * pow_s;
 	if (pow_s == 1)
 		res *= POW(pow);
 	else
@@ -143,5 +154,9 @@ double NumParse(string const& s)
 Vec<lexem*> MainParse(string const& s)
 {
 	Vec<lexem*> VL;
+	Vec<operand*> VOp;
+	Vec<operation> VStmt;
+	string tmp{ "" };
+	bool unary_minus_candidate = false, unary_minus = false, prev_is_operand = false;
 	return VL;
 }
