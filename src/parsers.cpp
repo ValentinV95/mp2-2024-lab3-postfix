@@ -157,16 +157,19 @@ double NumParse(string const& s)
 
 Vec<lexem*> MainParse(string const& s)
 {
-	Vec<lexem*> VL;
+	Vec<lexem*> VL, RES;
+	Vec<operation*> StmBuff;
 	MyStack<operand*> SOp;
 	MyStack<operation*> SStmt;
-	operand* lhs = nullptr, * rhs = nullptr;
-	operation* stm = nullptr, * _stm = nullptr;
+	MyStack<lexem*> LBuff;
+	lexem* ltmp = nullptr, **_VL=VL.GetData(), **_RES=RES.GetData(), **_LBuff=LBuff.GetData()->GetData();
+	operand* lhs = nullptr, * rhs = nullptr, **_SOp=SOp.GetData()->GetData();
+	operation* stm = nullptr, * _stm = nullptr, **_StmBuff=StmBuff.GetData(), **_SStmt=SStmt.GetData()->GetData();
 	string tmp{ "" };
 	double res=0.0;
-	bool unary_minus_candidate = false, unary_minus = false, prev_is_operand = false, prev_is_func = false;
-	size_t sz = s.size(), i = 0, ret = 0;
-	short int id, prior;
+	bool unary_minus = false, prev_is_operand = false, prev_is_func = false;
+	size_t sz = s.size(), i = 0, j = 0, k = 0, ret = 0, foo = 0;
+	short int id, prior, arity;
 	while (i < sz)
 	{
 		if (IsLetter(s[i]))
@@ -193,7 +196,7 @@ Vec<lexem*> MainParse(string const& s)
 				if (prev_is_func)
 					throw expression_error("Previous function must have an arguement at " + to_string(ret - 1) + " position");
 				prev_is_func = true;
-				SStmt.Push(new operation(id));
+				VL.push_back(new operation(id));
 			}
 			else 
 			{
@@ -202,7 +205,7 @@ Vec<lexem*> MainParse(string const& s)
 				if (prev_is_func)
 					throw expression_error("Function arguement must be placed in brackets at " + to_string(ret - 1) + " position");
 				prev_is_operand = true;
-				SOp.Push(new variable(tmp));
+				VL.push_back(new variable(tmp));
 			}
 		}
 		else if (IsDigit(s[i]))
@@ -230,7 +233,7 @@ Vec<lexem*> MainParse(string const& s)
 						i++;
 					}
 				}
-				i++;
+				else i++;
 			}
 			prev_is_func = false;
 			prev_is_operand = true;
@@ -240,7 +243,7 @@ Vec<lexem*> MainParse(string const& s)
 			}
 			catch (expression_error e) { 
 				throw expression_error(string(e.what()) + " at " + to_string(ret - 1) + " position"); }
-			SOp.Push(new constant(res));
+			VL.push_back(new constant(res));
 		}
 		else if (IsMath(s[i]))
 		{
@@ -251,7 +254,7 @@ Vec<lexem*> MainParse(string const& s)
 					throw expression_error("No operation between operand and '(' at " + to_string(ret - 1) + " position");
 				prev_is_operand = false;
 				prev_is_func = false;
-				SStmt.Push(new operation(0));
+				VL.push_back(new operation(0));
 				i++;
 			}
 			else if (s[i] == ')')
@@ -259,53 +262,10 @@ Vec<lexem*> MainParse(string const& s)
 				if (prev_is_func)
 					throw expression_error("Arguement required for function at " + to_string(ret - 1) + " position");
 				if (!prev_is_operand)
-					if (SStmt.Top()->GetId() == 0)
+					if (VL.Top()->IsStmt() && dynamic_cast<operation*>(VL.Top())->GetId() == 0)
 						throw expression_error("Brackets may not be epty at " + to_string(ret - 1) + " position");
 					else { throw expression_error("Operand required at " + to_string(ret - 1) + " position"); }
-				stm = SStmt.Top();
-				SStmt.Pop();
-				while (stm->GetId() != 0)
-				{
-					if (stm->GetArity() == 1)
-					{
-						rhs = SOp.Top();
-						if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
-						{
-							// If implicit operand is on top, operation will be applied to some result in VL. Need no replace top operand
-						}
-						else
-						{
-							SOp.Pop();
-							VL.push_back(rhs);
-							SOp.Push(new variable());
-						}
-					}
-					else
-					{
-						rhs = SOp.Top();
-						SOp.Pop();
-						lhs = SOp.Top();
-						if (!lhs->IsConst() && dynamic_cast<variable*>(lhs)->GetId() == -1)
-						{
-							// If implicit operand is on top, operation will be applied to some result in VL. Need no replace top operand
-						}
-						else
-						{
-							SOp.Pop();
-							VL.push_back(lhs);
-							SOp.Push(new variable());
-						}
-						if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
-						{
-							
-						}
-						else
-							VL.push_back(rhs);
-					}
-					VL.push_back(stm);
-					stm = SStmt.Top();
-					SStmt.Pop();
-				}
+				VL.push_back(new operation(1));
 				prev_is_operand = true;
 				i++;
 			}
@@ -316,53 +276,8 @@ Vec<lexem*> MainParse(string const& s)
 				if (prev_is_operand)
 				{
 					id = operation::StmtId(s[i]);
-					_stm = new operation(id);
-					stm = SStmt.Top();
-					prior = _stm->GetPriority();
-					while (stm->GetPriority() >= prior)
-					{
-						if (stm->GetArity() == 1)
-						{
-							rhs = SOp.Top();
-							if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
-							{
-								// If implicit operand is on top, operation will be applied to some result in VL. Need no replace top operand
-							}
-							else
-							{
-								SOp.Pop();
-								VL.push_back(rhs);
-								SOp.Push(new variable());
-							}
-						}
-						else
-						{
-							rhs = SOp.Top();
-							SOp.Pop();
-							lhs = SOp.Top();
-							if (!lhs->IsConst() && dynamic_cast<variable*>(lhs)->GetId() == -1)
-							{
-								// If implicit operand is on top, operation will be applied to some result in VL. Need no replace top operand
-							}
-							else
-							{
-								SOp.Pop();
-								VL.push_back(lhs);
-								SOp.Push(new variable());
-							}
-							if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
-							{
-
-							}
-							else
-								VL.push_back(rhs);
-						}
-						SStmt.Pop();
-						VL.push_back(stm);
-						stm = SStmt.Top();
-					}
-					SStmt.Push(_stm);
-					prev_is_operand == false;
+					VL.push_back(new operation(id));
+					prev_is_operand = false;
 					i++;
 				}
 				else
@@ -381,7 +296,7 @@ Vec<lexem*> MainParse(string const& s)
 							throw expression_error("Unexpected math operation at" + to_string(ret - 1) + " position");
 						if (IsLetter(s[i]) && unary_minus)
 						{
-							SStmt.Push(new operation(7));
+							VL.push_back(new operation(7));
 							unary_minus = false;
 						}
 					}
@@ -396,55 +311,266 @@ Vec<lexem*> MainParse(string const& s)
 		throw expression_error("Arguement required for function at the end of expression");
 	if (!prev_is_operand)
 		throw expression_error("Operand required at the end of expression");
-	while (!SStmt.Is_Empty())
+	sz = VL.GetSize();
+	i = 0;
+	for (; i < sz; i++)
 	{
-		stm = SStmt.Top();
-		SStmt.Pop();
-		if (stm->GetArity() == 1)
+		if (!VL[i]->IsStmt())
 		{
-			rhs = SOp.Top();
-			if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
-			{
-				// If implicit operand is on top, operation will be applied to some result in VL. Need no replace top operand
-			}
-			else
-			{
-				SOp.Pop();
-				VL.push_back(rhs);
-				SOp.Push(new variable());
-			}
+			rhs = dynamic_cast<operand*>(VL[i]);
+			SOp.Push(dynamic_cast<operand*>(rhs));
 		}
 		else
 		{
-			rhs = SOp.Top();
-			SOp.Pop();
-			lhs = SOp.Top();
-			if (!lhs->IsConst() && dynamic_cast<variable*>(lhs)->GetId() == -1)
+			stm = dynamic_cast<operation*>(VL[i]);
+			if (stm->GetId() == 0)
+				SStmt.Push(stm);
+			else if (stm->GetId() == 1)
 			{
-				// If implicit operand is on top, operation will be applied to some result in VL. Need no replace top operand
+				k = 0;
+				while (_stm->GetId() != 0)
+				{
+					rhs = SOp.Top();
+					if (_stm->GetArity() == 1)
+					{
+						if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// Arg is implicit
+						{
+
+						}
+						else																	// Arg is explicit
+						{
+							SOp.Pop();
+							RES.push_back(rhs);
+							SOp.Push(new variable());
+						}
+						RES.push_back(_stm);
+					}
+					else			// If arity == 2
+					{
+						SOp.Pop();
+						lhs = SOp.Top();
+						if (!lhs->IsConst() && dynamic_cast<variable*>(lhs)->GetId() == -1)			// lhs is implicit
+						{
+							if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
+							{
+								StmBuff.push_back(_stm);
+								k++;
+							}
+							else																	// rhs is explicit
+							{
+								RES.push_back(rhs);
+								RES.push_back(_stm);
+							}
+						}
+						else																		// lhs is explicit
+						{
+							SOp.Pop();
+							if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
+							{
+								for (j = 1 + k; j; j--)
+								{
+									ltmp = RES.Top();
+									LBuff.Push(ltmp);
+									if (ltmp->IsStmt())
+										j += dynamic_cast<operation*>(ltmp)->GetArity();
+									RES.pop_back();
+								}
+								k = 0;
+								RES.push_back(lhs);
+								StmBuff.push_back(_stm);
+							}
+							else																	// rhs is explicit
+							{
+								RES.push_back(lhs);
+								RES.push_back(rhs);
+								RES.push_back(_stm);
+							}
+							SOp.Push(new variable());
+						}
+
+					}
+				}
+				while (!LBuff.Is_Empty())
+				{
+					RES.push_back(LBuff.Top());
+					LBuff.Pop();
+				}
+				for (j = 0, k = StmBuff.GetSize(); j < k; j++)
+					RES.push_back(StmBuff[i]);
+				StmBuff.clear();
+				_stm = SStmt.Top();
+				SStmt.Pop();
 			}
-			else
+			else		// Is MathOp
 			{
-				SOp.Pop();
-				VL.push_back(lhs);
-				SOp.Push(new variable());
+				if (SStmt.Is_Empty())
+					SStmt.Push(stm);
+				else
+				{
+					prior = stm->GetPriority();
+					_stm = SStmt.Top();
+					if (prior > _stm->GetPriority())
+						SStmt.Push(stm);
+					else
+					{
+						k = 0;
+						while (!SStmt.Is_Empty() && _stm->GetPriority() >= prior)
+						{
+							_stm = SStmt.Top();
+							rhs = SOp.Top();
+							SStmt.Pop();
+							if (_stm->GetArity() == 1)
+							{
+								if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
+								{
+
+								}
+								else
+								{
+									SOp.Pop();
+									RES.push_back(rhs);
+									SOp.Push(new variable());
+								}
+								RES.push_back(_stm);
+							}
+							else			// If arity == 2
+							{
+								SOp.Pop();
+								lhs = SOp.Top();
+								if (!lhs->IsConst() && dynamic_cast<variable*>(lhs)->GetId() == -1)			// lhs is implicit
+								{
+									if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
+									{
+										StmBuff.push_back(_stm);
+										k++;
+									}
+									else																	// rhs is explicit
+									{
+										RES.push_back(rhs);
+										RES.push_back(_stm);
+									}
+								}
+								else																		// lhs is explicit
+								{
+									SOp.Pop();
+									if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
+									{
+										for (j = 1 + k; j; j--)
+										{
+											ltmp = RES.Top();
+											LBuff.Push(ltmp);
+											if (ltmp->IsStmt())
+												j += dynamic_cast<operation*>(ltmp)->GetArity();
+											RES.pop_back();
+										}
+										k = 0;
+										RES.push_back(lhs);
+										StmBuff.push_back(_stm);
+									}
+									else																	// rhs is explicit
+									{
+										RES.push_back(lhs);
+										RES.push_back(rhs);
+										RES.push_back(_stm);
+									}
+									SOp.Push(new variable());
+								}
+
+							}		
+						}
+						while (!LBuff.Is_Empty())
+						{
+							RES.push_back(LBuff.Top());
+							LBuff.Pop();
+						}
+						for (j = 0, k = StmBuff.GetSize(); j < k; j++)
+							RES.push_back(StmBuff[i]);
+						SStmt.Push(stm);
+						StmBuff.clear();
+					}
+				}
 			}
-			if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
+		}
+	}
+	k = 0;
+	while (!SStmt.Is_Empty())
+	{
+		_stm = SStmt.Top();
+		rhs = SOp.Top();
+		SStmt.Pop();
+		if (_stm->GetArity() == 1)
+		{
+			if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// Arg is implicit
 			{
 
 			}
-			else
-				VL.push_back(rhs);
+			else																	// Arg is explicit
+			{
+				SOp.Pop();
+				RES.push_back(rhs);
+				SOp.Push(new variable());
+			}
+			RES.push_back(_stm);
 		}
-		VL.push_back(stm);
+		else			// If arity == 2
+		{
+			SOp.Pop();
+			lhs = SOp.Top();
+			if (!lhs->IsConst() && dynamic_cast<variable*>(lhs)->GetId() == -1)			// lhs is implicit
+			{
+				if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
+				{
+					StmBuff.push_back(_stm);
+					k++;
+				}
+				else																	// rhs is explicit
+				{
+					RES.push_back(rhs);
+					RES.push_back(_stm);
+				}
+			}
+			else																		// lhs is explicit
+			{
+				SOp.Pop();
+				if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
+				{
+					for (j = 1 + k; j; j--)
+					{
+						ltmp = RES.Top();
+						LBuff.Push(ltmp);
+						if (ltmp->IsStmt())
+							j += dynamic_cast<operation*>(ltmp)->GetArity();
+						RES.pop_back();
+					}
+					k = 0;
+					RES.push_back(lhs);
+					StmBuff.push_back(_stm);
+				}
+				else																	// rhs is explicit
+				{
+					RES.push_back(lhs);
+					RES.push_back(rhs);
+					RES.push_back(_stm);
+				}
+				SOp.Push(new variable());
+			}
+
+		}
 	}
+	while (!LBuff.Is_Empty())
+	{
+		RES.push_back(LBuff.Top());
+		LBuff.Pop();
+	}
+	for (j = 0, k = StmBuff.GetSize(); j < k; j++)
+		RES.push_back(StmBuff[j]);
+	StmBuff.clear();
 	rhs = SOp.Top();
-	SOp.Pop();
 	if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
 	{
 
 	}
 	else
-		VL.push_back(rhs);
-	return VL;
+		RES.push_back(rhs);
+	return RES;
 }

@@ -202,7 +202,215 @@ TEST(MainParse, can_parse_single_operand)
 	string s{ "abc" };
 	Vec<lexem*> VL;
 	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 1);
 	EXPECT_EQ((dynamic_cast<variable*>(VL[0]))->GetName(), "abc");
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "_VL";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 1);
+	EXPECT_EQ((dynamic_cast<variable*>(VL[0]))->GetName(), "_VL");
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "i_13";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 1);
+	EXPECT_EQ((dynamic_cast<variable*>(VL[0]))->GetName(), "i_13");
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "pi";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 1);
+	EXPECT_EQ((dynamic_cast<variable*>(VL[0]))->GetName(), "pi");
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "0.16e+4";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 1);
+	EXPECT_EQ((dynamic_cast<constant*>(VL[0]))->GetVal(), 0.16e+4);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "-0.16e+4";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 1);
+	EXPECT_EQ((dynamic_cast<constant*>(VL[0]))->GetVal(), -0.16e+4);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+}
+
+TEST(MainParse, throws_when_encountered_unexpected_symbol)
+{
+	string s{ "abc ." };
+	Vec<lexem*> VL;
+	ASSERT_ANY_THROW(VL = MainParse(s));
+	s = "abc.";
+	ASSERT_ANY_THROW(VL = MainParse(s));
+	s = "abc%3";
+	ASSERT_ANY_THROW(VL = MainParse(s));
+	s = "ab $";
+	ASSERT_ANY_THROW(VL = MainParse(s));
+	s = "#abc";
+	ASSERT_ANY_THROW(VL = MainParse(s));
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+
+}
+
+TEST(MainParse, throws_when_variable_has_letters_after_index)
+{
+	string s{ "abc35D" };
+	Vec<lexem*> VL;
+	ASSERT_ANY_THROW(VL = MainParse(s));
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+}
+
+
+TEST(MainParse, throws_when_there_is_no_space_between_numbers)
+{
+	string s{ "12.35e+4012.16" };
+	Vec<lexem*> VL;
+	ASSERT_ANY_THROW(VL = MainParse(s));
+	s = "25.1635.12";
+	ASSERT_ANY_THROW(VL = MainParse(s));
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+}
+
+TEST(MainParse, can_parse_math_operations)
+{
+	string s{ "a + b" };
+	Vec<lexem*> VL;
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 3);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "a");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[1])->GetName(), "b");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[2])->GetId(), 2);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "-b";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 2);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "b");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[1])->GetId(), 7);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "e ^ x";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 3);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "e");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[1])->GetName(), "x");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[2])->GetId(), 6);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+}
+
+TEST(MainParse, ignores_any_spaces)
+{
+	string s{ "    a   +  b            " };
+	Vec<lexem*> VL;
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 3);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "a");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[1])->GetName(), "b");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[2])->GetId(), 2);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "-     b";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 2);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "b");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[1])->GetId(), 7);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+}
+
+TEST(MainParse, handles_multiple_unary_minuses)
+{
+	string s{ "---  --- - b" };
+	Vec<lexem*> VL;
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 2);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "b");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[1])->GetId(), 7);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "--b";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 1);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "b");
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "a--b";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 4);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "a");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[1])->GetName(), "b");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[2])->GetId(), 7);
+	EXPECT_EQ(dynamic_cast<operation*>(VL[3])->GetId(), 3);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "a+--b";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 3);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "a");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[1])->GetName(), "b");
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+}
+
+TEST(MainParse, handles_prioriites_of_operations)
+{
+	string s{ "a+b*c" };
+	Vec<lexem*> VL;
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 5);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "a");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[1])->GetName(), "b");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[2])->GetName(), "c");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[3])->GetId(), 4);
+	EXPECT_EQ(dynamic_cast<operation*>(VL[4])->GetId(), 2);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "a*b+c";;
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 5);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "a");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[1])->GetName(), "b");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[2])->GetId(), 4);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[3])->GetName(), "c");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[4])->GetId(), 2);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+	s = "a-b/c^d";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 7);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "a");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[1])->GetName(), "b");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[2])->GetName(), "c");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[3])->GetName(), "d");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[4])->GetId(), 6);
+	EXPECT_EQ(dynamic_cast<operation*>(VL[5])->GetId(), 5);
+	EXPECT_EQ(dynamic_cast<operation*>(VL[6])->GetId(), 3);
+	variable::GetValVec().clear();
+	variable::GetNameVec().clear();
+}
+
+TEST(MainParse, throws_8)
+{
+
+}
+
+TEST(MainParse, throws_9)
+{
+
+}
+
+TEST(MainParse, throws_when_there_is_no_operation_between_operand_and_function_or_operand)
+{
+	string s{ "abc35 sin" };
+	Vec<lexem*> VL;
+	ASSERT_ANY_THROW(VL = MainParse(s));
 }
 
 TEST(MainParse, _end)
