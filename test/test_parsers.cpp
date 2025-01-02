@@ -474,6 +474,15 @@ TEST(MainParse, handles_brackets)
 	EXPECT_EQ(dynamic_cast<operation*>(VL[10])->GetId(), 2);
 	EXPECT_EQ(dynamic_cast<operation*>(VL[11])->GetId(), 6);
 	EXPECT_EQ(dynamic_cast<operation*>(VL[12])->GetId(), 4);
+	s = "-a^(b^c)";
+	ASSERT_NO_THROW(VL = MainParse(s));
+	EXPECT_EQ(VL.GetSize(), 6);
+	EXPECT_EQ(dynamic_cast<variable*>(VL[0])->GetName(), "a");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[1])->GetName(), "b");
+	EXPECT_EQ(dynamic_cast<variable*>(VL[2])->GetName(), "c");
+	EXPECT_EQ(dynamic_cast<operation*>(VL[3])->GetId(), 6);
+	EXPECT_EQ(dynamic_cast<operation*>(VL[4])->GetId(), 6);
+	EXPECT_EQ(dynamic_cast<operation*>(VL[5])->GetId(), 7);
 }
 
 TEST(MainParse, handles_multiple_consecutive_brackets)

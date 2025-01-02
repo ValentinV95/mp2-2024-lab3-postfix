@@ -338,15 +338,18 @@ Vec<lexem*> MainParse(string const& s)
 					{
 						if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// Arg is implicit
 						{
-
+							if (_stm->GetId() == 7 && !StmBuff.Is_Empty() && StmBuff.Top()->GetId() == 6)	// This needed for correct parsing of unary minus and '^'
+								StmBuff.push_back(_stm);
+							else
+								RES.push_back(_stm);
 						}
 						else																	// Arg is explicit
 						{
 							SOp.Pop();
 							RES.push_back(rhs);
 							SOp.Push(new variable());
+							RES.push_back(_stm);
 						}
-						RES.push_back(_stm);
 					}
 					else			// If arity == 2
 					{
@@ -422,17 +425,20 @@ Vec<lexem*> MainParse(string const& s)
 							rhs = SOp.Top();
 							if (_stm->GetArity() == 1)
 							{
-								if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
+								if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// Arg is implicit
 								{
-
+									if (_stm->GetId() == 7 && !StmBuff.Is_Empty() && StmBuff.Top()->GetId() == 6)	// This needed for correct parsing of unary minus and '^'
+										StmBuff.push_back(_stm);
+									else
+										RES.push_back(_stm);
 								}
-								else
+								else																	// Arg is explicit
 								{
 									SOp.Pop();
 									RES.push_back(rhs);
 									SOp.Push(new variable());
+									RES.push_back(_stm);
 								}
-								RES.push_back(_stm);
 							}
 							else			// If arity == 2
 							{
@@ -506,15 +512,18 @@ Vec<lexem*> MainParse(string const& s)
 		{
 			if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// Arg is implicit
 			{
-
+				if (_stm->GetId() == 7 && !StmBuff.Is_Empty() && StmBuff.Top()->GetId() == 6)	// This needed for correct parsing of unary minus and '^'
+					StmBuff.push_back(_stm);
+				else
+					RES.push_back(_stm);
 			}
 			else																	// Arg is explicit
 			{
 				SOp.Pop();
 				RES.push_back(rhs);
 				SOp.Push(new variable());
+				RES.push_back(_stm);
 			}
-			RES.push_back(_stm);
 		}
 		else			// If arity == 2
 		{
