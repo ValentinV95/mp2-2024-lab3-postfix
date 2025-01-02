@@ -10,14 +10,13 @@ int main()
 	size_t sz, i;
 	double res, tmp;
 	char c;
-	setlocale(LC_ALL, "Russian");
-	cout << "Перед началом работы просмотрите инструкцию в файле MANUAL.txt\n\n\n";
+	cout << "Before you start, see the instructions in the file MANUAL.txt in the root directory\n\n\n";
 	system("pause");
 	while (!end)
 	{
 		proceed = true;
 		skip = false;
-		cout << "Введите вычисляемое выражение:\n";
+		cout << "Enter expression:\n";
 		getline(cin, s);
 		try
 		{
@@ -25,24 +24,24 @@ int main()
 		}
 		catch (expression_error e)
 		{
-			cout << "Error\t" << e.what() << '\n' << '\n'<<endl;
+			cout << "Error\t" << e.what() << '\n' << "Press any key to continue" << '\n' << endl;
 			skip = true;
 		}
 		if (!skip)
 		{
-			cout << "Введено выражение: " << AE.GetInfix();
-			cout << "\nВ постфиксной форме: " << AE.PrintPostfix();
+			cout << "You entered: " << AE.GetInfix();
+			cout << "\nThis expression in postfix form: " << AE.PrintPostfix();
 			while (proceed)
 			{
 				sz = (*Names).GetSize();
 				for (i = 2; i < sz; i++)
 				{
-					cout << "\nВведите значение переменной " << (*Names)[i] <<" : ";
+					cout << "\nEnter value of " << (*Names)[i] <<" : ";
 					cin >> tmp;
 					variable::Init(i, tmp);
 				}
 				res = AE.Calculate();
-				cout << "\nРезультат операции: ";
+				cout << "\nCalculation result: ";
 				if (isinf(res))
 				{
 					if (res < 0.0)
@@ -55,7 +54,7 @@ int main()
 					cout << res;
 				do
 				{
-					cout << "\n\nПосчитать выражение для других значений переменных? Y/N ";
+					cout << "\n\nWould you like to calculate the expression for other variables values? Y/N ";
 					cin >> c;
 				} while (c != 'Y' && c != 'y' && c != 'N' && c != 'n');
 				if (c == 'n' || c == 'N')
@@ -63,7 +62,7 @@ int main()
 			}
 			do
 			{
-				cout << "\n\nПосчитать другое выражение? Y/N ";
+				cout << "\n\nWould you like to calculate another expression? Y/N ";
 				cin >> c;
 			} while (c != 'Y' && c != 'y' && c != 'N' && c != 'n');
 			if (c == 'n' || c == 'N')
