@@ -1,11 +1,8 @@
 #include "arithmetic.h"
 #include "parsers.h"
+#include "simple_math.h"
 
-ArithmeticExpression::ArithmeticExpression() : postfix(1)
-{
-	infix = string();
-	postfix.push_back(nullptr);
-}
+ArithmeticExpression::ArithmeticExpression() : postfix(), infix{ "" } {}
 
 ArithmeticExpression::ArithmeticExpression(string const& s)
 {
@@ -13,26 +10,105 @@ ArithmeticExpression::ArithmeticExpression(string const& s)
 	ToPostfix();
 }
 
+ArithmeticExpression::ArithmeticExpression(ArithmeticExpression const& AE) : postfix(AE.postfix), infix(AE.infix) {}
+
+ArithmeticExpression::ArithmeticExpression(ArithmeticExpression&& AE) : postfix(), infix{""}
+{
+	swap(postfix, AE.postfix);
+	swap(infix, AE.infix);
+}
+
+ArithmeticExpression& ArithmeticExpression::operator = (ArithmeticExpression const& AE)
+{
+	infix = AE.infix;
+	postfix = AE.postfix;
+	return *this;
+}
+
+ArithmeticExpression& ArithmeticExpression::operator = (ArithmeticExpression&& AE)
+{
+	swap(postfix, AE.postfix);
+	swap(infix, AE.infix);
+	return *this;
+}
+
+
+
 void ArithmeticExpression::ToPostfix()
 {
 	postfix = MainParse(infix);
 	return;
 }
 
-ostream& ArithmeticExpression::PrintInfix(ostream& ostr) const
+void ArithmeticExpression::Rebuild(string const& s)
 {
-	ostr << infix;
-	return ostr;
+	infix = PreParse(s);
+	postfix = MainParse(infix);
 }
 
-ostream& ArithmeticExpression::PrintPostfix(ostream& ostr) const
+string ArithmeticExpression::GetInfix() const
 {
-	if (!postfix[0])
+	string s(infix);
+	if (infix.empty())
+		s = "No expression yet";
+	return s;
+}
+
+string ArithmeticExpression::PrintPostfix() const
+{
+	size_t sz = postfix.GetSize()-1;
+	size_t i = 0;
+	string s;
+	stringstream sstr;
+	if(postfix[0])
 	{
-		ostr << *postfix[0];
-		size_t sz = postfix.GetSize();
-		for (size_t i = 1; i < sz; i++)
-			ostr << " " << *postfix[i];
+		for (; i < sz; i++)
+			sstr << *postfix[i] << " ";
+		sstr << *postfix[i];
 	}
-	return ostr;
+	getline(sstr, s);
+	return s;
+}
+
+double ArithmeticExpression::Calculate() const
+{
+	if (!postfix.Is_Empty())
+	{
+		double (*unary[19]) (operand const*) = { NEG, ABS, LOG, SIN, ASIN, SINH, ASINH, COS, ACOS, COSH, ACOSH, TAN, ATAN, TANH, ATANH, COT, ACOT, COTH, ACOTH };
+		double (*binary[6]) (operand const*, operand const*) = { ADD, SUB, MUL, DIV, POW };
+		double res = 0.0, tmp;
+		MyStack<operand*> SOp;
+		operation* stm = nullptr;
+		operand* rhs = nullptr, * lhs = nullptr;
+		size_t i = 0, sz = postfix.GetSize();
+		for (; i < sz; i++)
+		{
+			if (postfix[i]->IsStmt())
+			{
+				stm = dynamic_cast<operation*>(postfix[i]);
+				rhs = SOp.Top();
+				SOp.Pop();
+				if (stm->GetArity() == 1)
+				{
+					tmp = unary[stm->GetId() - 7](rhs);
+					SOp.Push(new constant(tmp));
+				}
+				else
+				{
+					lhs = SOp.Top();
+					SOp.Pop();
+					tmp = binary[stm->GetId() - 2](lhs, rhs);
+					SOp.Push(new constant(tmp));
+				}
+			}
+			else
+				SOp.Push(dynamic_cast<operand*>(postfix[i]));
+		}
+		res = SOp.Top()->GetVal();
+		SOp.Pop();
+
+		return res;
+	}
+	else
+		throw logic_error("Nothing to calculate");
 }

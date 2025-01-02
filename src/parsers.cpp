@@ -1,4 +1,3 @@
-#pragma once
 #include "parsers.h"
 #include "expr_err.h"
 #define IsLetter(c)		(( 'a' <= c && c <= 'z' ) || ( 'A' <= c && c <= 'Z' ) || c == '_')
@@ -162,9 +161,9 @@ Vec<lexem*> MainParse(string const& s)
 	MyStack<operand*> SOp;
 	MyStack<operation*> SStmt;
 	MyStack<lexem*> LBuff;
-	lexem* ltmp = nullptr, **_VL=VL.GetData(), **_RES=RES.GetData(), **_LBuff=LBuff.GetData()->GetData();
-	operand* lhs = nullptr, * rhs = nullptr, **_SOp=SOp.GetData()->GetData();
-	operation* stm = nullptr, * _stm = nullptr, **_StmBuff=StmBuff.GetData(), **_SStmt=SStmt.GetData()->GetData();
+	lexem* ltmp = nullptr/*, ** _VL = VL.GetData(), ** _RES = RES.GetData(), ** _LBuff = LBuff.GetData()->GetData()*/;
+	operand* lhs = nullptr, * rhs = nullptr/*, ** _SOp = SOp.GetData()->GetData()*/;
+	operation* stm = nullptr, * _stm = nullptr/*, ** _StmBuff = StmBuff.GetData(), ** _SStmt = SStmt.GetData()->GetData()*/;
 	string tmp{ "" };
 	double res=0.0;
 	bool unary_minus = false, prev_is_operand = false, prev_is_func = false;
@@ -294,12 +293,14 @@ Vec<lexem*> MainParse(string const& s)
 						}
 						if (IsMathOp(s[i]))
 							throw expression_error("Unexpected math operation at" + to_string(ret - 1) + " position");
-						if (IsLetter(s[i]) && unary_minus)
+						if ((IsLetter(s[i]) || s[i] == '(') && unary_minus)
 						{
 							VL.push_back(new operation(7));
 							unary_minus = false;
 						}
 					}
+					else
+						throw expression_error("Unexpected math operation at" + to_string(ret - 1) + " position");
 				}
 			}
 		}
@@ -328,6 +329,8 @@ Vec<lexem*> MainParse(string const& s)
 			else if (stm->GetId() == 1)
 			{
 				k = 0;
+				_stm = SStmt.Top();
+				SStmt.Pop();
 				while (_stm->GetId() != 0)
 				{
 					rhs = SOp.Top();
@@ -387,8 +390,9 @@ Vec<lexem*> MainParse(string const& s)
 							}
 							SOp.Push(new variable());
 						}
-
 					}
+					_stm = SStmt.Top();
+					SStmt.Pop();
 				}
 				while (!LBuff.Is_Empty())
 				{
@@ -396,10 +400,8 @@ Vec<lexem*> MainParse(string const& s)
 					LBuff.Pop();
 				}
 				for (j = 0, k = StmBuff.GetSize(); j < k; j++)
-					RES.push_back(StmBuff[i]);
+					RES.push_back(StmBuff[j]);
 				StmBuff.clear();
-				_stm = SStmt.Top();
-				SStmt.Pop();
 			}
 			else		// Is MathOp
 			{
@@ -416,9 +418,8 @@ Vec<lexem*> MainParse(string const& s)
 						k = 0;
 						while (!SStmt.Is_Empty() && _stm->GetPriority() >= prior)
 						{
-							_stm = SStmt.Top();
-							rhs = SOp.Top();
 							SStmt.Pop();
+							rhs = SOp.Top();
 							if (_stm->GetArity() == 1)
 							{
 								if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
@@ -475,8 +476,11 @@ Vec<lexem*> MainParse(string const& s)
 									}
 									SOp.Push(new variable());
 								}
-
-							}		
+							}
+							if(!SStmt.Is_Empty())
+							{
+								_stm = SStmt.Top();
+							}
 						}
 						while (!LBuff.Is_Empty())
 						{
@@ -484,7 +488,7 @@ Vec<lexem*> MainParse(string const& s)
 							LBuff.Pop();
 						}
 						for (j = 0, k = StmBuff.GetSize(); j < k; j++)
-							RES.push_back(StmBuff[i]);
+							RES.push_back(StmBuff[j]);
 						SStmt.Push(stm);
 						StmBuff.clear();
 					}
@@ -572,5 +576,6 @@ Vec<lexem*> MainParse(string const& s)
 	}
 	else
 		RES.push_back(rhs);
+	SOp.Pop();
 	return RES;
 }

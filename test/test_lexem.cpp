@@ -1,4 +1,3 @@
-#pragma once
 #include <gtest.h>
 #include "lexem.h"
 
@@ -28,7 +27,7 @@ TEST(operation, can_get_its_fields)
 {
 	operation a(10);
 	EXPECT_EQ(10, a.GetId());
-	EXPECT_EQ(4, a.GetPriority());
+	EXPECT_EQ(6, a.GetPriority());
 	EXPECT_EQ(1, a.GetArity());
 	EXPECT_EQ("sin", a.GetName());
 }

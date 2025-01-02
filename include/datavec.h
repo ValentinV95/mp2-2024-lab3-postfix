@@ -48,7 +48,7 @@ public:
 
 	friend void swap(Vec<T>& lhs, Vec<T>& rhs) noexcept
 	{
-	swap(lhs.sz, rhs.sz);
+		swap(lhs.sz, rhs.sz);
 		swap(lhs.cap, rhs.cap);
 		swap(lhs.pMem, rhs.pMem);
 		return;

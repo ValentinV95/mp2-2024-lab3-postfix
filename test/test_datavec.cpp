@@ -1,5 +1,3 @@
-// тесты для вектора, на котором написан стек
-
 #include "datavec.h"
 #include <gtest.h>
 

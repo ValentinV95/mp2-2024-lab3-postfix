@@ -1,4 +1,3 @@
-#pragma once
 #include "lexem.h"
 #include "cmath"
 
@@ -64,9 +63,11 @@ void operation::SetPriority()
 	else if (id == 4 || id == 5)
 		priority = 2;
 	else if (id == 6)
-		priority = 3;
-	else if (id >= 7)
 		priority = 4;
+	else if (id == 7)
+		priority = 3;
+	else if (id >= 8)
+		priority = 6;
 	return;
 }
 short int operation::GetPriority() const noexcept
