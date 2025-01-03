@@ -333,78 +333,11 @@ Vec<lexem*> MainParse(string const& s)
 				SStmt.Pop();
 				while (_stm->GetId() != 0)
 				{
-					rhs = SOp.Top();
-					if (_stm->GetArity() == 1)
-					{
-						if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// Arg is implicit
-						{
-							if (_stm->GetId() == 7 && !StmBuff.Is_Empty() && StmBuff.Top()->GetId() == 6)	// This needed for correct parsing of unary minus and '^'
-								StmBuff.push_back(_stm);
-							else
-								RES.push_back(_stm);
-						}
-						else																	// Arg is explicit
-						{
-							SOp.Pop();
-							RES.push_back(rhs);
-							SOp.Push(new variable());
-							RES.push_back(_stm);
-						}
-					}
-					else			// If arity == 2
-					{
-						SOp.Pop();
-						lhs = SOp.Top();
-						if (!lhs->IsConst() && dynamic_cast<variable*>(lhs)->GetId() == -1)			// lhs is implicit
-						{
-							if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
-							{
-								StmBuff.push_back(_stm);
-								k++;
-							}
-							else																	// rhs is explicit
-							{
-								RES.push_back(rhs);
-								RES.push_back(_stm);
-							}
-						}
-						else																		// lhs is explicit
-						{
-							SOp.Pop();
-							if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
-							{
-								for (j = 1 + k; j; j--)
-								{
-									ltmp = RES.Top();
-									LBuff.Push(ltmp);
-									if (ltmp->IsStmt())
-										j += dynamic_cast<operation*>(ltmp)->GetArity();
-									RES.pop_back();
-								}
-								k = 0;
-								RES.push_back(lhs);
-								StmBuff.push_back(_stm);
-							}
-							else																	// rhs is explicit
-							{
-								RES.push_back(lhs);
-								RES.push_back(rhs);
-								RES.push_back(_stm);
-							}
-							SOp.Push(new variable());
-						}
-					}
+					Push_Stm(RES, StmBuff, LBuff, SOp, _stm, lhs, rhs, k);
 					_stm = SStmt.Top();
 					SStmt.Pop();
 				}
-				while (!LBuff.Is_Empty())
-				{
-					RES.push_back(LBuff.Top());
-					LBuff.Pop();
-				}
-				for (j = 0, k = StmBuff.GetSize(); j < k; j++)
-					RES.push_back(StmBuff[j]);
-				StmBuff.clear();
+				Push_Buff(RES, StmBuff, LBuff);
 			}
 			else		// Is MathOp
 			{
@@ -422,81 +355,14 @@ Vec<lexem*> MainParse(string const& s)
 						while (!SStmt.Is_Empty() && _stm->GetPriority() >= prior)
 						{
 							SStmt.Pop();
-							rhs = SOp.Top();
-							if (_stm->GetArity() == 1)
-							{
-								if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// Arg is implicit
-								{
-									if (_stm->GetId() == 7 && !StmBuff.Is_Empty() && StmBuff.Top()->GetId() == 6)	// This needed for correct parsing of unary minus and '^'
-										StmBuff.push_back(_stm);
-									else
-										RES.push_back(_stm);
-								}
-								else																	// Arg is explicit
-								{
-									SOp.Pop();
-									RES.push_back(rhs);
-									SOp.Push(new variable());
-									RES.push_back(_stm);
-								}
-							}
-							else			// If arity == 2
-							{
-								SOp.Pop();
-								lhs = SOp.Top();
-								if (!lhs->IsConst() && dynamic_cast<variable*>(lhs)->GetId() == -1)			// lhs is implicit
-								{
-									if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
-									{
-										StmBuff.push_back(_stm);
-										k++;
-									}
-									else																	// rhs is explicit
-									{
-										RES.push_back(rhs);
-										RES.push_back(_stm);
-									}
-								}
-								else																		// lhs is explicit
-								{
-									SOp.Pop();
-									if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
-									{
-										for (j = 1 + k; j; j--)
-										{
-											ltmp = RES.Top();
-											LBuff.Push(ltmp);
-											if (ltmp->IsStmt())
-												j += dynamic_cast<operation*>(ltmp)->GetArity();
-											RES.pop_back();
-										}
-										k = 0;
-										RES.push_back(lhs);
-										StmBuff.push_back(_stm);
-									}
-									else																	// rhs is explicit
-									{
-										RES.push_back(lhs);
-										RES.push_back(rhs);
-										RES.push_back(_stm);
-									}
-									SOp.Push(new variable());
-								}
-							}
+							Push_Stm(RES, StmBuff, LBuff, SOp, _stm, lhs, rhs, k);
 							if(!SStmt.Is_Empty())
 							{
 								_stm = SStmt.Top();
 							}
 						}
-						while (!LBuff.Is_Empty())
-						{
-							RES.push_back(LBuff.Top());
-							LBuff.Pop();
-						}
-						for (j = 0, k = StmBuff.GetSize(); j < k; j++)
-							RES.push_back(StmBuff[j]);
+						Push_Buff(RES, StmBuff, LBuff);
 						SStmt.Push(stm);
-						StmBuff.clear();
 					}
 				}
 			}
@@ -506,78 +372,10 @@ Vec<lexem*> MainParse(string const& s)
 	while (!SStmt.Is_Empty())
 	{
 		_stm = SStmt.Top();
-		rhs = SOp.Top();
 		SStmt.Pop();
-		if (_stm->GetArity() == 1)
-		{
-			if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// Arg is implicit
-			{
-				if (_stm->GetId() == 7 && !StmBuff.Is_Empty() && StmBuff.Top()->GetId() == 6)	// This needed for correct parsing of unary minus and '^'
-					StmBuff.push_back(_stm);
-				else
-					RES.push_back(_stm);
-			}
-			else																	// Arg is explicit
-			{
-				SOp.Pop();
-				RES.push_back(rhs);
-				SOp.Push(new variable());
-				RES.push_back(_stm);
-			}
-		}
-		else			// If arity == 2
-		{
-			SOp.Pop();
-			lhs = SOp.Top();
-			if (!lhs->IsConst() && dynamic_cast<variable*>(lhs)->GetId() == -1)			// lhs is implicit
-			{
-				if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
-				{
-					StmBuff.push_back(_stm);
-					k++;
-				}
-				else																	// rhs is explicit
-				{
-					RES.push_back(rhs);
-					RES.push_back(_stm);
-				}
-			}
-			else																		// lhs is explicit
-			{
-				SOp.Pop();
-				if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
-				{
-					for (j = 1 + k; j; j--)
-					{
-						ltmp = RES.Top();
-						LBuff.Push(ltmp);
-						if (ltmp->IsStmt())
-							j += dynamic_cast<operation*>(ltmp)->GetArity();
-						RES.pop_back();
-					}
-					k = 0;
-					RES.push_back(lhs);
-					StmBuff.push_back(_stm);
-				}
-				else																	// rhs is explicit
-				{
-					RES.push_back(lhs);
-					RES.push_back(rhs);
-					RES.push_back(_stm);
-				}
-				SOp.Push(new variable());
-			}
-
-		}
+		Push_Stm(RES, StmBuff, LBuff, SOp, _stm, lhs, rhs, k);
 	}
-	while (!LBuff.Is_Empty())
-	{
-		RES.push_back(LBuff.Top());
-		LBuff.Pop();
-	}
-	for (j = 0, k = StmBuff.GetSize(); j < k; j++)
-		RES.push_back(StmBuff[j]);
-	StmBuff.clear();
+	Push_Buff(RES, StmBuff, LBuff);
 	rhs = SOp.Top();
 	if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)
 	{
@@ -587,4 +385,84 @@ Vec<lexem*> MainParse(string const& s)
 		RES.push_back(rhs);
 	SOp.Pop();
 	return RES;
+}
+
+void Push_Stm(Vec<lexem*>& RES, Vec<operation*>&StmBuff, MyStack<lexem*>& LBuff, MyStack<operand*>& SOp, operation*& _stm, operand*& lhs, operand*& rhs, size_t& k)
+{
+	lexem* ltmp;
+	rhs = SOp.Top();
+	if (_stm->GetArity() == 1)
+	{
+		if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// Arg is implicit
+		{
+			if (_stm->GetId() == 7 && !StmBuff.Is_Empty() && StmBuff.Top()->GetId() == 6)	// This needed for correct parsing of unary minus and '^'
+				StmBuff.push_back(_stm);
+			else
+				RES.push_back(_stm);
+		}
+		else																	// Arg is explicit
+		{
+			SOp.Pop();
+			RES.push_back(rhs);
+			SOp.Push(new variable());
+			RES.push_back(_stm);
+		}
+	}
+	else			// If arity == 2
+	{
+		SOp.Pop();
+		lhs = SOp.Top();
+		if (!lhs->IsConst() && dynamic_cast<variable*>(lhs)->GetId() == -1)			// lhs is implicit
+		{
+			if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
+			{
+				StmBuff.push_back(_stm);
+				k++;
+			}
+			else																	// rhs is explicit
+			{
+				RES.push_back(rhs);
+				RES.push_back(_stm);
+			}
+		}
+		else																		// lhs is explicit
+		{
+			SOp.Pop();
+			if (!rhs->IsConst() && dynamic_cast<variable*>(rhs)->GetId() == -1)		// rhs is implicit
+			{
+				for (size_t i = 1 + k; i; i--)
+				{
+					ltmp = RES.Top();
+					LBuff.Push(ltmp);
+					if (ltmp->IsStmt())
+						i += dynamic_cast<operation*>(ltmp)->GetArity();
+					RES.pop_back();
+				}
+				k = 0;
+				RES.push_back(lhs);
+				StmBuff.push_back(_stm);
+			}
+			else																	// rhs is explicit
+			{
+				RES.push_back(lhs);
+				RES.push_back(rhs);
+				RES.push_back(_stm);
+			}
+			SOp.Push(new variable());
+		}
+	}
+	return;
+}
+
+void Push_Buff(Vec<lexem*>& RES, Vec<operation*>& StmBuff, MyStack<lexem*>& LBuff)
+{
+	while (!LBuff.Is_Empty())
+	{
+		RES.push_back(LBuff.Top());
+		LBuff.Pop();
+	}
+	for (size_t i = 0, j = StmBuff.GetSize(); i < j; i++)
+		RES.push_back(StmBuff[i]);
+	StmBuff.clear();
+	return;
 }
