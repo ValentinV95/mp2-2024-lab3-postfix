@@ -1,6 +1,4 @@
 #include <gtest.h>
-#include "lexem.h"
-#include "vector.h"
 #include "rpn.h"
 
 TEST(ToRPNTests, SimpleAddition) {

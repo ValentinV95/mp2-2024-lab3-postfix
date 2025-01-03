@@ -1,5 +1,3 @@
-// тесты дл€ стека
-
 #include "stack.h"
 #include <gtest.h>
 
@@ -132,7 +130,7 @@ TEST(StackTest, ClearMultipleTimes) {
     Stack<int> stack;
     stack.push(1);
     stack.clear();
-    stack.clear(); // ƒолжно работать без ошибок
+    stack.clear(); 
     EXPECT_TRUE(stack.isEmpty());
 }
 

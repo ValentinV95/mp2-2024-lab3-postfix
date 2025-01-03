@@ -7,6 +7,40 @@ TEST(LexemeTest, ConstructorTest) {
     EXPECT_EQ(lexeme.value(), "1");
 }
 
+TEST(LexemeTest, ConstructorWithString) {
+    std::string testValue = "test";
+    Lexeme lexeme(2, testValue);
+    EXPECT_EQ(lexeme.type(), 2);
+    EXPECT_EQ(lexeme.value(), testValue);
+    EXPECT_DOUBLE_EQ(lexeme.number(), 0.0);
+}
+
+TEST(LexemeTest, ConstructorWithEmptyString) {
+    std::string testValue = "";
+    Lexeme lexeme(2, testValue);
+    EXPECT_EQ(lexeme.type(), 2);
+    EXPECT_EQ(lexeme.value(), testValue);
+    EXPECT_DOUBLE_EQ(lexeme.number(), 0.0);
+}
+
+TEST(LexemeTest, ConstructorWithVariousStrings) {
+    Lexeme lexeme1(2, "operator");
+    Lexeme lexeme2(5, "function");
+    Lexeme lexeme3(6, "variable");
+
+    EXPECT_EQ(lexeme1.type(), 2);
+    EXPECT_EQ(lexeme1.value(), "operator");
+    EXPECT_DOUBLE_EQ(lexeme1.number(), 0.0);
+
+    EXPECT_EQ(lexeme2.type(), 5);
+    EXPECT_EQ(lexeme2.value(), "function");
+    EXPECT_DOUBLE_EQ(lexeme2.number(), 0.0);
+
+    EXPECT_EQ(lexeme3.type(), 6);
+    EXPECT_EQ(lexeme3.value(), "variable");
+    EXPECT_DOUBLE_EQ(lexeme3.number(), 0.0);
+}
+
 TEST(LexemeTest, SetNumberTest) {
     Lexeme lexeme(1, "1");
     lexeme.setnumber(3.14);
@@ -71,10 +105,10 @@ TEST(LexemeTest, ValueTest) {
 }
 
 TEST(LexemeTest, MultipleLexemesTest) {
-    Lexeme lexeme1(1, "a");
+    Lexeme lexeme1(1, "1");
     Lexeme lexeme2(2, "+");
     Lexeme lexeme3(3, "(");
-    EXPECT_EQ(lexeme1.toString(), "Type: NUMBER, Value: a");
+    EXPECT_EQ(lexeme1.toString(), "Type: NUMBER, Value: 1");
     EXPECT_EQ(lexeme2.toString(), "Type: OPERATOR, Value: +");
     EXPECT_EQ(lexeme3.toString(), "Type: LEFT, Value: (");
 }
@@ -85,19 +119,19 @@ TEST(LexemeTest, TypeBoundaryTest) {
 }
 
 TEST(LexemeTest, LargeNumberTest) {
-    Lexeme lexeme(1, "large");
+    Lexeme lexeme(1, "1e+10");
     lexeme.setnumber(1e10);
     EXPECT_DOUBLE_EQ(lexeme.number(), 1e10);
 }
 
 TEST(LexemeTest, SmallNumberTest) {
-    Lexeme lexeme(1, "small");
+    Lexeme lexeme(1, "1e-10");
     lexeme.setnumber(1e-10);
     EXPECT_DOUBLE_EQ(lexeme.number(), 1e-10);
 }
 
 TEST(LexemeTest, StringValueWithSpacesTest) {
-    Lexeme lexeme(1, "value with spaces");
+    Lexeme lexeme(0, "value with spaces");
     EXPECT_EQ(lexeme.value(), "value with spaces");
 }
 
@@ -138,7 +172,7 @@ TEST(LexemeTest, PrecedenceNonOperators) {
 }
 
 TEST(LexemeTest, PrecedenceUnknownType) {
-    Lexeme unknown(7, "unknown");
+    Lexeme unknown(8, "unknown");
 
     EXPECT_EQ(unknown.precedence(), 0);
 }

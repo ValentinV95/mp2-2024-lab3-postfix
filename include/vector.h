@@ -84,6 +84,11 @@ public:
     bool operator!=(const Vector& v) const {
         return !(*this == v);
     }
+
+    bool isEmpty() const {
+        return size == 0;
+    }
+
     const size_t getsize() const {
         return size;
     }
@@ -113,7 +118,7 @@ public:
     }
     const T& at(size_t index) const {
         if (index >= size || index < 0) {
-            throw std::out_of_range("index out of range");
+            throw std::out_of_range("Index out of range at position " + std::to_string(index));
         }
         return data[index];
     }
@@ -126,7 +131,7 @@ public:
     void resize(size_t sz) {
         if (sz > capacity) {
             T* newData = new T[sz]();
-            std::copy(data, data + capacity, newData);
+            std::copy(data, data + size, newData);
             capacity = sz;
             delete[] data;
             data = newData;
